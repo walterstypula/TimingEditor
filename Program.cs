@@ -27,18 +27,15 @@ namespace NSFW.TimingEditor
             Assembly assembly = Assembly.GetExecutingAssembly();
             string name = assembly.ManifestModule.Name;
 
-            bool singleTableMode;
             if ((string.Compare("tableeditor.exe", name, StringComparison.OrdinalIgnoreCase) == 0) ||
                 (args.Length == 1 && args[0] == "table"))
             {
-                singleTableMode = true;
                 Util.DoubleFormat = "0.0000";
                 Util.RowHeaderWidth = 60;
                 Util.ColumnWidth = 60;
             }
             else
             {
-                singleTableMode = false;
                 Util.DoubleFormat = "0.00";
                 Util.RowHeaderWidth = 60;
                 Util.ColumnWidth = 40;
@@ -46,7 +43,7 @@ namespace NSFW.TimingEditor
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new TimingForm(singleTableMode));
+            Application.Run(new TimingForm());
         }
     }
 }

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -49,6 +46,7 @@ namespace NSFW.TimingEditor
                 this.ResumeLayout(false);
                 this.PerformLayout();
             }
+
             protected override void Dispose(bool disposing)
             {
                 if (disposing && (components != null))
@@ -57,10 +55,12 @@ namespace NSFW.TimingEditor
                 }
                 base.Dispose(disposing);
             }
+
             protected override bool ShowWithoutActivation
             {
                 get { return true; }
             }
+
             private System.ComponentModel.IContainer components = null;
             public System.Windows.Forms.RichTextBox textBox = null;
         }
@@ -72,14 +72,14 @@ namespace NSFW.TimingEditor
         private int selectedRow;
         private int advancePadding;
         private bool editControlKeyDownSubscribed;
-        private bool singleTableMode;
-        private String[,] baseTimingCellHit;
-        private String[,] advanceTimingCellHit;
+        private string[,] baseTimingCellHita;
+        private string[,] overlay;
+
+
         private CellPopup cellPopup;
 
-        public TimingForm(bool singleTableMode)
+        public TimingForm()
         {
-            this.singleTableMode = singleTableMode;
             InitializeComponent();
             this.smoothComboBox.SelectedIndex = 0;
             this.smoothButton.Enabled = false;
@@ -111,11 +111,6 @@ namespace NSFW.TimingEditor
                 "When you edit cells in this table, the changes are actually made to the base timing table."));
             this.tableList.Items.Add(new TableListEntry("Delta total timing", this.tables.DeltaTotalTiming, false,
                 "This table shows the difference between the initial total timing and the modified total timing."));
-
-            if (this.singleTableMode)
-            {
-                this.tableList.Visible = false;
-            }
 
             if (Program.Debug)
             {
@@ -153,7 +148,7 @@ namespace NSFW.TimingEditor
 
             this.tableList.SelectedIndex = 0;
         }
-        
+
         private void tableList_SelectedIndexChanged(object sender, EventArgs e)
         {
             disposeCellPopup();
@@ -165,17 +160,9 @@ namespace NSFW.TimingEditor
             TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
             string title;
 
-            if (this.singleTableMode)
-            {
-                this.statusStrip1.Items[0].Text = "This is a reduced-functionality version of Timing Editor, for use with a single table.";
-                title = "Table Editor {0}";
-            }
-            else
-            {
-                title = "Timing Editor {0}: " + entry.Description;
-                this.pasteButton.Enabled = entry.AllowPaste;
-                this.statusStrip1.Items[0].Text = entry.StatusText;
-            }
+            title = "Timing Editor {0}: " + entry.Description;
+            this.pasteButton.Enabled = entry.AllowPaste;
+            this.statusStrip1.Items[0].Text = entry.StatusText;
 
             this.Text = string.Format(title, "v15");
 
@@ -195,15 +182,21 @@ namespace NSFW.TimingEditor
                     Util.ShowTable(this, entry.Table, this.dataGrid);
                     this.dataGrid.ClearSelection();
                     this.DrawSideViews(this.selectedColumn, this.selectedRow);
-                    if (entry.Table == this.tables.InitialAdvanceTiming || entry.Table == this.tables.ModifiedAdvanceTiming)
-                        Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, advanceTimingCellHit);
-                    else if (entry.Table == this.tables.InitialBaseTiming || entry.Table == this.tables.ModifiedBaseTiming)
-                        Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, baseTimingCellHit);
+                    if (entry.Table == this.tables.InitialAdvanceTiming || entry.Table == this.tables.ModifiedAdvanceTiming
+                        || entry.Table == this.tables.InitialBaseTiming || entry.Table == this.tables.ModifiedBaseTiming)
+                    {
+                        Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, overlay);
+                    }
                     else
+                    {
                         Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, null);
+                    }
+
                     this.changingTables = false;
                     foreach (int[] pair in selectedIndices)
+                    {
                         dataGrid.Rows[pair[1]].Cells[pair[0]].Selected = true;
+                    }
                 }
                 catch (IndexOutOfRangeException)
                 {
@@ -218,23 +211,15 @@ namespace NSFW.TimingEditor
                 this.dataGrid.Columns.Clear();
                 this.changingTables = false;
             }
-            if (entry.Table == this.tables.InitialTotalTiming || entry.Table == this.tables.ModifiedTotalTiming)
-                this.logOverlayButton.Enabled = false;
-            else
-                this.logOverlayButton.Enabled = true;
+
+            this.logOverlayButton.Enabled = true;
+
             if (entry.Table.IsReadOnly)
             {
                 this.smoothButton.Enabled = false;
                 this.logOverlayButton.Enabled = false;
             }
             disposeCellPopup();
-
-/*            DataGridViewCell cell;
-            if (this.dataGrid.SelectedCells.Count == 1)
-            {
-                cell = this.dataGrid.SelectedCells[0];
-                this.DrawSideViews(cell.ColumnIndex, cell.RowIndex);
-            }            */
         }
 
         private void copyButton_Click(object sender, EventArgs e)
@@ -301,28 +286,28 @@ namespace NSFW.TimingEditor
                         this.advancePadding = 0;
                     }
                 }
-                
+
                 temporaryTable.CopyTo(entry.Table);
-                
+
                 if (wasReadOnly)
                 {
                     entry.Table.IsReadOnly = true;
                 }
                 Util.ShowTable(this, entry.Table, this.dataGrid);
-                Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, new String[entry.Table.ColumnHeaders.Count, entry.Table.RowHeaders.Count]);
+                Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, new string[entry.Table.ColumnHeaders.Count, entry.Table.RowHeaders.Count]);
                 this.dataGrid.ClearSelection();
                 this.changingTables = false;
 
                 if (entry.Table == this.tables.InitialBaseTiming)
                 {
-                    this.baseTimingCellHit = null;
+                    this.overlay = null;
                     temporaryTable.CopyTo(this.tables.ModifiedBaseTiming);
                     //Util.LoadTable(tableText, this.tables.ModifiedBaseTiming);
                 }
 
                 if (entry.Table == this.tables.InitialAdvanceTiming)
                 {
-                    this.advanceTimingCellHit = null;
+                    this.overlay = null;
                     temporaryTable.CopyTo(this.tables.ModifiedAdvanceTiming);
                     //Util.LoadTable(tableText, this.tables.ModifiedAdvanceTiming);
                 }
@@ -359,7 +344,7 @@ namespace NSFW.TimingEditor
 
             object cellValue = this.dataGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
             string newStringValue = cellValue as string;
-            
+
             double value;
             if (double.TryParse(newStringValue, out value))
             {
@@ -367,14 +352,14 @@ namespace NSFW.TimingEditor
                 CommandHistory.Instance.Execute(edit);
 
                 // The "smooth" button stops working if this code is enabled...
-/*                foreach (DataGridViewCell cell in this.dataGrid.SelectedCells)
-                {
-                    // TODO: create an "EditSelectedCells" command, execute that instead, for better undo/redo
-                    EditCell edit = new EditCell(table, cell.ColumnIndex, cell.RowIndex, value);
-                    CommandHistory.Instance.Execute(edit);
-                    cell.Value = value;
-                }                
- */ 
+                /*                foreach (DataGridViewCell cell in this.dataGrid.SelectedCells)
+                                {
+                                    // TODO: create an "EditSelectedCells" command, execute that instead, for better undo/redo
+                                    EditCell edit = new EditCell(table, cell.ColumnIndex, cell.RowIndex, value);
+                                    CommandHistory.Instance.Execute(edit);
+                                    cell.Value = value;
+                                }
+                 */
             }
 
             this.DrawSideViews(e.ColumnIndex, e.RowIndex);
@@ -392,15 +377,15 @@ namespace NSFW.TimingEditor
             }
             else
             {
-/*                DataGridViewCellStyle style = Util.DefaultStyle;
-                style.BackColor = Color.Black;
-                style.ForeColor = Color.White;
+                /*                DataGridViewCellStyle style = Util.DefaultStyle;
+                                style.BackColor = Color.Black;
+                                style.ForeColor = Color.White;
 
-                foreach (DataGridViewCell cell in this.dataGrid.SelectedCells)
-                {
-                    cell.Style = style;
-                }
-*/
+                                foreach (DataGridViewCell cell in this.dataGrid.SelectedCells)
+                                {
+                                    cell.Style = style;
+                                }
+                */
                 if (this.Smooth(selectedCells, false))
                 {
                     this.smoothButton.Enabled = true;
@@ -446,7 +431,7 @@ namespace NSFW.TimingEditor
                 }
             }
         }
-        
+
         private void dataGrid_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
             if (!this.editControlKeyDownSubscribed)
@@ -504,17 +489,21 @@ namespace NSFW.TimingEditor
         private void redoButton_Click(object sender, EventArgs e)
         {
             CommandHistory.Instance.Redo();
-            
+
             this.changingTables = true;
             TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
             Util.ShowTable(this, entry.Table, this.dataGrid);
             this.dataGrid.ClearSelection();
-            if (entry.Table == this.tables.InitialAdvanceTiming || entry.Table == this.tables.ModifiedAdvanceTiming)
-                Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, advanceTimingCellHit);
-            else if (entry.Table == this.tables.InitialBaseTiming || entry.Table == this.tables.ModifiedBaseTiming)
-                Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, baseTimingCellHit);
+            if (entry.Table == this.tables.InitialAdvanceTiming || entry.Table == this.tables.ModifiedAdvanceTiming
+                || entry.Table == this.tables.InitialBaseTiming || entry.Table == this.tables.ModifiedBaseTiming)
+            {
+                Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, overlay);
+            }
             else
+            {
                 Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, null);
+            }
+
             this.changingTables = false;
             disposeCellPopup();
             this.DrawSideViews(this.selectedColumn, this.selectedRow);
@@ -523,17 +512,21 @@ namespace NSFW.TimingEditor
         private void undoButton_Click(object sender, EventArgs e)
         {
             Command command = CommandHistory.Instance.Undo();
-            
+
             this.changingTables = true;
             TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
             Util.ShowTable(this, entry.Table, this.dataGrid);
             this.dataGrid.ClearSelection();
-            if (entry.Table == this.tables.InitialAdvanceTiming || entry.Table == this.tables.ModifiedAdvanceTiming)
-                Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, advanceTimingCellHit);
-            else if (entry.Table == this.tables.InitialBaseTiming || entry.Table == this.tables.ModifiedBaseTiming)
-                Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, baseTimingCellHit);
+            if (entry.Table == this.tables.InitialAdvanceTiming || entry.Table == this.tables.ModifiedAdvanceTiming 
+                || entry.Table == this.tables.InitialBaseTiming || entry.Table == this.tables.ModifiedBaseTiming)
+            {
+                Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, overlay);
+            }
             else
+            {
                 Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, null);
+            }
+
             this.changingTables = false;
             disposeCellPopup();
             this.DrawSideViews(this.selectedColumn, this.selectedRow);
@@ -561,18 +554,23 @@ namespace NSFW.TimingEditor
         {
             DataGridViewSelectedCellCollection selectedCells = this.dataGrid.SelectedCells;
             TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
-            if (entry != null)
+            if (entry == null)
             {
-                if (entry.Table.IsReadOnly)
-                    this.smoothButton.Enabled = false;
-                else
-                {
-                    if (this.Smooth(selectedCells, false))
-                        this.smoothButton.Enabled = true;
-                    else
-                        this.smoothButton.Enabled = false;
-                }
+                return;
             }
+
+            if (entry.Table.IsReadOnly)
+            {
+                this.smoothButton.Enabled = false;
+                return;
+            }
+
+            if (this.Smooth(selectedCells, false))
+            {
+                this.smoothButton.Enabled = true;
+                return;
+            }
+            this.smoothButton.Enabled = false;
         }
 
         private void disposeCellPopup()
@@ -587,138 +585,165 @@ namespace NSFW.TimingEditor
         private void logOverlayButton_Click(object sender, EventArgs e)
         {
             TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
-            if (entry != null)
+            if (entry == null)
             {
-                disposeCellPopup();
-                this.dataGrid.ClearSelection();
-                if (entry.Table.IsReadOnly)
-                    this.logOverlayButton.Enabled = false;
-                else if (!entry.Table.IsPopulated)
-                    MessageBox.Show("Error: Please populate table first");
-                else
-                {
-                    String line;
-                    OpenFileDialog file = new OpenFileDialog();
-                    if (file.ShowDialog() == DialogResult.OK)
-                    {
-                        StreamReader sr = new StreamReader(file.FileName, Encoding.Default);
-                        try
-                        {
-                            line = sr.ReadLine();
-                            if (line != null)
-                            {
-                                String[] header = line.Split(',');
-                                int i = 0;
-                                foreach (String h in header)
-                                    header[i++] = h.Trim();
-                                LogOverlay logOverlay = new LogOverlay();
-                                logOverlay.LogParameters = header;
-                                if (DialogResult.OK == logOverlay.ShowDialog(this))
-                                {
-                                    String[] selected = logOverlay.LogParameters;
-                                    String xAxis = logOverlay.XAxis;
-                                    String yAxis = logOverlay.YAxis;
-                                    if (selected.Length > 0)
-                                    {
-                                        String[,] cellHit = null;
-                                        if (entry.Table == this.tables.InitialAdvanceTiming || entry.Table == this.tables.ModifiedAdvanceTiming)
-                                        {
-                                            advanceTimingCellHit = new String [entry.Table.ColumnHeaders.Count,entry.Table.RowHeaders.Count];
-                                            cellHit = advanceTimingCellHit;
-                                        }
-                                        else if (entry.Table == this.tables.InitialBaseTiming || entry.Table == this.tables.ModifiedBaseTiming)
-                                        {
-                                            baseTimingCellHit = new String [entry.Table.ColumnHeaders.Count,entry.Table.RowHeaders.Count];
-                                            cellHit = baseTimingCellHit;
-                                        }
-                                        int xIdx = Array.IndexOf(header, xAxis);
-                                        int yIdx = Array.IndexOf(header, yAxis);
-                                        int[] indeces = new int[selected.Length];
-                                        for (i = 0; i < selected.Length; ++i)
-                                            indeces[i] = Array.IndexOf(header, selected[i]);
-                                        Cursor cursor = Cursor.Current;
-                                        Cursor.Current = Cursors.WaitCursor;
-                                        double X, Y, x, y, v;
-                                        int xArrIdx, yArrIdx;
-                                        this.changingTables = true;
-                                        try
-                                        {
-                                            List<double> xAxisArray = (List<double>)entry.Table.ColumnHeaders;
-                                            List<double> yAxisArray = (List<double>)entry.Table.RowHeaders;
-                                            Dictionary<int, Dictionary<int, Dictionary<String, String>>> xDict = new Dictionary<int, Dictionary<int, Dictionary<String, String>>>();
-                                            Dictionary<int, Dictionary<String, String>> yDict;
-                                            Dictionary<String, String> paramDict;
-                                            String val;
-                                            while ((line = sr.ReadLine()) != null)
-                                            {
-                                                String[] vals = line.Split(',');
-                                                if (double.TryParse(vals[xIdx], out x) && double.TryParse(vals[yIdx], out y))
-                                                {
-                                                    X = xAxisArray[Util.ClosestValueIndex(x, xAxisArray)];
-                                                    Y = yAxisArray[Util.ClosestValueIndex(y, yAxisArray)];
-                                                    for (int idx = 0; idx < indeces.Length; ++idx)
-                                                    {
-                                                        if (idx == xIdx || idx == yIdx)
-                                                            continue;
-                                                        if (double.TryParse(vals[indeces[idx]], out v) && v != 0.0)
-                                                        {
-                                                            xArrIdx = xAxisArray.IndexOf(X);
-                                                            yArrIdx = yAxisArray.IndexOf(Y);
+                return;
+            }
 
-                                                            if (!xDict.TryGetValue(xArrIdx, out yDict))
-                                                            {
-                                                                yDict = new Dictionary<int, Dictionary<String, String>>();
-                                                                xDict[xArrIdx] = yDict;
-                                                            }
-                                                            if (!yDict.TryGetValue(yArrIdx, out paramDict))
-                                                            {
-                                                                paramDict = new Dictionary<String, String>();
-                                                                yDict[yArrIdx] = paramDict;
-                                                            }
-                                                            if (!paramDict.TryGetValue(selected[idx], out val))
-                                                                paramDict[selected[idx]] = "    [" + x + ", " + y + ", " + v + "]\r\n";
-                                                            else
-                                                                paramDict[selected[idx]] += ("    [" + x + ", " + y + ", " + v + "]\r\n");
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            foreach (KeyValuePair<int, Dictionary<int, Dictionary<String, String>>> xPair in xDict)
-                                            {
-                                                foreach (KeyValuePair<int, Dictionary<String, String>> yPair in xPair.Value)
-                                                {
-                                                    foreach (KeyValuePair<String, String> paramPair in yPair.Value)
-                                                    {
-                                                        if (cellHit[xPair.Key, yPair.Key] == null)
-                                                            cellHit[xPair.Key, yPair.Key] = "";
-                                                        cellHit[xPair.Key, yPair.Key] += (paramPair.Key + ":\r\n" + paramPair.Value);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            MessageBox.Show("Error: " + ex.Message);
-                                        }
-                                        Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, cellHit);
-                                        this.dataGrid.Refresh();
-                                        this.changingTables = false;
-                                        Cursor.Current = cursor;
-                                    }
-                                    else
-                                        MessageBox.Show("Error: No parameters were selected");
+            disposeCellPopup();
+            this.dataGrid.ClearSelection();
+            if (entry.Table.IsReadOnly)
+            {
+                this.logOverlayButton.Enabled = false;
+                return;
+            }
+            else if (!entry.Table.IsPopulated)
+            {
+                MessageBox.Show("Error: Please populate table first");
+                return;
+            }
+
+            string line;
+            OpenFileDialog file = new OpenFileDialog();
+            if (file.ShowDialog() == DialogResult.OK)
+            {
+                StreamReader sr = new StreamReader(file.FileName, Encoding.Default);
+                try
+                {
+                    line = sr.ReadLine();
+
+                    if (line == null)
+                    {
+                        return;
+                    }
+
+                    string[] header = line.Split(',');
+                    int i = 0;
+                    foreach (string h in header)
+                    {
+                        header[i++] = h.Trim();
+                    }
+
+                    LogOverlay logOverlay = new LogOverlay();
+                    logOverlay.LogParameters = header;
+
+                    if (DialogResult.OK != logOverlay.ShowDialog(this))
+                    {
+                        return;
+                    }
+
+                    string[] selected = logOverlay.LogParameters;
+                    if (selected.Length == 0)
+                    {
+                        MessageBox.Show("Error: No parameters were selected");
+                    }
+
+                    string xAxis = logOverlay.XAxis;
+                    string yAxis = logOverlay.YAxis;
+                    string[,] cellHit = null;
+
+                    overlay = new string[entry.Table.ColumnHeaders.Count, entry.Table.RowHeaders.Count];
+                    cellHit = overlay;
+
+                    int xIdx = Array.IndexOf(header, xAxis);
+                    int yIdx = Array.IndexOf(header, yAxis);
+                    int[] indeces = new int[selected.Length];
+                    for (i = 0; i < selected.Length; ++i)
+                    {
+                        indeces[i] = Array.IndexOf(header, selected[i]);
+                    }
+
+                    Cursor cursor = Cursor.Current;
+                    Cursor.Current = Cursors.WaitCursor;
+                    double X, Y, x, y, v;
+                    int xArrIdx, yArrIdx;
+                    this.changingTables = true;
+                    try
+                    {
+                        List<double> xAxisArray = (List<double>)entry.Table.ColumnHeaders;
+                        List<double> yAxisArray = (List<double>)entry.Table.RowHeaders;
+                        Dictionary<int, Dictionary<int, Dictionary<string, string>>> xDict = new Dictionary<int, Dictionary<int, Dictionary<string, string>>>();
+                        Dictionary<int, Dictionary<string, string>> yDict;
+                        Dictionary<string, string> paramDict;
+                        string val;
+                        while ((line = sr.ReadLine()) != null)
+                        {
+                            string[] vals = line.Split(',');
+
+                            if (!double.TryParse(vals[xIdx], out x) || !double.TryParse(vals[yIdx], out y))
+                            {
+                                continue;
+                            }
+
+                            X = xAxisArray[Util.ClosestValueIndex(x, xAxisArray)];
+                            Y = yAxisArray[Util.ClosestValueIndex(y, yAxisArray)];
+                            for (int idx = 0; idx < indeces.Length; ++idx)
+                            {
+                                if (idx == xIdx || idx == yIdx)
+                                {
+                                    continue;
+                                }
+
+                                if (!double.TryParse(vals[indeces[idx]], out v) || v == 0.0)
+                                {
+                                    continue;
+                                }
+
+                                xArrIdx = xAxisArray.IndexOf(X);
+                                yArrIdx = yAxisArray.IndexOf(Y);
+
+                                if (!xDict.TryGetValue(xArrIdx, out yDict))
+                                {
+                                    yDict = new Dictionary<int, Dictionary<string, string>>();
+                                    xDict[xArrIdx] = yDict;
+                                }
+                                if (!yDict.TryGetValue(yArrIdx, out paramDict))
+                                {
+                                    paramDict = new Dictionary<string, string>();
+                                    yDict[yArrIdx] = paramDict;
+                                }
+                                if (!paramDict.TryGetValue(selected[idx], out val))
+                                {
+                                    paramDict[selected[idx]] = "    [" + x + ", " + y + ", " + v + "]\r\n";
+                                }
+                                else
+                                {
+                                    paramDict[selected[idx]] += ("    [" + x + ", " + y + ", " + v + "]\r\n");
                                 }
                             }
                         }
-                        catch (Exception ex)
+                        foreach (KeyValuePair<int, Dictionary<int, Dictionary<string, string>>> xPair in xDict)
                         {
-                            MessageBox.Show("Error: " + ex.Message);
-                        }
-                        finally
-                        {
-                            sr.Close();
+                            foreach (KeyValuePair<int, Dictionary<string, string>> yPair in xPair.Value)
+                            {
+                                foreach (KeyValuePair<string, string> paramPair in yPair.Value)
+                                {
+                                    if (cellHit[xPair.Key, yPair.Key] == null)
+                                    {
+                                        cellHit[xPair.Key, yPair.Key] = "";
+                                    }
+
+                                    cellHit[xPair.Key, yPair.Key] += (paramPair.Key + ":\r\n" + paramPair.Value);
+                                }
+                            }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error: " + ex.Message);
+                    }
+                    Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, cellHit);
+                    this.dataGrid.Refresh();
+                    this.changingTables = false;
+                    Cursor.Current = cursor;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                }
+                finally
+                {
+                    sr.Close();
                 }
             }
         }
@@ -732,15 +757,13 @@ namespace NSFW.TimingEditor
                 if (e.ColumnIndex >= 0 && e.RowIndex >= 0 && entry != null && dataGrid.GetCellCount(DataGridViewElementStates.Selected) == 1 &&
                     dataGrid.SelectedCells[0].RowIndex == e.RowIndex && dataGrid.SelectedCells[0].ColumnIndex == e.ColumnIndex && dataGrid[e.ColumnIndex, e.RowIndex].IsInEditMode == false)
                 {
-                    String[,] cellHit = null;
-                    if (entry.Table == this.tables.InitialAdvanceTiming || entry.Table == this.tables.ModifiedAdvanceTiming)
+                    string[,] cellHit = null;
+                    if (entry.Table == this.tables.InitialAdvanceTiming || entry.Table == this.tables.ModifiedAdvanceTiming
+                        || entry.Table == this.tables.InitialBaseTiming || entry.Table == this.tables.ModifiedBaseTiming)
                     {
-                        cellHit = advanceTimingCellHit;
+                        cellHit = overlay;
                     }
-                    else if (entry.Table == this.tables.InitialBaseTiming || entry.Table == this.tables.ModifiedBaseTiming)
-                    {
-                        cellHit = baseTimingCellHit;
-                    }
+
                     if (cellHit != null)
                     {
                         if (cellHit[e.ColumnIndex, e.RowIndex] != null)
@@ -812,7 +835,6 @@ namespace NSFW.TimingEditor
 
         private void dataGrid_CurrentCellChanged(object sender, EventArgs e)
         {
-
         }
     }
 }
