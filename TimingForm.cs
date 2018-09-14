@@ -75,7 +75,6 @@ namespace NSFW.TimingEditor
         private string[,] baseTimingCellHita;
         private string[,] overlay;
 
-
         private CellPopup cellPopup;
 
         public TimingForm()
@@ -111,6 +110,8 @@ namespace NSFW.TimingEditor
                 "When you edit cells in this table, the changes are actually made to the base timing table."));
             this.tableList.Items.Add(new TableListEntry("Delta total timing", this.tables.DeltaTotalTiming, false,
                 "This table shows the difference between the initial total timing and the modified total timing."));
+            this.tableList.Items.Add(new TableListEntry("Target Fuel Map", this.tables.TargetFuel, true,
+                "This table is the Target Fuel table used for MAF adjustments."));
 
             if (Program.Debug)
             {
@@ -182,15 +183,7 @@ namespace NSFW.TimingEditor
                     Util.ShowTable(this, entry.Table, this.dataGrid);
                     this.dataGrid.ClearSelection();
                     this.DrawSideViews(this.selectedColumn, this.selectedRow);
-                    if (entry.Table == this.tables.InitialAdvanceTiming || entry.Table == this.tables.ModifiedAdvanceTiming
-                        || entry.Table == this.tables.InitialBaseTiming || entry.Table == this.tables.ModifiedBaseTiming)
-                    {
-                        Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, overlay);
-                    }
-                    else
-                    {
-                        Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, null);
-                    }
+                    Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, overlay);
 
                     this.changingTables = false;
                     foreach (int[] pair in selectedIndices)
@@ -517,15 +510,7 @@ namespace NSFW.TimingEditor
             TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
             Util.ShowTable(this, entry.Table, this.dataGrid);
             this.dataGrid.ClearSelection();
-            if (entry.Table == this.tables.InitialAdvanceTiming || entry.Table == this.tables.ModifiedAdvanceTiming 
-                || entry.Table == this.tables.InitialBaseTiming || entry.Table == this.tables.ModifiedBaseTiming)
-            {
-                Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, overlay);
-            }
-            else
-            {
-                Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, null);
-            }
+            Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, overlay);
 
             this.changingTables = false;
             disposeCellPopup();
@@ -757,12 +742,7 @@ namespace NSFW.TimingEditor
                 if (e.ColumnIndex >= 0 && e.RowIndex >= 0 && entry != null && dataGrid.GetCellCount(DataGridViewElementStates.Selected) == 1 &&
                     dataGrid.SelectedCells[0].RowIndex == e.RowIndex && dataGrid.SelectedCells[0].ColumnIndex == e.ColumnIndex && dataGrid[e.ColumnIndex, e.RowIndex].IsInEditMode == false)
                 {
-                    string[,] cellHit = null;
-                    if (entry.Table == this.tables.InitialAdvanceTiming || entry.Table == this.tables.ModifiedAdvanceTiming
-                        || entry.Table == this.tables.InitialBaseTiming || entry.Table == this.tables.ModifiedBaseTiming)
-                    {
-                        cellHit = overlay;
-                    }
+                    string[,] cellHit = overlay;
 
                     if (cellHit != null)
                     {

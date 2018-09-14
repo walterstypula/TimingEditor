@@ -51,7 +51,7 @@
             this.tableList.IntegralHeight = false;
             this.tableList.Location = new System.Drawing.Point(12, 12);
             this.tableList.Name = "tableList";
-            this.tableList.Size = new System.Drawing.Size(200, 99);
+            this.tableList.Size = new System.Drawing.Size(200, 115);
             this.tableList.TabIndex = 0;
             this.tableList.SelectedIndexChanged += new System.EventHandler(this.tableList_SelectedIndexChanged);
             this.tableList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tableList_MouseDown);
@@ -108,7 +108,7 @@
             // 
             // copyButton
             // 
-            this.copyButton.Location = new System.Drawing.Point(12, 117);
+            this.copyButton.Location = new System.Drawing.Point(12, 132);
             this.copyButton.Name = "copyButton";
             this.copyButton.Size = new System.Drawing.Size(95, 23);
             this.copyButton.TabIndex = 4;
@@ -118,7 +118,7 @@
             // 
             // pasteButton
             // 
-            this.pasteButton.Location = new System.Drawing.Point(125, 117);
+            this.pasteButton.Location = new System.Drawing.Point(125, 132);
             this.pasteButton.Name = "pasteButton";
             this.pasteButton.Size = new System.Drawing.Size(87, 23);
             this.pasteButton.TabIndex = 5;

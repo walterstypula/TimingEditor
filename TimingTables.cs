@@ -43,6 +43,7 @@ namespace NSFW.TimingEditor
         private ITable modifiedAdvanceTiming;
         private ITable modifiedTotalTiming;
         private ITable deltaTotalTiming;
+        private ITable targetFuel;
 
         public ITable InitialBaseTiming { get { return this.initialBaseTiming; } }
         public ITable InitialAdvanceTiming { get { return this.initialAdvanceTiming; } }
@@ -51,6 +52,8 @@ namespace NSFW.TimingEditor
         public ITable ModifiedAdvanceTiming { get { return this.modifiedAdvanceTiming; } }
         public ITable ModifiedTotalTiming { get { return this.modifiedTotalTiming; } }
         public ITable DeltaTotalTiming { get { return this.deltaTotalTiming; } }
+
+        public ITable TargetFuel { get { return this.targetFuel; } }
 
         public TimingTables()
         {
@@ -61,6 +64,7 @@ namespace NSFW.TimingEditor
             this.modifiedAdvanceTiming = new PassThroughTable(this.modifiedBaseTiming);
             this.modifiedTotalTiming = new CombinedTable(this.modifiedBaseTiming, this.modifiedAdvanceTiming, Operation.Sum);
             this.deltaTotalTiming = new CombinedTable(this.initialTotalTiming, this.modifiedTotalTiming, Operation.Difference);
+            this.targetFuel = new Table();
         }
     }
 }
