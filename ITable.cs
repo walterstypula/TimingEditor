@@ -17,6 +17,7 @@ namespace NSFW.TimingEditor
         void SetCell(int x, int y, double value);
         void Reset();
         void Populated();
+        bool Is2dTable { get; set; }
     }
 
     public interface I2DTable

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace NSFW.TimingEditor
@@ -13,7 +11,7 @@ namespace NSFW.TimingEditor
         public static string DoubleFormat = "0.00";
         public static int RowHeaderWidth = 60;
         public static int ColumnWidth = 40;
-            
+
         public static double ValueAsDouble(this DataGridViewCell cell)
         {
             if (cell.Value is double)
@@ -39,6 +37,12 @@ namespace NSFW.TimingEditor
             StringReader reader = new StringReader(tableText);
             string line = reader.ReadLine();
 
+            if (line.StartsWith("[Table2D]"))
+            {
+                line = line.Replace("2", "3");
+                table.Is2dTable = true;
+            }
+
             if (!line.StartsWith("[Table3D]"))
             {
                 throw new ApplicationException("Doesn't start with [Table3D].");
@@ -61,6 +65,11 @@ namespace NSFW.TimingEditor
                 if (string.IsNullOrEmpty(rowText))
                 {
                     break;
+                }
+
+                if (table.Is2dTable)
+                {
+                    rowText = rowText.Insert(0, "0.0\t");
                 }
 
                 string[] columnStrings = rowText.Split('\t');
@@ -148,7 +157,7 @@ namespace NSFW.TimingEditor
             {
                 result.ColumnHeaders.Add(source.ColumnHeaders[i - newColumnCount]);
             }
-            
+
             for (int i = 0; i < source.RowHeaders.Count; i++)
             {
                 result.RowHeaders.Add(source.RowHeaders[i]);
@@ -180,7 +189,7 @@ namespace NSFW.TimingEditor
         {
             Table result = new Table();
             result.Reset();
-            
+
             for (int i = columnsToRemove; i < source.ColumnHeaders.Count; i++)
             {
                 result.ColumnHeaders.Add(source.ColumnHeaders[i]);
@@ -223,19 +232,19 @@ namespace NSFW.TimingEditor
             }
         }
 
-/*        public static DataGridViewCellStyle SelectedStyle
-        {
-            get
-            {
-                if (selectedStyle == null)
+        /*        public static DataGridViewCellStyle SelectedStyle
                 {
-                    selectedStyle = new DataGridViewCellStyle();
-                    selectedStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-                    selectedStyle.BackColor = System.Drawing.Color.LightGray;
-                }
-                return selectedStyle;
-            }
-        }*/
+                    get
+                    {
+                        if (selectedStyle == null)
+                        {
+                            selectedStyle = new DataGridViewCellStyle();
+                            selectedStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                            selectedStyle.BackColor = System.Drawing.Color.LightGray;
+                        }
+                        return selectedStyle;
+                    }
+                }*/
 
         private static void GetMinMax(ITable table, out double min, out double max)
         {
@@ -275,9 +284,13 @@ namespace NSFW.TimingEditor
                     if (cellHit != null)
                     {
                         if (cellHit[x, y] != null)
+                        {
                             dataGridView.Rows[y].Cells[x] = new CustomDataGridViewCell();
+                        }
                         else if (dataGridView.Rows[y].Cells[x] is CustomDataGridViewCell)
+                        {
                             dataGridView.Rows[y].Cells[x] = new DataGridViewTextBoxCell();
+                        }
                     }
 
                     if ((x == selectedX) || (y == selectedY))
@@ -375,20 +388,21 @@ namespace NSFW.TimingEditor
             form.Height += delta;
         }
 
-/*        public static void Highlight(DataGridView grid, int selectedColumn, int selectedRow)
-        {
-            for (int row = 0; row < grid.Rows.Count; row++)
-            {
-                for (int column = 0; column < grid.Columns.Count; column++)
+        /*        public static void Highlight(DataGridView grid, int selectedColumn, int selectedRow)
                 {
-                    DataGridViewCellStyle style =
-                        (row == selectedRow || column == selectedColumn) ?
-                        SelectedStyle : DefaultStyle;
-                    grid.Rows[row].Cells[column].Style = style;
+                    for (int row = 0; row < grid.Rows.Count; row++)
+                    {
+                        for (int column = 0; column < grid.Columns.Count; column++)
+                        {
+                            DataGridViewCellStyle style =
+                                (row == selectedRow || column == selectedColumn) ?
+                                SelectedStyle : DefaultStyle;
+                            grid.Rows[row].Cells[column].Style = style;
+                        }
+                    }
                 }
-            }
-        }
-*/
+        */
+
         public static double[] GetValues(string[] valueStrings)
         {
             double[] result = new double[valueStrings.Length];

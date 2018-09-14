@@ -11,6 +11,9 @@
         public ITable DeltaTotalTiming { get; }
 
         public ITable TargetFuel { get; }
+        public ITable InitialMaf { get; }
+        public ITable ModifiedMaf { get; }
+        public ITable DeltaMaf { get; }
 
         public TimingTables()
         {
@@ -22,6 +25,9 @@
             ModifiedTotalTiming = new CombinedTable(ModifiedBaseTiming, ModifiedAdvanceTiming, Operation.Sum);
             DeltaTotalTiming = new CombinedTable(InitialTotalTiming, ModifiedTotalTiming, Operation.Difference);
             TargetFuel = new Table();
+            InitialMaf = new Table(true);
+            ModifiedMaf = new Table(true);
+            DeltaMaf = new CombinedTable(InitialMaf, ModifiedMaf, Operation.Difference);
         }
     }
 }

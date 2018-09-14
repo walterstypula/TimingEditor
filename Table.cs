@@ -11,9 +11,15 @@ namespace NSFW.TimingEditor
         public bool IsPopulated { get; private set; }
         public IList<double> RowHeaders { get; private set; }
         public IList<double> ColumnHeaders { get; private set; }
+        public bool Is2dTable { get; set; }
 
         public Table()
         {
+        }
+
+        public Table(bool is2dTable)
+        {
+            Is2dTable = Is2dTable;
         }
 
         public ITable Clone()

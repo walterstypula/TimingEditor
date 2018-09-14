@@ -112,6 +112,12 @@ namespace NSFW.TimingEditor
                 "This table shows the difference between the initial total timing and the modified total timing."));
             tableList.Items.Add(new TableListEntry("Target Fuel Map", tables.TargetFuel, true,
                 "This table is the Target Fuel table used for MAF adjustments."));
+            tableList.Items.Add(new TableListEntry("Maf", tables.InitialMaf, true,
+                "This table is MAF."));
+            tableList.Items.Add(new TableListEntry("Modified Maf", tables.ModifiedMaf, true,
+                "This table is MAF adjustments."));
+            tableList.Items.Add(new TableListEntry("Delta Maf", tables.DeltaMaf, true,
+                "This table shows the difference between MAF and Modified MAF adjustments."));
 
             if (Program.Debug)
             {
@@ -303,6 +309,12 @@ namespace NSFW.TimingEditor
                     overlay = null;
                     temporaryTable.CopyTo(tables.ModifiedAdvanceTiming);
                     //Util.LoadTable(tableText, this.tables.ModifiedAdvanceTiming);
+                }
+
+                if (entry.Table == tables.InitialMaf)
+                {
+                    overlay = null;
+                    temporaryTable.CopyTo(tables.ModifiedMaf);
                 }
             }
             catch (ApplicationException ex)

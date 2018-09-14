@@ -43,6 +43,8 @@ namespace NSFW.TimingEditor
             }
         }
 
+        public bool Is2dTable { get; set; }
+
         public void Reset()
         {
         }

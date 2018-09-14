@@ -19,6 +19,8 @@ namespace NSFW.TimingEditor
             advanceTable = new Table();
         }
 
+        public bool Is2dTable { get; set; }
+
         public ITable Clone()
         {
             PassThroughTable result = new PassThroughTable(baseTable);
