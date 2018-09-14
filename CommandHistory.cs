@@ -19,11 +19,11 @@ namespace NSFW.TimingEditor
         private int x;
         private int y;
 
-        public ITable Table { get { return this.table; } }
-        public int Y { get { return this.y; } }
-        public int X { get { return this.x; } }
-        public double OldValue { get { return this.oldValue; } }
-        public double NewValue { get { return this.newValue; } }
+        public ITable Table { get { return table; } }
+        public int Y { get { return y; } }
+        public int X { get { return x; } }
+        public double OldValue { get { return oldValue; } }
+        public double NewValue { get { return newValue; } }
 
         public EditCell(ITable table, int x, int y, double newValue)
         {
@@ -31,17 +31,17 @@ namespace NSFW.TimingEditor
             this.x = x;
             this.y = y;
             this.newValue = newValue;
-            this.oldValue = this.table.GetCell(this.x, this.y);
+            oldValue = this.table.GetCell(this.x, this.y);
         }
 
         public override void Execute()
         {
-            this.table.SetCell(this.x, this.y, this.newValue);            
+            table.SetCell(x, y, newValue);            
         }
 
         public override void Undo()
         {
-            this.table.SetCell(this.x, this.y, this.oldValue);
+            table.SetCell(x, y, oldValue);
         }
     }
 
@@ -130,8 +130,8 @@ namespace NSFW.TimingEditor
 
         private CommandHistory()
         {
-            this.commands = new List<Command>();
-            this.undone = new List<Command>();
+            commands = new List<Command>();
+            undone = new List<Command>();
         }
 
         public static CommandHistory Instance
@@ -143,60 +143,60 @@ namespace NSFW.TimingEditor
             }
         }
 
-        public bool CanUndo { get { return this.commands.Count > 0; } }
-        public bool CanRedo { get { return this.undone.Count > 0; } }
+        public bool CanUndo { get { return commands.Count > 0; } }
+        public bool CanRedo { get { return undone.Count > 0; } }
 
         public void Execute(Command command)
         {
             command.Execute();
-            this.commands.Add(command);
-            this.undone.Clear();
-            this.UpdateButtons();
+            commands.Add(command);
+            undone.Clear();
+            UpdateButtons();
         }
 
         public Command Undo()
         {
-            if (this.commands.Count == 0)
+            if (commands.Count == 0)
             {
                 return null;
             }
 
-            int lastIndex = this.commands.Count - 1;
-            Command command = this.commands[lastIndex];
-            this.commands.RemoveAt(lastIndex);
+            int lastIndex = commands.Count - 1;
+            Command command = commands[lastIndex];
+            commands.RemoveAt(lastIndex);
 
             command.Undo();
 
-            this.undone.Add(command);
-            this.UpdateButtons();
+            undone.Add(command);
+            UpdateButtons();
 
             return command;
         }
 
         public Command Redo()
         {
-            if (this.undone.Count == 0)
+            if (undone.Count == 0)
             {
                 return null;
             }
 
-            int lastIndex = this.undone.Count - 1;
-            Command command = this.undone[lastIndex];
-            this.undone.RemoveAt(lastIndex);
+            int lastIndex = undone.Count - 1;
+            Command command = undone[lastIndex];
+            undone.RemoveAt(lastIndex);
 
             command.Execute();
 
-            this.commands.Add(command);
-            this.UpdateButtons();
+            commands.Add(command);
+            UpdateButtons();
 
             return command;
         }
 
         private void UpdateButtons()
         {
-            if (this.UpdateCommandHistoryButtons != null)
+            if (UpdateCommandHistoryButtons != null)
             {
-                this.UpdateCommandHistoryButtons(this, new EventArgs());
+                UpdateCommandHistoryButtons(this, new EventArgs());
             }
         }
     }

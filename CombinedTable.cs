@@ -1,26 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace NSFW.TimingEditor
 {
-    public enum Operation
-    {
-        Undefined = 0,
-        Sum = 1,
-        Difference = 2,
-    }
-
     public class CombinedTable : ITable
     {
         private ITable a;
         private ITable b;
         private Operation operation;
 
-        public bool IsReadOnly { get { return this.a.IsReadOnly || this.b.IsReadOnly || this.operation != Operation.Sum; } set { throw new InvalidOperationException(); } }
-        public IList<double> RowHeaders { get { return this.a.RowHeaders; } }
-        public IList<double> ColumnHeaders { get { return this.a.ColumnHeaders; } }
+        public bool IsReadOnly { get { return a.IsReadOnly || b.IsReadOnly || operation != Operation.Sum; } set { throw new InvalidOperationException(); } }
+        public IList<double> RowHeaders { get { return a.RowHeaders; } }
+        public IList<double> ColumnHeaders { get { return a.ColumnHeaders; } }
 
         public CombinedTable(ITable a, ITable b, Operation operation)
         {
@@ -48,7 +39,7 @@ namespace NSFW.TimingEditor
         {
             get
             {
-                return this.a.IsPopulated && this.b.IsPopulated;
+                return a.IsPopulated && b.IsPopulated;
             }
         }
 
@@ -63,30 +54,30 @@ namespace NSFW.TimingEditor
 
         public double GetCell(int x, int y)
         {
-            if (this.operation == Operation.Sum)
+            if (operation == Operation.Sum)
             {
-                return this.a.GetCell(x, y) + this.b.GetCell(x, y);
+                return a.GetCell(x, y) + b.GetCell(x, y);
             }
-            else if (this.operation == Operation.Difference)
+            else if (operation == Operation.Difference)
             {
-                return this.b.GetCell(x, y) - this.a.GetCell(x, y);
+                return b.GetCell(x, y) - a.GetCell(x, y);
             }
             else
             {
-                throw new InvalidOperationException("Undefined CombinedTable Operation: " + this.operation.ToString());
+                throw new InvalidOperationException("Undefined CombinedTable Operation: " + operation.ToString());
             }
         }
 
         public void SetCell(int x, int y, double value)
         {
-            double oldTotalValue = this.GetCell(x, y);
+            double oldTotalValue = GetCell(x, y);
             double delta = value - oldTotalValue;
 
-            if (this.operation == Operation.Sum)
+            if (operation == Operation.Sum)
             {
-                double oldValue = this.a.GetCell(x, y);
+                double oldValue = a.GetCell(x, y);
                 double newValue = oldValue + delta;
-                this.a.SetCell(x, y, newValue);
+                a.SetCell(x, y, newValue);
                 return;
             }
 

@@ -13,38 +13,38 @@ namespace NSFW.TimingEditor
         {
             public CellPopup()
             {
-                this.textBox = new System.Windows.Forms.RichTextBox();
-                this.SuspendLayout();
+                textBox = new System.Windows.Forms.RichTextBox();
+                SuspendLayout();
 
-                this.textBox.BackColor = System.Drawing.Color.White;
-                this.textBox.Padding = new Padding(3, 3, 3, 3);
-                this.textBox.ReadOnly = true;
-                this.textBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-                this.textBox.Dock = System.Windows.Forms.DockStyle.Fill;
-                this.textBox.Name = "textBox";
-                this.textBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-                this.textBox.Size = new System.Drawing.Size(175, 220);
-                this.textBox.TabIndex = 0;
-                this.textBox.Text = "";
+                textBox.BackColor = System.Drawing.Color.White;
+                textBox.Padding = new Padding(3, 3, 3, 3);
+                textBox.ReadOnly = true;
+                textBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+                textBox.Dock = System.Windows.Forms.DockStyle.Fill;
+                textBox.Name = "textBox";
+                textBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+                textBox.Size = new System.Drawing.Size(175, 220);
+                textBox.TabIndex = 0;
+                textBox.Text = "";
 
-                this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-                this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-                this.AutoScroll = true;
-                this.Padding = new Padding(3, 3, 3, 3);
-                this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-                this.ClientSize = new System.Drawing.Size(175, 220);
-                this.ControlBox = false;
-                this.Controls.Add(this.textBox);
-                this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-                this.MaximizeBox = false;
-                this.MinimizeBox = false;
-                this.Name = "CellPopup";
-                this.ShowIcon = false;
-                this.ShowInTaskbar = false;
-                this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-                this.StartPosition = FormStartPosition.Manual;
-                this.ResumeLayout(false);
-                this.PerformLayout();
+                AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+                AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+                AutoScroll = true;
+                Padding = new Padding(3, 3, 3, 3);
+                BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+                ClientSize = new System.Drawing.Size(175, 220);
+                ControlBox = false;
+                Controls.Add(textBox);
+                FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+                MaximizeBox = false;
+                MinimizeBox = false;
+                Name = "CellPopup";
+                ShowIcon = false;
+                ShowInTaskbar = false;
+                SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+                StartPosition = FormStartPosition.Manual;
+                ResumeLayout(false);
+                PerformLayout();
             }
 
             protected override void Dispose(bool disposing)
@@ -80,37 +80,37 @@ namespace NSFW.TimingEditor
         public TimingForm()
         {
             InitializeComponent();
-            this.smoothComboBox.SelectedIndex = 0;
-            this.smoothButton.Enabled = false;
-            this.logOverlayButton.Enabled = false;
+            smoothComboBox.SelectedIndex = 0;
+            smoothButton.Enabled = false;
+            logOverlayButton.Enabled = false;
         }
 
         private void CommandHistory_UpdateButtons(object sender, EventArgs args)
         {
-            this.undoButton.Enabled = CommandHistory.Instance.CanUndo;
-            this.redoButton.Enabled = CommandHistory.Instance.CanRedo;
+            undoButton.Enabled = CommandHistory.Instance.CanUndo;
+            redoButton.Enabled = CommandHistory.Instance.CanRedo;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            CommandHistory.Instance.UpdateCommandHistoryButtons += this.CommandHistory_UpdateButtons;
-            this.CommandHistory_UpdateButtons(null, null);
+            CommandHistory.Instance.UpdateCommandHistoryButtons += CommandHistory_UpdateButtons;
+            CommandHistory_UpdateButtons(null, null);
 
-            this.tableList.Items.Add(new TableListEntry("Initial base timing", this.tables.InitialBaseTiming, true,
+            tableList.Items.Add(new TableListEntry("Initial base timing", tables.InitialBaseTiming, true,
                 "When you paste into this table, the modified base timing table will also be initialized with the same data."));
-            this.tableList.Items.Add(new TableListEntry("Initial advance timing", this.tables.InitialAdvanceTiming, true,
+            tableList.Items.Add(new TableListEntry("Initial advance timing", tables.InitialAdvanceTiming, true,
                 "When you paste into this table, the modified advance timing table will also be initialized with the same data."));
-            this.tableList.Items.Add(new TableListEntry("Initial total timing", this.tables.InitialTotalTiming, false,
+            tableList.Items.Add(new TableListEntry("Initial total timing", tables.InitialTotalTiming, false,
                 "You cannot edit this table."));
-            this.tableList.Items.Add(new TableListEntry("Modified base timing", this.tables.ModifiedBaseTiming, true,
+            tableList.Items.Add(new TableListEntry("Modified base timing", tables.ModifiedBaseTiming, true,
                 ""));
-            this.tableList.Items.Add(new TableListEntry("Modified advance timing", this.tables.ModifiedAdvanceTiming, true,
+            tableList.Items.Add(new TableListEntry("Modified advance timing", tables.ModifiedAdvanceTiming, true,
                 "The base timing will be adjusted when you change cells in this table, so that the total timing does not change."));
-            this.tableList.Items.Add(new TableListEntry("Modified total timing", this.tables.ModifiedTotalTiming, false,
+            tableList.Items.Add(new TableListEntry("Modified total timing", tables.ModifiedTotalTiming, false,
                 "When you edit cells in this table, the changes are actually made to the base timing table."));
-            this.tableList.Items.Add(new TableListEntry("Delta total timing", this.tables.DeltaTotalTiming, false,
+            tableList.Items.Add(new TableListEntry("Delta total timing", tables.DeltaTotalTiming, false,
                 "This table shows the difference between the initial total timing and the modified total timing."));
-            this.tableList.Items.Add(new TableListEntry("Target Fuel Map", this.tables.TargetFuel, true,
+            tableList.Items.Add(new TableListEntry("Target Fuel Map", tables.TargetFuel, true,
                 "This table is the Target Fuel table used for MAF adjustments."));
 
             if (Program.Debug)
@@ -121,17 +121,17 @@ namespace NSFW.TimingEditor
                     {
                         StreamReader reader = new StreamReader(file);
                         string content = reader.ReadToEnd();
-                        Util.LoadTable(content, this.tables.InitialBaseTiming);
-                        this.tables.InitialBaseTiming.IsReadOnly = true;
-                        Util.LoadTable(content, this.tables.ModifiedBaseTiming);
+                        Util.LoadTable(content, tables.InitialBaseTiming);
+                        tables.InitialBaseTiming.IsReadOnly = true;
+                        Util.LoadTable(content, tables.ModifiedBaseTiming);
                     }
                     using (FileStream file = new FileStream("..\\..\\TimingAdvance.txt", FileMode.Open))
                     {
                         StreamReader reader = new StreamReader(file);
                         string content = reader.ReadToEnd();
-                        Util.LoadTable(content, this.tables.InitialAdvanceTiming);
-                        this.tables.InitialAdvanceTiming.IsReadOnly = true;
-                        Util.LoadTable(content, this.tables.ModifiedAdvanceTiming);
+                        Util.LoadTable(content, tables.InitialAdvanceTiming);
+                        tables.InitialAdvanceTiming.IsReadOnly = true;
+                        Util.LoadTable(content, tables.ModifiedAdvanceTiming);
                     }
 
                     tableList_SelectedIndexChanged(null, null);
@@ -147,45 +147,45 @@ namespace NSFW.TimingEditor
                 }
             }
 
-            this.tableList.SelectedIndex = 0;
+            tableList.SelectedIndex = 0;
         }
 
         private void tableList_SelectedIndexChanged(object sender, EventArgs e)
         {
             disposeCellPopup();
-            if (this.tableList.SelectedItem == null)
+            if (tableList.SelectedItem == null)
             {
                 return;
             }
 
-            TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
+            TableListEntry entry = tableList.SelectedItem as TableListEntry;
             string title;
 
             title = "Timing Editor {0}: " + entry.Description;
-            this.pasteButton.Enabled = entry.AllowPaste;
-            this.statusStrip1.Items[0].Text = entry.StatusText;
+            pasteButton.Enabled = entry.AllowPaste;
+            statusStrip1.Items[0].Text = entry.StatusText;
 
-            this.Text = string.Format(title, "v15");
+            Text = string.Format(title, "v15");
 
             if (entry.Table.IsPopulated)
             {
                 try
                 {
-                    List<int[]> selectedIndices = new List<int[]>(this.dataGrid.SelectedCells.Count);
-                    DataGridViewSelectedCellCollection selected = this.dataGrid.SelectedCells;
+                    List<int[]> selectedIndices = new List<int[]>(dataGrid.SelectedCells.Count);
+                    DataGridViewSelectedCellCollection selected = dataGrid.SelectedCells;
                     foreach (DataGridViewCell cell in selected)
                     {
                         selectedIndices.Add(new int[2] { cell.ColumnIndex, cell.RowIndex });
                     }
 
-                    this.dataGrid.ReadOnly = entry.Table.IsReadOnly;
-                    this.changingTables = true;
-                    Util.ShowTable(this, entry.Table, this.dataGrid);
-                    this.dataGrid.ClearSelection();
-                    this.DrawSideViews(this.selectedColumn, this.selectedRow);
-                    Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, overlay);
+                    dataGrid.ReadOnly = entry.Table.IsReadOnly;
+                    changingTables = true;
+                    Util.ShowTable(this, entry.Table, dataGrid);
+                    dataGrid.ClearSelection();
+                    DrawSideViews(selectedColumn, selectedRow);
+                    Util.ColorTable(dataGrid, entry.Table, selectedColumn, selectedRow, overlay);
 
-                    this.changingTables = false;
+                    changingTables = false;
                     foreach (int[] pair in selectedIndices)
                     {
                         dataGrid.Rows[pair[1]].Cells[pair[0]].Selected = true;
@@ -193,24 +193,24 @@ namespace NSFW.TimingEditor
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    this.dataGrid.ClearSelection();
+                    dataGrid.ClearSelection();
                     dataGrid.Rows.Clear();
-                    this.statusStrip1.Items[0].Text = "This only works if the base and advance tables are the same size";
+                    statusStrip1.Items[0].Text = "This only works if the base and advance tables are the same size";
                 }
             }
             else
             {
-                this.changingTables = true;
-                this.dataGrid.Columns.Clear();
-                this.changingTables = false;
+                changingTables = true;
+                dataGrid.Columns.Clear();
+                changingTables = false;
             }
 
-            this.logOverlayButton.Enabled = true;
+            logOverlayButton.Enabled = true;
 
             if (entry.Table.IsReadOnly)
             {
-                this.smoothButton.Enabled = false;
-                this.logOverlayButton.Enabled = false;
+                smoothButton.Enabled = false;
+                logOverlayButton.Enabled = false;
             }
             disposeCellPopup();
         }
@@ -218,20 +218,20 @@ namespace NSFW.TimingEditor
         private void copyButton_Click(object sender, EventArgs e)
         {
             disposeCellPopup();
-            TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
+            TableListEntry entry = tableList.SelectedItem as TableListEntry;
             if (entry == null)
             {
                 return;
             }
 
             ITable copyFrom = entry.Table;
-            if ((entry.Table == this.tables.InitialAdvanceTiming) || (entry.Table == this.tables.ModifiedAdvanceTiming))
+            if ((entry.Table == tables.InitialAdvanceTiming) || (entry.Table == tables.ModifiedAdvanceTiming))
             {
-                if (this.advancePadding > 0)
+                if (advancePadding > 0)
                 {
-                    string message = string.Format("The advance table will have the leftmost {0} columns removed.", this.advancePadding);
+                    string message = string.Format("The advance table will have the leftmost {0} columns removed.", advancePadding);
                     MessageBox.Show(this, message, "Timing Editor", MessageBoxButtons.OK);
-                    copyFrom = Util.TrimLeft(copyFrom, this.advancePadding);
+                    copyFrom = Util.TrimLeft(copyFrom, advancePadding);
                 }
             }
 
@@ -242,7 +242,7 @@ namespace NSFW.TimingEditor
         private void pasteButton_Click(object sender, EventArgs e)
         {
             disposeCellPopup();
-            TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
+            TableListEntry entry = tableList.SelectedItem as TableListEntry;
             if (entry == null)
             {
                 return;
@@ -256,7 +256,7 @@ namespace NSFW.TimingEditor
                     throw new ApplicationException("Doesn't contain text.");
                 }
 
-                this.changingTables = true;
+                changingTables = true;
                 bool wasReadOnly = entry.Table.IsReadOnly;
                 if (wasReadOnly)
                 {
@@ -266,17 +266,17 @@ namespace NSFW.TimingEditor
                 Table temporaryTable = new Table();
                 Util.LoadTable(tableText, temporaryTable);
 
-                if ((entry.Table == this.tables.InitialAdvanceTiming) || (entry.Table == this.tables.ModifiedAdvanceTiming))
+                if ((entry.Table == tables.InitialAdvanceTiming) || (entry.Table == tables.ModifiedAdvanceTiming))
                 {
-                    if (temporaryTable.ColumnHeaders.Count < this.tables.InitialBaseTiming.ColumnHeaders.Count)
+                    if (temporaryTable.ColumnHeaders.Count < tables.InitialBaseTiming.ColumnHeaders.Count)
                     {
                         MessageBox.Show(this, "The advance table will have values added to the left side, to make it align with the base timing table.", "Timing Editor", MessageBoxButtons.OK);
-                        this.advancePadding = this.tables.InitialBaseTiming.ColumnHeaders.Count - temporaryTable.ColumnHeaders.Count;
-                        temporaryTable = Util.PadLeft(temporaryTable, this.tables.InitialBaseTiming.ColumnHeaders.Count);
+                        advancePadding = tables.InitialBaseTiming.ColumnHeaders.Count - temporaryTable.ColumnHeaders.Count;
+                        temporaryTable = Util.PadLeft(temporaryTable, tables.InitialBaseTiming.ColumnHeaders.Count);
                     }
                     else
                     {
-                        this.advancePadding = 0;
+                        advancePadding = 0;
                     }
                 }
 
@@ -286,22 +286,22 @@ namespace NSFW.TimingEditor
                 {
                     entry.Table.IsReadOnly = true;
                 }
-                Util.ShowTable(this, entry.Table, this.dataGrid);
-                Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, new string[entry.Table.ColumnHeaders.Count, entry.Table.RowHeaders.Count]);
-                this.dataGrid.ClearSelection();
-                this.changingTables = false;
+                Util.ShowTable(this, entry.Table, dataGrid);
+                Util.ColorTable(dataGrid, entry.Table, selectedColumn, selectedRow, new string[entry.Table.ColumnHeaders.Count, entry.Table.RowHeaders.Count]);
+                dataGrid.ClearSelection();
+                changingTables = false;
 
-                if (entry.Table == this.tables.InitialBaseTiming)
+                if (entry.Table == tables.InitialBaseTiming)
                 {
-                    this.overlay = null;
-                    temporaryTable.CopyTo(this.tables.ModifiedBaseTiming);
+                    overlay = null;
+                    temporaryTable.CopyTo(tables.ModifiedBaseTiming);
                     //Util.LoadTable(tableText, this.tables.ModifiedBaseTiming);
                 }
 
-                if (entry.Table == this.tables.InitialAdvanceTiming)
+                if (entry.Table == tables.InitialAdvanceTiming)
                 {
-                    this.overlay = null;
-                    temporaryTable.CopyTo(this.tables.ModifiedAdvanceTiming);
+                    overlay = null;
+                    temporaryTable.CopyTo(tables.ModifiedAdvanceTiming);
                     //Util.LoadTable(tableText, this.tables.ModifiedAdvanceTiming);
                 }
             }
@@ -313,12 +313,12 @@ namespace NSFW.TimingEditor
 
         private void dataGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (this.changingTables || this.inCellMouseEnter)
+            if (changingTables || inCellMouseEnter)
             {
                 return;
             }
 
-            TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
+            TableListEntry entry = tableList.SelectedItem as TableListEntry;
             if (entry == null)
             {
                 return;
@@ -335,7 +335,7 @@ namespace NSFW.TimingEditor
                 return;
             }
 
-            object cellValue = this.dataGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+            object cellValue = dataGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
             string newStringValue = cellValue as string;
 
             double value;
@@ -355,18 +355,18 @@ namespace NSFW.TimingEditor
                  */
             }
 
-            this.DrawSideViews(e.ColumnIndex, e.RowIndex);
+            DrawSideViews(e.ColumnIndex, e.RowIndex);
         }
 
         private void dataGrid_CellStateChanged(object sender, DataGridViewCellStateChangedEventArgs e)
         {
-            DataGridViewSelectedCellCollection selectedCells = this.dataGrid.SelectedCells;
+            DataGridViewSelectedCellCollection selectedCells = dataGrid.SelectedCells;
 
-            TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
+            TableListEntry entry = tableList.SelectedItem as TableListEntry;
             if (entry.Table.IsReadOnly)
             {
-                this.smoothButton.Enabled = false;
-                this.logOverlayButton.Enabled = false;
+                smoothButton.Enabled = false;
+                logOverlayButton.Enabled = false;
             }
             else
             {
@@ -379,34 +379,34 @@ namespace NSFW.TimingEditor
                                     cell.Style = style;
                                 }
                 */
-                if (this.Smooth(selectedCells, false))
+                if (Smooth(selectedCells, false))
                 {
-                    this.smoothButton.Enabled = true;
+                    smoothButton.Enabled = true;
                 }
                 else
                 {
-                    this.smoothButton.Enabled = false;
+                    smoothButton.Enabled = false;
                 }
 
-                this.logOverlayButton.Enabled = true;
+                logOverlayButton.Enabled = true;
             }
         }
 
         private void dataGrid_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
         {
-            this.SuspendLayout();
-            if (this.dataGrid.ColumnCount > 0 && this.dataGrid.RowCount > 0)
+            SuspendLayout();
+            if (dataGrid.ColumnCount > 0 && dataGrid.RowCount > 0)
             {
-                this.inCellMouseEnter = true;
-                this.selectedColumn = e.ColumnIndex;
-                this.selectedRow = e.RowIndex;
-                TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
-                Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, null);
-                this.inCellMouseEnter = false;
+                inCellMouseEnter = true;
+                selectedColumn = e.ColumnIndex;
+                selectedRow = e.RowIndex;
+                TableListEntry entry = tableList.SelectedItem as TableListEntry;
+                Util.ColorTable(dataGrid, entry.Table, selectedColumn, selectedRow, null);
+                inCellMouseEnter = false;
             }
-            this.DrawSideViews(this.selectedColumn, this.selectedRow);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            DrawSideViews(selectedColumn, selectedRow);
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         private void dataGrid_KeyDown(object sender, KeyEventArgs e)
@@ -415,22 +415,22 @@ namespace NSFW.TimingEditor
             {
                 if (e.KeyCode == Keys.Z)
                 {
-                    this.undoButton_Click(this, e);
+                    undoButton_Click(this, e);
                 }
 
                 if (e.KeyCode == Keys.Y)
                 {
-                    this.redoButton_Click(this, e);
+                    redoButton_Click(this, e);
                 }
             }
         }
 
         private void dataGrid_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
-            if (!this.editControlKeyDownSubscribed)
+            if (!editControlKeyDownSubscribed)
             {
                 e.Control.KeyDown += dataGridEditControl_KeyDown;
-                this.editControlKeyDownSubscribed = true;
+                editControlKeyDownSubscribed = true;
             }
         }
 
@@ -438,24 +438,24 @@ namespace NSFW.TimingEditor
         {
             if (e.KeyValue == 187)
             {
-                this.Delta(+0.35);
+                Delta(+0.35);
                 e.Handled = true;
-                this.dataGrid.CancelEdit();
-                this.dataGrid.EndEdit();
+                dataGrid.CancelEdit();
+                dataGrid.EndEdit();
             }
 
             if (e.KeyValue == 189)
             {
-                this.Delta(-0.35);
+                Delta(-0.35);
                 e.Handled = true;
-                this.dataGrid.CancelEdit();
-                this.dataGrid.EndEdit();
+                dataGrid.CancelEdit();
+                dataGrid.EndEdit();
             }
         }
 
         private void Delta(double delta)
         {
-            foreach (DataGridViewCell cell in this.dataGrid.SelectedCells)
+            foreach (DataGridViewCell cell in dataGrid.SelectedCells)
             {
                 double value;
                 if (double.TryParse(cell.Value.ToString(), out value))
@@ -470,7 +470,7 @@ namespace NSFW.TimingEditor
         {
             value = 0;
 
-            object o = this.dataGrid.Rows[y].Cells[x].Value;
+            object o = dataGrid.Rows[y].Cells[x].Value;
             if (o == null)
             {
                 return false;
@@ -483,38 +483,38 @@ namespace NSFW.TimingEditor
         {
             CommandHistory.Instance.Redo();
 
-            this.changingTables = true;
-            TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
-            Util.ShowTable(this, entry.Table, this.dataGrid);
-            this.dataGrid.ClearSelection();
-            if (entry.Table == this.tables.InitialAdvanceTiming || entry.Table == this.tables.ModifiedAdvanceTiming
-                || entry.Table == this.tables.InitialBaseTiming || entry.Table == this.tables.ModifiedBaseTiming)
+            changingTables = true;
+            TableListEntry entry = tableList.SelectedItem as TableListEntry;
+            Util.ShowTable(this, entry.Table, dataGrid);
+            dataGrid.ClearSelection();
+            if (entry.Table == tables.InitialAdvanceTiming || entry.Table == tables.ModifiedAdvanceTiming
+                || entry.Table == tables.InitialBaseTiming || entry.Table == tables.ModifiedBaseTiming)
             {
-                Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, overlay);
+                Util.ColorTable(dataGrid, entry.Table, selectedColumn, selectedRow, overlay);
             }
             else
             {
-                Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, null);
+                Util.ColorTable(dataGrid, entry.Table, selectedColumn, selectedRow, null);
             }
 
-            this.changingTables = false;
+            changingTables = false;
             disposeCellPopup();
-            this.DrawSideViews(this.selectedColumn, this.selectedRow);
+            DrawSideViews(selectedColumn, selectedRow);
         }
 
         private void undoButton_Click(object sender, EventArgs e)
         {
             Command command = CommandHistory.Instance.Undo();
 
-            this.changingTables = true;
-            TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
-            Util.ShowTable(this, entry.Table, this.dataGrid);
-            this.dataGrid.ClearSelection();
-            Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, overlay);
+            changingTables = true;
+            TableListEntry entry = tableList.SelectedItem as TableListEntry;
+            Util.ShowTable(this, entry.Table, dataGrid);
+            dataGrid.ClearSelection();
+            Util.ColorTable(dataGrid, entry.Table, selectedColumn, selectedRow, overlay);
 
-            this.changingTables = false;
+            changingTables = false;
             disposeCellPopup();
-            this.DrawSideViews(this.selectedColumn, this.selectedRow);
+            DrawSideViews(selectedColumn, selectedRow);
         }
 
         private void dataGrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -537,8 +537,8 @@ namespace NSFW.TimingEditor
 
         private void smoothComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DataGridViewSelectedCellCollection selectedCells = this.dataGrid.SelectedCells;
-            TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
+            DataGridViewSelectedCellCollection selectedCells = dataGrid.SelectedCells;
+            TableListEntry entry = tableList.SelectedItem as TableListEntry;
             if (entry == null)
             {
                 return;
@@ -546,16 +546,16 @@ namespace NSFW.TimingEditor
 
             if (entry.Table.IsReadOnly)
             {
-                this.smoothButton.Enabled = false;
+                smoothButton.Enabled = false;
                 return;
             }
 
-            if (this.Smooth(selectedCells, false))
+            if (Smooth(selectedCells, false))
             {
-                this.smoothButton.Enabled = true;
+                smoothButton.Enabled = true;
                 return;
             }
-            this.smoothButton.Enabled = false;
+            smoothButton.Enabled = false;
         }
 
         private void disposeCellPopup()
@@ -569,17 +569,17 @@ namespace NSFW.TimingEditor
 
         private void logOverlayButton_Click(object sender, EventArgs e)
         {
-            TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
+            TableListEntry entry = tableList.SelectedItem as TableListEntry;
             if (entry == null)
             {
                 return;
             }
 
             disposeCellPopup();
-            this.dataGrid.ClearSelection();
+            dataGrid.ClearSelection();
             if (entry.Table.IsReadOnly)
             {
-                this.logOverlayButton.Enabled = false;
+                logOverlayButton.Enabled = false;
                 return;
             }
             else if (!entry.Table.IsPopulated)
@@ -642,7 +642,7 @@ namespace NSFW.TimingEditor
                     Cursor.Current = Cursors.WaitCursor;
                     double X, Y, x, y, v;
                     int xArrIdx, yArrIdx;
-                    this.changingTables = true;
+                    changingTables = true;
                     try
                     {
                         List<double> xAxisArray = (List<double>)entry.Table.ColumnHeaders;
@@ -717,9 +717,9 @@ namespace NSFW.TimingEditor
                     {
                         MessageBox.Show("Error: " + ex.Message);
                     }
-                    Util.ColorTable(this.dataGrid, entry.Table, this.selectedColumn, this.selectedRow, cellHit);
-                    this.dataGrid.Refresh();
-                    this.changingTables = false;
+                    Util.ColorTable(dataGrid, entry.Table, selectedColumn, selectedRow, cellHit);
+                    dataGrid.Refresh();
+                    changingTables = false;
                     Cursor.Current = cursor;
                 }
                 catch (Exception ex)
@@ -738,7 +738,7 @@ namespace NSFW.TimingEditor
             try
             {
                 disposeCellPopup();
-                TableListEntry entry = this.tableList.SelectedItem as TableListEntry;
+                TableListEntry entry = tableList.SelectedItem as TableListEntry;
                 if (e.ColumnIndex >= 0 && e.RowIndex >= 0 && entry != null && dataGrid.GetCellCount(DataGridViewElementStates.Selected) == 1 &&
                     dataGrid.SelectedCells[0].RowIndex == e.RowIndex && dataGrid.SelectedCells[0].ColumnIndex == e.ColumnIndex && dataGrid[e.ColumnIndex, e.RowIndex].IsInEditMode == false)
                 {

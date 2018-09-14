@@ -11,67 +11,67 @@ namespace NSFW.TimingEditor
 	{
         private void DrawSideViews(int activeColumn, int activeRow)
         {
-            Bitmap horizontalPanelBitmap = new Bitmap(this.horizontalPanel.Width, this.horizontalPanel.Height);
+            Bitmap horizontalPanelBitmap = new Bitmap(horizontalPanel.Width, horizontalPanel.Height);
             Graphics horizontalPanelBackBuffer = Graphics.FromImage(horizontalPanelBitmap);
             //Graphics horizontalPanelBackBuffer = horizontalPanel.CreateGraphics();
 
-            Bitmap verticalPanelBitmap = new Bitmap(this.verticalPanel.Width, this.verticalPanel.Height);
+            Bitmap verticalPanelBitmap = new Bitmap(verticalPanel.Width, verticalPanel.Height);
             Graphics verticalPanelBackBuffer = Graphics.FromImage(verticalPanelBitmap);
             //Graphics verticalPanelBackBuffer = verticalPanel.CreateGraphics();
 
-            horizontalPanelBackBuffer.FillRectangle(Brushes.White, this.horizontalPanel.ClientRectangle);
-            verticalPanelBackBuffer.FillRectangle(Brushes.White, this.verticalPanel.ClientRectangle);
+            horizontalPanelBackBuffer.FillRectangle(Brushes.White, horizontalPanel.ClientRectangle);
+            verticalPanelBackBuffer.FillRectangle(Brushes.White, verticalPanel.ClientRectangle);
                         
             double min;
             double max;
-            this.GetMinMax(out min, out max);
+            GetMinMax(out min, out max);
 
             Pen pen = Pens.Gray;
-            for (int row = 0; row < this.dataGrid.Rows.Count; row++)
+            for (int row = 0; row < dataGrid.Rows.Count; row++)
             {
-                this.DrawRow(horizontalPanelBackBuffer, pen, row, min, max);
+                DrawRow(horizontalPanelBackBuffer, pen, row, min, max);
             }
 
-            for (int column = 0; column < this.dataGrid.Columns.Count; column++)
+            for (int column = 0; column < dataGrid.Columns.Count; column++)
             {
-                this.DrawColumn(verticalPanelBackBuffer, pen, column, min, max);
+                DrawColumn(verticalPanelBackBuffer, pen, column, min, max);
             }
 
-            if ((activeColumn >= 0) && (activeColumn < this.dataGrid.Columns.Count) &&
-                (activeRow >= 0) && (activeRow < this.dataGrid.Rows.Count))
+            if ((activeColumn >= 0) && (activeColumn < dataGrid.Columns.Count) &&
+                (activeRow >= 0) && (activeRow < dataGrid.Rows.Count))
             {
                 using (Pen heavyPen = new Pen(Color.Black, 3))
                 {
-                    this.DrawRow(horizontalPanelBackBuffer, heavyPen, activeRow, min, max);
-                    this.DrawColumn(verticalPanelBackBuffer, heavyPen, activeColumn, min, max);
+                    DrawRow(horizontalPanelBackBuffer, heavyPen, activeRow, min, max);
+                    DrawColumn(verticalPanelBackBuffer, heavyPen, activeColumn, min, max);
                 }
 
                 using (Pen lightPen = new Pen(Color.Gray, 2))
                 {
-                    int x = this.GetRowX(activeColumn);
+                    int x = GetRowX(activeColumn);
                     horizontalPanelBackBuffer.DrawLine(lightPen, x, 0, x, horizontalPanel.Height);
 
-                    int y = this.GetColumnY(activeRow);
+                    int y = GetColumnY(activeRow);
                     verticalPanelBackBuffer.DrawLine(lightPen, 0, y, verticalPanel.Width, y);
                 }
             }
             
-            SmoothInfo si = this.GetSmoothInfo(min, max);
+            SmoothInfo si = GetSmoothInfo(min, max);
             if (si != null)
             {
                 if (si.A.RowIndex == si.B.RowIndex)
                 {
-                    this.DrawRowSmooth(horizontalPanelBackBuffer, si);
+                    DrawRowSmooth(horizontalPanelBackBuffer, si);
                 }
                 else
                 {
-                    this.DrawColumnSmooth(verticalPanelBackBuffer, si);
+                    DrawColumnSmooth(verticalPanelBackBuffer, si);
                 }
             }
 
-            Graphics graphics = this.horizontalPanel.CreateGraphics();
+            Graphics graphics = horizontalPanel.CreateGraphics();
             graphics.DrawImage(horizontalPanelBitmap, 0, 0);
-            graphics = this.verticalPanel.CreateGraphics();
+            graphics = verticalPanel.CreateGraphics();
             graphics.DrawImage(verticalPanelBitmap, 0, 0);
         }
 
@@ -80,11 +80,11 @@ namespace NSFW.TimingEditor
             min = double.MaxValue;
             max = double.MinValue;
             double value;
-            for (int row = 0; row < this.dataGrid.Rows.Count; row++)
+            for (int row = 0; row < dataGrid.Rows.Count; row++)
             {
-                for (int column = 0; column < this.dataGrid.Columns.Count; column++)
+                for (int column = 0; column < dataGrid.Columns.Count; column++)
                 {
-                    if (!this.TryGetValue(column, row, out value))
+                    if (!TryGetValue(column, row, out value))
                     {
                         return;
                     }
@@ -105,8 +105,8 @@ namespace NSFW.TimingEditor
 
         private SmoothInfo GetSmoothInfo(double min, double max)
         {
-            DataGridViewSelectedCellCollection selected = this.dataGrid.SelectedCells;
-            if (this.SelectedColumn(selected))
+            DataGridViewSelectedCellCollection selected = dataGrid.SelectedCells;
+            if (SelectedColumn(selected))
             {
                 SmoothInfo result = new SmoothInfo();
                 result.MinValue = min;
@@ -119,7 +119,7 @@ namespace NSFW.TimingEditor
                 return result;
             }
 
-            if (this.SelectedRow(this.dataGrid.SelectedCells))
+            if (SelectedRow(dataGrid.SelectedCells))
             {
                 SmoothInfo result = new SmoothInfo();
                 result.MinValue = min;
@@ -138,20 +138,20 @@ namespace NSFW.TimingEditor
         private void DrawRowSmooth(Graphics graphics, SmoothInfo si)
         {
             double valueA, valueB;
-            if (!this.TryGetValue(si.A.ColumnIndex, si.A.RowIndex, out valueA))
+            if (!TryGetValue(si.A.ColumnIndex, si.A.RowIndex, out valueA))
             {
                 return;
             }
 
-            if (!this.TryGetValue(si.B.ColumnIndex, si.B.RowIndex, out valueB))
+            if (!TryGetValue(si.B.ColumnIndex, si.B.RowIndex, out valueB))
             {
                 return;
             }
 
-            float x1 = this.GetRowX(si.A.ColumnIndex);
-            float y1 = this.GetRowY(si.MinValue, si.MaxValue, valueA);
-            float x2 = this.GetRowX(si.B.ColumnIndex);
-            float y2 = this.GetRowY(si.MinValue, si.MaxValue, valueB);
+            float x1 = GetRowX(si.A.ColumnIndex);
+            float y1 = GetRowY(si.MinValue, si.MaxValue, valueA);
+            float x2 = GetRowX(si.B.ColumnIndex);
+            float y2 = GetRowY(si.MinValue, si.MaxValue, valueB);
 
             using (Pen pen = new Pen(Color.Blue, 3))
             {
@@ -167,12 +167,12 @@ namespace NSFW.TimingEditor
         private void DrawColumnSmooth(Graphics graphics, SmoothInfo si)
         {
             double valueA, valueB;
-            if (!this.TryGetValue(si.A.ColumnIndex, si.A.RowIndex, out valueA))
+            if (!TryGetValue(si.A.ColumnIndex, si.A.RowIndex, out valueA))
             {
                 return;
             }
 
-            if (!this.TryGetValue(si.B.ColumnIndex, si.B.RowIndex, out valueB))
+            if (!TryGetValue(si.B.ColumnIndex, si.B.RowIndex, out valueB))
             {
                 return;
             }
@@ -181,35 +181,35 @@ namespace NSFW.TimingEditor
             {
                 graphics.DrawLine(
                     pen,
-                    this.GetColumnX(si.MinValue, si.MaxValue, valueA),
-                    this.GetColumnY(si.A.RowIndex),
-                    this.GetColumnX(si.MinValue, si.MaxValue, valueB),
-                    this.GetColumnY(si.B.RowIndex));
+                    GetColumnX(si.MinValue, si.MaxValue, valueA),
+                    GetColumnY(si.A.RowIndex),
+                    GetColumnX(si.MinValue, si.MaxValue, valueB),
+                    GetColumnY(si.B.RowIndex));
             }
         }
 
         private void DrawRow(Graphics graphics, Pen pen, int row, double min, double max)
         {
             double value;
-            if (!this.TryGetValue(0, row, out value))
+            if (!TryGetValue(0, row, out value))
             {
                 return;
             }
 
-            int lastX = this.dataGrid.RowHeadersWidth;
-            int lastY = this.GetRowY(min, max, value);
+            int lastX = dataGrid.RowHeadersWidth;
+            int lastY = GetRowY(min, max, value);
 
             int nextX;
             int nextY;
-            for (int i = 0; i < this.dataGrid.Columns.Count; i++)
+            for (int i = 0; i < dataGrid.Columns.Count; i++)
             {
-                if (!this.TryGetValue(i, row, out value))
+                if (!TryGetValue(i, row, out value))
                 {
                     return;
                 }
 
-                nextX = this.GetRowX(i);
-                nextY = this.GetRowY(min, max, value);
+                nextX = GetRowX(i);
+                nextY = GetRowY(min, max, value);
 
                 if (i != 0)
                 {
@@ -228,24 +228,24 @@ namespace NSFW.TimingEditor
         private void DrawColumn(Graphics graphics, Pen pen, int column, double min, double max)
         {
             double value;
-            if (!this.TryGetValue(column, 0, out value))
+            if (!TryGetValue(column, 0, out value))
             {
                 return;
             }
 
-            int lastX = this.GetColumnX(min, max, value);
-            int lastY = this.dataGrid.ColumnHeadersHeight;
+            int lastX = GetColumnX(min, max, value);
+            int lastY = dataGrid.ColumnHeadersHeight;
             int nextX;
             int nextY;
-            for (int i = 0; i < this.dataGrid.Rows.Count; i++)
+            for (int i = 0; i < dataGrid.Rows.Count; i++)
             {
-                if (!this.TryGetValue(column, i, out value))
+                if (!TryGetValue(column, i, out value))
                 {
                     return;
                 }
 
-                nextX = this.GetColumnX(min, max, value);
-                nextY = this.GetColumnY(i);
+                nextX = GetColumnX(min, max, value);
+                nextY = GetColumnY(i);
 
                 if (i != 0)
                 {
@@ -263,33 +263,33 @@ namespace NSFW.TimingEditor
 
         private int GetRowX(int i)
         {
-            int width = this.horizontalPanel.Width - this.dataGrid.RowHeadersWidth;
-            int offset = (width / (this.dataGrid.Columns.Count * 2)) + this.dataGrid.RowHeadersWidth;
+            int width = horizontalPanel.Width - dataGrid.RowHeadersWidth;
+            int offset = (width / (dataGrid.Columns.Count * 2)) + dataGrid.RowHeadersWidth;
 
-            return ((width * i) / (this.dataGrid.Columns.Count)) + offset;
+            return ((width * i) / (dataGrid.Columns.Count)) + offset;
         }
 
         private int GetRowY(double min, double max, double value)
         {
             double difference = max - min;
             double magnitude = difference == 0 ? 0.5 : (max - value) / difference;
-            double result = magnitude * (this.horizontalPanel.Height * 0.8);
-            return (int)result + (int)(this.horizontalPanel.Height * 0.1);
+            double result = magnitude * (horizontalPanel.Height * 0.8);
+            return (int)result + (int)(horizontalPanel.Height * 0.1);
         }
 
         private int GetColumnX(double min, double max, double value)
         {
             double difference = max - min;
             double magnitude = difference == 0 ? 0.5 : (max - value) / difference;
-            double result = magnitude * (this.verticalPanel.Width * 0.8);
-            return (int)result + (int)(this.verticalPanel.Width * 0.1);
+            double result = magnitude * (verticalPanel.Width * 0.8);
+            return (int)result + (int)(verticalPanel.Width * 0.1);
         }
 
         private int GetColumnY(int i)
         {
-            int height = this.verticalPanel.Height - this.dataGrid.ColumnHeadersHeight;
-            int offset = (height / (this.dataGrid.Columns.Count * 2)) + this.dataGrid.ColumnHeadersHeight;
-            return ((height * i) / (this.dataGrid.Rows.Count)) + offset;
+            int height = verticalPanel.Height - dataGrid.ColumnHeadersHeight;
+            int offset = (height / (dataGrid.Columns.Count * 2)) + dataGrid.ColumnHeadersHeight;
+            return ((height * i) / (dataGrid.Rows.Count)) + offset;
         }
     }
 }

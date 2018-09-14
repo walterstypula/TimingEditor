@@ -18,4 +18,9 @@ namespace NSFW.TimingEditor
         void Reset();
         void Populated();
     }
+
+    public interface I2DTable
+    {
+        IList<double> ColumnHeaders { get; }
+    }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace NSFW.TimingEditor
 {
@@ -12,20 +10,20 @@ namespace NSFW.TimingEditor
         private bool populated;
 
         public bool IsReadOnly { get { return false; } set { throw new InvalidOperationException(); } }
-        public IList<double> RowHeaders { get { return this.advanceTable.RowHeaders; } }
-        public IList<double> ColumnHeaders { get { return this.advanceTable.ColumnHeaders; } }
+        public IList<double> RowHeaders { get { return advanceTable.RowHeaders; } }
+        public IList<double> ColumnHeaders { get { return advanceTable.ColumnHeaders; } }
 
         public PassThroughTable(ITable baseTable)
         {
             this.baseTable = baseTable;
-            this.advanceTable = new Table();
+            advanceTable = new Table();
         }
 
         public ITable Clone()
         {
-            PassThroughTable result = new PassThroughTable(this.baseTable);
-            result.advanceTable = this.advanceTable.Clone();
-            result.populated = this.populated;
+            PassThroughTable result = new PassThroughTable(baseTable);
+            result.advanceTable = advanceTable.Clone();
+            result.populated = populated;
             return result;
         }
 
@@ -33,21 +31,21 @@ namespace NSFW.TimingEditor
         {
             other.Reset();
 
-            for (int i = 0; i < this.baseTable.RowHeaders.Count; i++)
+            for (int i = 0; i < baseTable.RowHeaders.Count; i++)
             {
-                other.RowHeaders.Add(this.baseTable.RowHeaders[i]);
+                other.RowHeaders.Add(baseTable.RowHeaders[i]);
             }
 
-            for (int i = 0; i < this.baseTable.ColumnHeaders.Count; i++)
+            for (int i = 0; i < baseTable.ColumnHeaders.Count; i++)
             {
-                other.ColumnHeaders.Add(this.baseTable.ColumnHeaders[i]);
+                other.ColumnHeaders.Add(baseTable.ColumnHeaders[i]);
             }
 
-            for (int x = 0; x < this.baseTable.ColumnHeaders.Count; x++)
+            for (int x = 0; x < baseTable.ColumnHeaders.Count; x++)
             {
-                for (int y = 0; y < this.baseTable.RowHeaders.Count; y++)
+                for (int y = 0; y < baseTable.RowHeaders.Count; y++)
                 {
-                    other.SetCell(x, y, this.GetCell(x, y));
+                    other.SetCell(x, y, GetCell(x, y));
                 }
             }
             other.Populated();
@@ -57,41 +55,41 @@ namespace NSFW.TimingEditor
         {
             get
             {
-                return this.baseTable.IsPopulated && this.advanceTable.IsPopulated;
+                return baseTable.IsPopulated && advanceTable.IsPopulated;
             }
         }
 
         public void Reset()
         {
-            this.populated = false;
-            this.advanceTable.Reset();
+            populated = false;
+            advanceTable.Reset();
         }
 
         public void Populated()
         {
-            this.populated = true;
-            this.advanceTable.Populated();
+            populated = true;
+            advanceTable.Populated();
         }
 
         public double GetCell(int x, int y)
         {
-            return this.advanceTable.GetCell(x, y);
+            return advanceTable.GetCell(x, y);
         }
 
         public void SetCell(int x, int y, double value)
         {
-            if (this.populated)
+            if (populated)
             {
-                double oldTotalValue = this.advanceTable.GetCell(x, y);
+                double oldTotalValue = advanceTable.GetCell(x, y);
                 double delta = value - oldTotalValue;
 
-                double oldBaseValue = this.baseTable.GetCell(x, y);
-                this.baseTable.SetCell(x, y, oldBaseValue - delta);
-                this.advanceTable.SetCell(x, y, oldTotalValue + delta);
+                double oldBaseValue = baseTable.GetCell(x, y);
+                baseTable.SetCell(x, y, oldBaseValue - delta);
+                advanceTable.SetCell(x, y, oldTotalValue + delta);
             }
             else
             {
-                this.advanceTable.SetCell(x, y, value);
+                advanceTable.SetCell(x, y, value);
             }
         }
     }

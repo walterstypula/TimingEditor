@@ -81,6 +81,8 @@
     <Compile Include="CommandHistory.cs" />
     <Compile Include="CustomDataGridViewCell.cs" />
     <Compile Include="ITable.cs" />
+    <Compile Include="Operation.cs" />
+    <Compile Include="TableListEntry.cs" />
     <Compile Include="TimingForm.cs">
       <SubType>Form</SubType>
     </Compile>

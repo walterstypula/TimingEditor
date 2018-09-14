@@ -12,32 +12,32 @@ namespace NSFW.TimingEditor
         private void smoothButton_Click(object sender, EventArgs e)
         {
             disposeCellPopup();
-            this.Smooth(this.dataGrid.SelectedCells, true);
+            Smooth(dataGrid.SelectedCells, true);
         }
 
         private bool Smooth(DataGridViewSelectedCellCollection selectedCells, bool forReal)
         {
             bool ret = false;
-            if (this.smoothComboBox.SelectedIndex == 0 || this.smoothComboBox.SelectedIndex == 1)
+            if (smoothComboBox.SelectedIndex == 0 || smoothComboBox.SelectedIndex == 1)
             {
-                if (this.SelectedRow(selectedCells))
+                if (SelectedRow(selectedCells))
                 {
                     if (forReal)
                     {
-                        IList<DataGridViewCell> cells = this.SortCellsByRow(selectedCells);
-                        this.SmoothHorizontal(cells);
+                        IList<DataGridViewCell> cells = SortCellsByRow(selectedCells);
+                        SmoothHorizontal(cells);
                     }
                     ret = true;
                 }
             }
-            if (this.smoothComboBox.SelectedIndex == 0 || this.smoothComboBox.SelectedIndex == 2)
+            if (smoothComboBox.SelectedIndex == 0 || smoothComboBox.SelectedIndex == 2)
             {
-                if (this.SelectedColumn(selectedCells))
+                if (SelectedColumn(selectedCells))
                 {
                     if (forReal)
                     {
-                        IList<DataGridViewCell> cells = this.SortCellsByColumn(selectedCells);
-                        this.SmoothVertical(cells);
+                        IList<DataGridViewCell> cells = SortCellsByColumn(selectedCells);
+                        SmoothVertical(cells);
                     }
                     ret = true;
                 }
