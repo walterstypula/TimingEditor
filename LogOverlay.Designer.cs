@@ -1,6 +1,6 @@
 ﻿namespace NSFW.TimingEditor
 {
-    partial class LogOverlay
+    partial class LogOverlayForm
     {
         /// <summary>
         /// Required designer variable.

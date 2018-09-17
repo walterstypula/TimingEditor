@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -581,7 +582,7 @@ namespace NSFW.TimingEditor
 
         private void logOverlayButton_Click(object sender, EventArgs e)
         {
-            TableListEntry entry = tableList.SelectedItem as TableListEntry;
+            var entry = tableList.SelectedItem as TableListEntry;
             if (entry == null)
             {
                 return;
@@ -601,35 +602,31 @@ namespace NSFW.TimingEditor
             }
 
             string line;
-            OpenFileDialog file = new OpenFileDialog();
+            var file = new OpenFileDialog();
             if (file.ShowDialog() == DialogResult.OK)
             {
-                StreamReader sr = new StreamReader(file.FileName, Encoding.Default);
+                var overlayStream = new StreamReader(file.FileName, Encoding.Default);
                 try
                 {
-                    line = sr.ReadLine();
+                    line = overlayStream.ReadLine();
 
                     if (line == null)
                     {
                         return;
                     }
 
-                    string[] header = line.Split(',');
-                    int i = 0;
-                    foreach (string h in header)
-                    {
-                        header[i++] = h.Trim();
-                    }
+                    var header = line.Split(',')
+                                     .Select(s => s.Trim())
+                                     .ToArray();
 
-                    LogOverlay logOverlay = new LogOverlay();
-                    logOverlay.LogParameters = header;
+                    var logOverlay = new LogOverlayForm(header);
 
                     if (DialogResult.OK != logOverlay.ShowDialog(this))
                     {
                         return;
                     }
 
-                    string[] selected = logOverlay.LogParameters;
+                    string[] selected = logOverlay.SelectedLogParameters;
                     if (selected.Length == 0)
                     {
                         MessageBox.Show("Error: No parameters were selected");
@@ -637,15 +634,11 @@ namespace NSFW.TimingEditor
 
                     string xAxis = logOverlay.XAxis;
                     string yAxis = logOverlay.YAxis;
-                    string[,] cellHit = null;
-
-                    overlay = new string[entry.Table.ColumnHeaders.Count, entry.Table.RowHeaders.Count];
-                    cellHit = overlay;
 
                     int xIdx = Array.IndexOf(header, xAxis);
                     int yIdx = Array.IndexOf(header, yAxis);
                     int[] indeces = new int[selected.Length];
-                    for (i = 0; i < selected.Length; ++i)
+                    for (int i = 0; i < selected.Length; ++i)
                     {
                         indeces[i] = Array.IndexOf(header, selected[i]);
                     }
@@ -655,6 +648,11 @@ namespace NSFW.TimingEditor
                     double X, Y, x, y, v;
                     int xArrIdx, yArrIdx;
                     changingTables = true;
+
+                    string[,] cellHit = null;
+                    overlay = new string[entry.Table.ColumnHeaders.Count, entry.Table.RowHeaders.Count];
+                    cellHit = overlay;
+
                     try
                     {
                         List<double> xAxisArray = (List<double>)entry.Table.ColumnHeaders;
@@ -663,7 +661,7 @@ namespace NSFW.TimingEditor
                         Dictionary<int, Dictionary<string, string>> yDict;
                         Dictionary<string, string> paramDict;
                         string val;
-                        while ((line = sr.ReadLine()) != null)
+                        while ((line = overlayStream.ReadLine()) != null)
                         {
                             string[] vals = line.Split(',');
 
@@ -727,7 +725,7 @@ namespace NSFW.TimingEditor
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error: " + ex.Message);
+                        MessageBox.Show($"Error: {ex}");
                     }
                     Util.ColorTable(dataGrid, entry.Table, selectedColumn, selectedRow, cellHit);
                     dataGrid.Refresh();
@@ -736,11 +734,11 @@ namespace NSFW.TimingEditor
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error: " + ex.Message);
+                    MessageBox.Show($"Error: {ex}");
                 }
                 finally
                 {
-                    sr.Close();
+                    overlayStream.Close();
                 }
             }
         }
@@ -771,7 +769,7 @@ namespace NSFW.TimingEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message);
+                MessageBox.Show($"Error: {ex}");
             }
         }
 

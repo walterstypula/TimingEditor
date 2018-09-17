@@ -267,7 +267,7 @@ namespace NSFW.TimingEditor
             }
         }
 
-        public static void ColorTable(DataGridView dataGridView, ITable table, int selectedX, int selectedY, String[,] cellHit)
+        public static void ColorTable(DataGridView dataGridView, ITable table, int selectedX, int selectedY, string[,] cellHit)
         {
             double min, max, unbrightness;
             Color color;

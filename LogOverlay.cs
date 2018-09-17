@@ -1,74 +1,90 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace NSFW.TimingEditor
 {
-    public partial class LogOverlay : Form
+    public partial class LogOverlayForm : Form
     {
-        public LogOverlay()
+        private LogOverlayForm()
         {
             InitializeComponent();
         }
 
-        public String[] LogParameters
+        public LogOverlayForm(string[] headers)
+            : this()
         {
-            get
+            InitializeForm(headers);
+        }
+
+        private void InitializeForm(string[] headers)
+        {
+            if (headers.Length <= 0)
             {
-                if (headerListBox.SelectedItems.Count > 0)
-                {
-                    int i = 0;
-                    String[] s = new String[headerListBox.CheckedItems.Count];
-                    foreach (Object o in headerListBox.CheckedItems)
-                        s[i++] = o.ToString();
-                    return s;
-                }
-                else
-                    return new String[0];
+                return;
             }
-            set
+
+            headerListBox.Items.Clear();
+            xAxisComboBox.Items.Clear();
+            yAxisComboBox.Items.Clear();
+
+            string engLoad = null;
+            string engSpeed = null;
+            foreach (string s in headers)
             {
-                if (value.Length > 0)
+                headerListBox.Items.Add(s);
+                xAxisComboBox.Items.Add(s);
+                yAxisComboBox.Items.Add(s);
+                if (Regex.IsMatch(s, ".*\\bengine[_\\s]load\\b.*", RegexOptions.IgnoreCase))
                 {
-                    headerListBox.Items.Clear();
-                    xAxisComboBox.Items.Clear();
-                    yAxisComboBox.Items.Clear();
-                    String engLoad = null;
-                    String engSpeed = null;
-                    foreach (String s in value)
-                    {
-                        headerListBox.Items.Add(s);
-                        xAxisComboBox.Items.Add(s);
-                        yAxisComboBox.Items.Add(s);
-                        if (Regex.IsMatch(s, ".*\\bengine[_\\s]load\\b.*", RegexOptions.IgnoreCase))
-                            engLoad = s;
-                        else if (Regex.IsMatch(s, ".*\\b(engine[_\\s]speed|rpm)\\b.*", RegexOptions.IgnoreCase))
-                            engSpeed = s;
-                    }
-                    if (engLoad != null)
-                        xAxisComboBox.SelectedItem = engLoad;
-                    else
-                        xAxisComboBox.SelectedIndex = 0;
-                    if (engSpeed != null)
-                        yAxisComboBox.SelectedItem = engSpeed;
-                    else
-                        yAxisComboBox.SelectedIndex = 0;
+                    engLoad = s;
                 }
+                else if (Regex.IsMatch(s, ".*\\b(engine[_\\s]speed|rpm)\\b.*", RegexOptions.IgnoreCase))
+                {
+                    engSpeed = s;
+                }
+            }
+
+            xAxisComboBox.SelectedIndex = 0;
+            yAxisComboBox.SelectedIndex = 0;
+
+            if (engLoad != null)
+            {
+                xAxisComboBox.SelectedItem = engLoad;
+            }
+
+            if (engSpeed != null)
+            {
+                yAxisComboBox.SelectedItem = engSpeed;
             }
         }
 
-        public String XAxis
+        public string[] SelectedLogParameters
+        {
+            get
+            {
+                if (headerListBox.CheckedItems.Count <= 0)
+                {
+                    return new string[0];
+                }
+
+                int i = 0;
+                string[] s = new string[headerListBox.CheckedItems.Count];
+
+                foreach (object o in headerListBox.CheckedItems)
+                {
+                    s[i++] = o.ToString();
+                }
+
+                return s;
+            }
+        }
+
+        public string XAxis
         {
             get { return xAxisComboBox.SelectedItem.ToString(); }
         }
 
-        public String YAxis
+        public string YAxis
         {
             get { return yAxisComboBox.SelectedItem.ToString(); }
         }
