@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace NSFW.TimingEditor
 {
@@ -11,12 +8,19 @@ namespace NSFW.TimingEditor
         bool IsPopulated { get; }
         IList<double> RowHeaders { get; }
         IList<double> ColumnHeaders { get; }
+
         ITable Clone();
+
         void CopyTo(ITable destination);
+
         double GetCell(int x, int y);
+
         void SetCell(int x, int y, double value);
+
         void Reset();
+
         void Populated();
+
         bool Is2dTable { get; set; }
     }
 

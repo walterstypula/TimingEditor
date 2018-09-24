@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace NSFW.TimingEditor
 {
     public abstract class Command
     {
         public abstract void Execute();
+
         public abstract void Undo();
     }
 
@@ -36,7 +35,7 @@ namespace NSFW.TimingEditor
 
         public override void Execute()
         {
-            table.SetCell(x, y, newValue);            
+            table.SetCell(x, y, newValue);
         }
 
         public override void Undo()
@@ -45,79 +44,80 @@ namespace NSFW.TimingEditor
         }
     }
 
-/*    public class EditMultipleCells : Command
-    {
-        private IList<EditCell> cells;
-        public EditMultipleCells(IList<EditCell> cells)
+    /*    public class EditMultipleCells : Command
         {
-            this.cells = cells;
-        }
-
-        public override void Execute()
-        {
-            foreach (EditCell cell in this.cells)
+            private IList<EditCell> cells;
+            public EditMultipleCells(IList<EditCell> cells)
             {
-                cell.Execute();
+                this.cells = cells;
+            }
+
+            public override void Execute()
+            {
+                foreach (EditCell cell in this.cells)
+                {
+                    cell.Execute();
+                }
+            }
+
+            public override void Undo()
+            {
+                foreach (EditCell cell in this.cells)
+                {
+                    cell.Undo();
+                }
             }
         }
 
-        public override void Undo()
+        public class Paste : Command
         {
-            foreach (EditCell cell in this.cells)
+            private ITable source;
+            private ITable destination;
+            private ITable backup;
+
+            public Paste(ITable source, ITable destination)
             {
-                cell.Undo();
+                this.source = source;
+                this.destination = destination;
+                this.backup = destination.Clone();
+            }
+
+            public override void Execute()
+            {
+                this.source.CopyTo(destination);
+            }
+
+            public override void Undo()
+            {
+                this.backup.CopyTo(this.destination);
             }
         }
-    }
 
-    public class Paste : Command
-    {
-        private ITable source;
-        private ITable destination;
-        private ITable backup;
-
-        public Paste(ITable source, ITable destination)
+        public class DoublePaste : Command
         {
-            this.source = source;
-            this.destination = destination;
-            this.backup = destination.Clone();
-        }
+            private Paste initial;
+            private Paste modified;
 
-        public override void Execute()
-        {
-            this.source.CopyTo(destination);
-        }
+            public DoublePaste(Paste initial, Paste modified)
+            {
+                this.initial = initial;
+                this.modified = modified;
+            }
 
-        public override void Undo()
-        {
-            this.backup.CopyTo(this.destination);
-        }
-    }
+            public override void Execute()
+            {
+                this.initial.Execute();
+                this.modified.Execute();
+            }
 
-    public class DoublePaste : Command
-    {
-        private Paste initial;
-        private Paste modified;
+            public override void Undo()
+            {
+                this.initial.Undo();
+                this.modified.Undo();
+            }
+        }
+    */
 
-        public DoublePaste(Paste initial, Paste modified)
-        {
-            this.initial = initial;
-            this.modified = modified;
-        }
-   
-        public override void Execute()
-        {
-            this.initial.Execute();
-            this.modified.Execute();
-        }
-
-        public override void Undo()
-        {
-            this.initial.Undo();
-            this.modified.Undo();
-        }
-    }
-*/
     public delegate void UpdateCommandHistoryButtons(object sender, EventArgs args);
 
     public class CommandHistory
@@ -137,7 +137,7 @@ namespace NSFW.TimingEditor
         public static CommandHistory Instance
         {
             [System.Diagnostics.DebuggerStepThrough]
-            get 
+            get
             {
                 return instance;
             }

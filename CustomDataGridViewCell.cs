@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace NSFW.TimingEditor
 {
-    class CustomDataGridViewCell : DataGridViewTextBoxCell
+    internal class CustomDataGridViewCell : DataGridViewTextBoxCell
     {
         private DataGridViewAdvancedBorderStyle _style;
 
         public CustomDataGridViewCell() : base()
         {
-
             _style = new DataGridViewAdvancedBorderStyle();
 
             _style.Bottom = DataGridViewAdvancedCellBorderStyle.None;
             _style.Top = DataGridViewAdvancedCellBorderStyle.None;
             _style.Left = DataGridViewAdvancedCellBorderStyle.None;
             _style.Right = DataGridViewAdvancedCellBorderStyle.None;
-
         }
 
         public DataGridViewAdvancedBorderStyle AdvancedBorderStyle

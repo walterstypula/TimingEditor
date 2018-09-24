@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace NSFW.TimingEditor
@@ -94,7 +91,7 @@ namespace NSFW.TimingEditor
             try
             {
                 double x, x1, x2, y1, y2;
-                for (int start = 0, end = 0; end < cells.Count; )
+                for (int start = 0, end = 0; end < cells.Count;)
                 {
                     x1 = dataGrid.Columns[cells[start].ColumnIndex].HeaderCell.ValueAsDouble();
                     y1 = cells[start].ValueAsDouble();
@@ -124,7 +121,7 @@ namespace NSFW.TimingEditor
             try
             {
                 double x, x1, x2, y1, y2;
-                for (int start = 0, end = 0; end < cells.Count; )
+                for (int start = 0, end = 0; end < cells.Count;)
                 {
                     x1 = dataGrid.Rows[cells[start].RowIndex].HeaderCell.ValueAsDouble();
                     y1 = cells[start].ValueAsDouble();
@@ -160,7 +157,7 @@ namespace NSFW.TimingEditor
                 }
                 result.Add(cell);
             }
-            result.Sort(delegate(DataGridViewCell a, DataGridViewCell b)
+            result.Sort(delegate (DataGridViewCell a, DataGridViewCell b)
             {
                 if (a.RowIndex < b.RowIndex)
                     return -1;
@@ -187,7 +184,7 @@ namespace NSFW.TimingEditor
                 }
                 result.Add(cell);
             }
-            result.Sort(delegate(DataGridViewCell a, DataGridViewCell b)
+            result.Sort(delegate (DataGridViewCell a, DataGridViewCell b)
             {
                 if (a.ColumnIndex < b.ColumnIndex)
                     return -1;

@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace NSFW.TimingEditor
 {
-	public partial class TimingForm : Form
-	{
+    public partial class TimingForm : Form
+    {
         private void DrawSideViews(int activeColumn, int activeRow)
         {
             Bitmap horizontalPanelBitmap = new Bitmap(horizontalPanel.Width, horizontalPanel.Height);
@@ -21,7 +20,7 @@ namespace NSFW.TimingEditor
 
             horizontalPanelBackBuffer.FillRectangle(Brushes.White, horizontalPanel.ClientRectangle);
             verticalPanelBackBuffer.FillRectangle(Brushes.White, verticalPanel.ClientRectangle);
-                        
+
             double min;
             double max;
             GetMinMax(out min, out max);
@@ -55,7 +54,7 @@ namespace NSFW.TimingEditor
                     verticalPanelBackBuffer.DrawLine(lightPen, 0, y, verticalPanel.Width, y);
                 }
             }
-            
+
             SmoothInfo si = GetSmoothInfo(min, max);
             if (si != null)
             {
