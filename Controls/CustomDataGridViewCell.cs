@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace NSFW.TimingEditor
+namespace NSFW.TimingEditor.Controls
 {
     internal class CustomDataGridViewCell : DataGridViewTextBoxCell
     {

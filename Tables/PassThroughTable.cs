@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using NSFW.TimingEditor;
 
-namespace NSFW.TimingEditor
+namespace NSFW.TimingEditor.Tables
 {
     public class PassThroughTable : ITable
     {

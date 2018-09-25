@@ -1,4 +1,4 @@
-﻿namespace NSFW.TimingEditor
+﻿namespace NSFW.TimingEditor.Enums
 {
     public enum Operation
     {

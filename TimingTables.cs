@@ -1,4 +1,7 @@
-﻿namespace NSFW.TimingEditor
+﻿using NSFW.TimingEditor.Enums;
+using NSFW.TimingEditor.Tables;
+
+namespace NSFW.TimingEditor
 {
     public class TimingTables
     {

@@ -3,12 +3,6 @@ using System.Collections.Generic;
 
 namespace NSFW.TimingEditor
 {
-    public abstract class Command
-    {
-        public abstract void Execute();
-
-        public abstract void Undo();
-    }
 
     public class EditCell : Command
     {

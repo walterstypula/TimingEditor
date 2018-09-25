@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using NSFW.TimingEditor.Tables;
+using NSFW.TimingEditor.Utils;
 
 namespace NSFW.TimingEditor
 {
@@ -124,23 +126,36 @@ namespace NSFW.TimingEditor
             {
                 try
                 {
-                    using (FileStream file = new FileStream("..\\..\\TimingBase.txt", FileMode.Open))
+                    using (var file = new FileStream("..\\..\\tableTimingBase.txt", FileMode.Open))
                     {
-                        StreamReader reader = new StreamReader(file);
-                        string content = reader.ReadToEnd();
+                        var reader = new StreamReader(file);
+                        var content = reader.ReadToEnd();
                         Util.LoadTable(content, tables.InitialBaseTiming);
                         tables.InitialBaseTiming.IsReadOnly = true;
                         Util.LoadTable(content, tables.ModifiedBaseTiming);
                     }
-                    using (FileStream file = new FileStream("..\\..\\TimingAdvance.txt", FileMode.Open))
+                    using (var file = new FileStream("..\\..\\tableTimingAdvance.txt", FileMode.Open))
                     {
-                        StreamReader reader = new StreamReader(file);
-                        string content = reader.ReadToEnd();
+                        var reader = new StreamReader(file);
+                        var content = reader.ReadToEnd();
                         Util.LoadTable(content, tables.InitialAdvanceTiming);
                         tables.InitialAdvanceTiming.IsReadOnly = true;
                         Util.LoadTable(content, tables.ModifiedAdvanceTiming);
                     }
-
+                    using (var file = new FileStream("..\\..\\tableFuelBase.txt", FileMode.Open))
+                    {
+                        var reader = new StreamReader(file);
+                        var content = reader.ReadToEnd();
+                        Util.LoadTable(content, tables.TargetFuel);
+                    }
+                    using (var file = new FileStream("..\\..\\tableMafBase.txt", FileMode.Open))
+                    {
+                        var reader = new StreamReader(file);
+                        var content = reader.ReadToEnd();
+                        Util.LoadTable(content, tables.InitialMaf);
+                        tables.InitialMaf.IsReadOnly = true;
+                        Util.LoadTable(content, tables.ModifiedMaf);
+                    }
                     tableList_SelectedIndexChanged(null, null);
                 }
                 catch (IOException)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using NSFW.TimingEditor.Utils;
 
 namespace NSFW.TimingEditor
 {
