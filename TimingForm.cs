@@ -1,12 +1,12 @@
-﻿using System;
+﻿using NSFW.TimingEditor.Tables;
+using NSFW.TimingEditor.Utils;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using NSFW.TimingEditor.Tables;
-using NSFW.TimingEditor.Utils;
 
 namespace NSFW.TimingEditor
 {
@@ -618,143 +618,143 @@ namespace NSFW.TimingEditor
 
             string line;
             var file = new OpenFileDialog();
-            if (file.ShowDialog() == DialogResult.OK)
+
+            if (file.ShowDialog() != DialogResult.OK)
+            { return; }
+
+            var overlayStream = new StreamReader(file.FileName, Encoding.Default);
+            try
             {
-                var overlayStream = new StreamReader(file.FileName, Encoding.Default);
+                line = overlayStream.ReadLine();
+
+                if (line == null)
+                {
+                    return;
+                }
+
+                var header = line.Split(',')
+                                 .Select(s => s.Trim())
+                                 .ToArray();
+
+                var logOverlay = new LogOverlayForm(header);
+
+                if (DialogResult.OK != logOverlay.ShowDialog(this))
+                {
+                    return;
+                }
+
+                string[] selected = logOverlay.SelectedLogParameters;
+                if (selected.Length == 0)
+                {
+                    MessageBox.Show("Error: No parameters were selected");
+                }
+
+                string xAxis = logOverlay.XAxis;
+                string yAxis = logOverlay.YAxis;
+
+                int xIdx = Array.IndexOf(header, xAxis);
+                int yIdx = Array.IndexOf(header, yAxis);
+                int[] indeces = new int[selected.Length];
+
+                for (int i = 0; i < selected.Length; ++i)
+                {
+                    indeces[i] = Array.IndexOf(header, selected[i]);
+                }
+
+                Cursor cursor = Cursor.Current;
+                Cursor.Current = Cursors.WaitCursor;
+                double x, y, v;
+                int xArrIdx, yArrIdx;
+                changingTables = true;
+
+                var columnHeaders = entry.Table.ColumnHeaders;
+                var rowHeaders = entry.Table.RowHeaders;
+
+                overlay = new string[columnHeaders.Count, rowHeaders.Count];
+                string[,] cellHit = overlay;
+
                 try
                 {
-                    line = overlayStream.ReadLine();
-
-                    if (line == null)
+                    var xDict = new Dictionary<int, Dictionary<int, Dictionary<string, string>>>();
+                    Dictionary<int, Dictionary<string, string>> yDict;
+                    Dictionary<string, string> paramDict;
+                    string val;
+                    while ((line = overlayStream.ReadLine()) != null)
                     {
-                        return;
-                    }
+                        string[] vals = line.Split(',');
 
-                    var header = line.Split(',')
-                                     .Select(s => s.Trim())
-                                     .ToArray();
-
-                    var logOverlay = new LogOverlayForm(header);
-
-                    if (DialogResult.OK != logOverlay.ShowDialog(this))
-                    {
-                        return;
-                    }
-
-                    string[] selected = logOverlay.SelectedLogParameters;
-                    if (selected.Length == 0)
-                    {
-                        MessageBox.Show("Error: No parameters were selected");
-                    }
-
-                    string xAxis = logOverlay.XAxis;
-                    string yAxis = logOverlay.YAxis;
-
-                    int xIdx = Array.IndexOf(header, xAxis);
-                    int yIdx = Array.IndexOf(header, yAxis);
-                    int[] indeces = new int[selected.Length];
-                    for (int i = 0; i < selected.Length; ++i)
-                    {
-                        indeces[i] = Array.IndexOf(header, selected[i]);
-                    }
-
-                    Cursor cursor = Cursor.Current;
-                    Cursor.Current = Cursors.WaitCursor;
-                    double X, Y, x, y, v;
-                    int xArrIdx, yArrIdx;
-                    changingTables = true;
-
-                    string[,] cellHit = null;
-                    overlay = new string[entry.Table.ColumnHeaders.Count, entry.Table.RowHeaders.Count];
-                    cellHit = overlay;
-
-                    try
-                    {
-                        List<double> xAxisArray = (List<double>)entry.Table.ColumnHeaders;
-                        List<double> yAxisArray = (List<double>)entry.Table.RowHeaders;
-                        Dictionary<int, Dictionary<int, Dictionary<string, string>>> xDict = new Dictionary<int, Dictionary<int, Dictionary<string, string>>>();
-                        Dictionary<int, Dictionary<string, string>> yDict;
-                        Dictionary<string, string> paramDict;
-                        string val;
-                        while ((line = overlayStream.ReadLine()) != null)
+                        if (!double.TryParse(vals[xIdx], out x) || !double.TryParse(vals[yIdx], out y))
                         {
-                            string[] vals = line.Split(',');
+                            continue;
+                        }
 
-                            if (!double.TryParse(vals[xIdx], out x) || !double.TryParse(vals[yIdx], out y))
+                        xArrIdx = columnHeaders.ClosestValueIndex(x);
+                        yArrIdx = rowHeaders.ClosestValueIndex(y);
+                        for (int idx = 0; idx < indeces.Length; ++idx)
+                        {
+                            if (idx == xIdx || idx == yIdx)
                             {
                                 continue;
                             }
 
-                            X = xAxisArray[Util.ClosestValueIndex(x, xAxisArray)];
-                            Y = yAxisArray[Util.ClosestValueIndex(y, yAxisArray)];
-                            for (int idx = 0; idx < indeces.Length; ++idx)
+                            if (!double.TryParse(vals[indeces[idx]], out v) || v == 0.0)
                             {
-                                if (idx == xIdx || idx == yIdx)
-                                {
-                                    continue;
-                                }
-
-                                if (!double.TryParse(vals[indeces[idx]], out v) || v == 0.0)
-                                {
-                                    continue;
-                                }
-
-                                xArrIdx = xAxisArray.IndexOf(X);
-                                yArrIdx = yAxisArray.IndexOf(Y);
-
-                                if (!xDict.TryGetValue(xArrIdx, out yDict))
-                                {
-                                    yDict = new Dictionary<int, Dictionary<string, string>>();
-                                    xDict[xArrIdx] = yDict;
-                                }
-                                if (!yDict.TryGetValue(yArrIdx, out paramDict))
-                                {
-                                    paramDict = new Dictionary<string, string>();
-                                    yDict[yArrIdx] = paramDict;
-                                }
-                                if (!paramDict.TryGetValue(selected[idx], out val))
-                                {
-                                    paramDict[selected[idx]] = "    [" + x + ", " + y + ", " + v + "]\r\n";
-                                }
-                                else
-                                {
-                                    paramDict[selected[idx]] += ("    [" + x + ", " + y + ", " + v + "]\r\n");
-                                }
+                                continue;
                             }
-                        }
-                        foreach (KeyValuePair<int, Dictionary<int, Dictionary<string, string>>> xPair in xDict)
-                        {
-                            foreach (KeyValuePair<int, Dictionary<string, string>> yPair in xPair.Value)
-                            {
-                                foreach (KeyValuePair<string, string> paramPair in yPair.Value)
-                                {
-                                    if (cellHit[xPair.Key, yPair.Key] == null)
-                                    {
-                                        cellHit[xPair.Key, yPair.Key] = "";
-                                    }
 
-                                    cellHit[xPair.Key, yPair.Key] += (paramPair.Key + ":\r\n" + paramPair.Value);
-                                }
+                            if (!xDict.TryGetValue(xArrIdx, out yDict))
+                            {
+                                yDict = new Dictionary<int, Dictionary<string, string>>();
+                                xDict[xArrIdx] = yDict;
+                            }
+                            if (!yDict.TryGetValue(yArrIdx, out paramDict))
+                            {
+                                paramDict = new Dictionary<string, string>();
+                                yDict[yArrIdx] = paramDict;
+                            }
+                            if (!paramDict.TryGetValue(selected[idx], out val))
+                            {
+                                paramDict[selected[idx]] = $"    [{x}, {y}, {v}]\r\n";
+                            }
+                            else
+                            {
+                                paramDict[selected[idx]] += ($"    [{x}, {y}, {v}]\r\n");
                             }
                         }
                     }
-                    catch (Exception ex)
+
+                    foreach (KeyValuePair<int, Dictionary<int, Dictionary<string, string>>> xPair in xDict)
                     {
-                        MessageBox.Show($"Error: {ex}");
+                        foreach (KeyValuePair<int, Dictionary<string, string>> yPair in xPair.Value)
+                        {
+                            foreach (KeyValuePair<string, string> paramPair in yPair.Value)
+                            {
+                                if (cellHit[xPair.Key, yPair.Key] == null)
+                                {
+                                    cellHit[xPair.Key, yPair.Key] = "";
+                                }
+
+                                cellHit[xPair.Key, yPair.Key] += ($"{paramPair.Key}:\r\n{paramPair.Value}");
+                            }
+                        }
                     }
-                    Util.ColorTable(dataGrid, entry.Table, selectedColumn, selectedRow, cellHit);
-                    dataGrid.Refresh();
-                    changingTables = false;
-                    Cursor.Current = cursor;
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Error: {ex}");
                 }
-                finally
-                {
-                    overlayStream.Close();
-                }
+                Util.ColorTable(dataGrid, entry.Table, selectedColumn, selectedRow, cellHit);
+                dataGrid.Refresh();
+                changingTables = false;
+                Cursor.Current = cursor;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex}");
+            }
+            finally
+            {
+                overlayStream.Close();
             }
         }
 

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using NSFW.TimingEditor.Controls;
+using NSFW.TimingEditor.Tables;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using NSFW.TimingEditor.Controls;
-using NSFW.TimingEditor.Tables;
 
 namespace NSFW.TimingEditor.Utils
 {
@@ -248,7 +248,7 @@ namespace NSFW.TimingEditor.Utils
                     }
                 }*/
 
-        private static void GetMinMax(ITable table, out double min, out double max)
+        private static void GetMinMax(this ITable table, out double min, out double max)
         {
             min = double.MaxValue;
             max = double.MinValue;
@@ -274,7 +274,8 @@ namespace NSFW.TimingEditor.Utils
             double min, max, unbrightness;
             Color color;
             DataGridViewCellStyle style;
-            Util.GetMinMax(table, out min, out max);
+
+            table.GetMinMax(out min, out max);
             double middle = (max + min) / 2;
 
             for (int x = 0; x < dataGridView.Columns.Count; x++)
@@ -440,9 +441,9 @@ namespace NSFW.TimingEditor.Utils
             return (x1 == x2) ? 0.0 : (y1 + (x - x1) * (y2 - y1) / (x2 - x1));
         }
 
-        public static int ClosestValueIndex(double val, List<double> list)
+        public static int ClosestValueIndex(this IList<double> list, double val)
         {
-            int index = list.BinarySearch(val);
+            int index = ((List<double>)list).BinarySearch(val);
             if (index < 0)
             {
                 int idxPrev = Math.Max(0, -index - 2);
