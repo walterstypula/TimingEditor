@@ -94,33 +94,37 @@ namespace NSFW.TimingEditor
             redoButton.Enabled = CommandHistory.Instance.CanRedo;
         }
 
+        private List<TableListEntry> tableListEntries = new List<TableListEntry>();
+
         private void MainForm_Load(object sender, EventArgs e)
         {
             CommandHistory.Instance.UpdateCommandHistoryButtons += CommandHistory_UpdateButtons;
             CommandHistory_UpdateButtons(null, null);
 
-            tableList.Items.Add(new TableListEntry("Initial base timing", tables.InitialBaseTiming, true,
-                "When you paste into this table, the modified base timing table will also be initialized with the same data."));
-            tableList.Items.Add(new TableListEntry("Initial advance timing", tables.InitialAdvanceTiming, true,
-                "When you paste into this table, the modified advance timing table will also be initialized with the same data."));
-            tableList.Items.Add(new TableListEntry("Initial total timing", tables.InitialTotalTiming, false,
-                "You cannot edit this table."));
-            tableList.Items.Add(new TableListEntry("Modified base timing", tables.ModifiedBaseTiming, true,
-                ""));
-            tableList.Items.Add(new TableListEntry("Modified advance timing", tables.ModifiedAdvanceTiming, true,
-                "The base timing will be adjusted when you change cells in this table, so that the total timing does not change."));
-            tableList.Items.Add(new TableListEntry("Modified total timing", tables.ModifiedTotalTiming, false,
-                "When you edit cells in this table, the changes are actually made to the base timing table."));
-            tableList.Items.Add(new TableListEntry("Delta total timing", tables.DeltaTotalTiming, false,
-                "This table shows the difference between the initial total timing and the modified total timing."));
-            tableList.Items.Add(new TableListEntry("Target Fuel Map", tables.TargetFuel, true,
-                "This table is the Target Fuel table used for MAF adjustments."));
-            tableList.Items.Add(new TableListEntry("Maf", tables.InitialMaf, true,
-                "This table is MAF."));
-            tableList.Items.Add(new TableListEntry("Modified Maf", tables.ModifiedMaf, true,
-                "This table is MAF adjustments."));
-            tableList.Items.Add(new TableListEntry("Delta Maf", tables.DeltaMaf, true,
-                "This table shows the difference between MAF and Modified MAF adjustments."));
+            tableListEntries.Add(new TableListEntry("Initial base timing", tables.InitialBaseTiming, true,
+                "When you paste into this table, the modified base timing table will also be initialized with the same data.", TuningMode.Timing));
+            tableListEntries.Add(new TableListEntry("Initial advance timing", tables.InitialAdvanceTiming, true,
+                "When you paste into this table, the modified advance timing table will also be initialized with the same data.", TuningMode.Timing));
+            tableListEntries.Add(new TableListEntry("Initial total timing", tables.InitialTotalTiming, false,
+                "You cannot edit this table.", TuningMode.Timing));
+            tableListEntries.Add(new TableListEntry("Modified base timing", tables.ModifiedBaseTiming, true,
+                "", TuningMode.Timing));
+            tableListEntries.Add(new TableListEntry("Modified advance timing", tables.ModifiedAdvanceTiming, true,
+                "The base timing will be adjusted when you change cells in this table, so that the total timing does not change.", TuningMode.Timing));
+            tableListEntries.Add(new TableListEntry("Modified total timing", tables.ModifiedTotalTiming, false,
+                "When you edit cells in this table, the changes are actually made to the base timing table.", TuningMode.Timing));
+            tableListEntries.Add(new TableListEntry("Delta total timing", tables.DeltaTotalTiming, false,
+                "This table shows the difference between the initial total timing and the modified total timing.", TuningMode.Timing));
+            tableListEntries.Add(new TableListEntry("Target Fuel Map", tables.TargetFuel, true,
+                "This table is the Target Fuel table used for MAF adjustments.", TuningMode.Timing));
+            tableListEntries.Add(new TableListEntry("Maf", tables.InitialMaf, true,
+                "This table is MAF.", TuningMode.MAF));
+            tableListEntries.Add(new TableListEntry("Modified Maf", tables.ModifiedMaf, true,
+                "This table is MAF adjustments.", TuningMode.MAF));
+            tableListEntries.Add(new TableListEntry("Delta Maf", tables.DeltaMaf, true,
+                "This table shows the difference between MAF and Modified MAF adjustments.", TuningMode.MAF));
+
+            tableList.Items.AddRange(tableListEntries.Where(p => p.TuningMode == TuningMode.Timing).ToArray());
 
             if (Program.Debug)
             {
@@ -210,6 +214,11 @@ namespace NSFW.TimingEditor
                     changingTables = false;
                     foreach (int[] pair in selectedIndices)
                     {
+                        if (dataGrid.Rows.Count < pair[1] || dataGrid.Rows[pair[1]].Cells.Count < pair[0])
+                        {
+                            continue;
+                        }
+
                         dataGrid.Rows[pair[1]].Cells[pair[0]].Selected = true;
                     }
                 }
@@ -663,7 +672,7 @@ namespace NSFW.TimingEditor
 
                 Cursor cursor = Cursor.Current;
                 Cursor.Current = Cursors.WaitCursor;
-                double x, y, v;
+                double xAxisLogValue, yAxisLogValue, v;
                 int xArrIdx, yArrIdx;
                 changingTables = true;
 
@@ -683,13 +692,13 @@ namespace NSFW.TimingEditor
                     {
                         string[] vals = line.Split(',');
 
-                        if (!double.TryParse(vals[xIdx], out x) || !double.TryParse(vals[yIdx], out y))
+                        if (!double.TryParse(vals[xIdx], out xAxisLogValue) || !double.TryParse(vals[yIdx], out yAxisLogValue))
                         {
                             continue;
                         }
 
-                        xArrIdx = columnHeaders.ClosestValueIndex(x);
-                        yArrIdx = rowHeaders.ClosestValueIndex(y);
+                        xArrIdx = columnHeaders.ClosestValueIndex(xAxisLogValue);
+                        yArrIdx = rowHeaders.ClosestValueIndex(yAxisLogValue);
                         for (int idx = 0; idx < indeces.Length; ++idx)
                         {
                             if (idx == xIdx || idx == yIdx)
@@ -714,11 +723,11 @@ namespace NSFW.TimingEditor
                             }
                             if (!paramDict.TryGetValue(selected[idx], out val))
                             {
-                                paramDict[selected[idx]] = $"    [{x}, {y}, {v}]\r\n";
+                                paramDict[selected[idx]] = $"    [{xAxisLogValue}, {yAxisLogValue}, {v}]\r\n";
                             }
                             else
                             {
-                                paramDict[selected[idx]] += ($"    [{x}, {y}, {v}]\r\n");
+                                paramDict[selected[idx]] += ($"    [{xAxisLogValue}, {yAxisLogValue}, {v}]\r\n");
                             }
                         }
                     }
@@ -755,6 +764,53 @@ namespace NSFW.TimingEditor
             finally
             {
                 overlayStream.Close();
+            }
+        }
+
+        public class Overlay
+        {
+            private string xAxisHeader;
+            private string yAxisHeader;
+            private StringBuilder logData;
+
+            public List<OverlayPoint> ProcessOverlay(int rows, int columns)
+            {
+            }
+
+            public void AddLog(string content, params string[] dataHeaders)
+            {
+                var reader = new StringReader(content);
+                var line = reader.ReadLine();
+                int xAxisHeaderIndex = line.IndexOf(xAxisHeader);
+                int yAxisHeaderIndex = line.IndexOf(yAxisHeader);
+
+                //Get index of xAxisHeader
+                //Get index of yAxisHeader
+            }
+        }
+
+        public class OverlayPoint
+        {
+            public double xAxisLookupValue { get; }
+            public double yAxisLookupBalue { get; }
+            public readonly Dictionary<string, List<string>> Data = new Dictionary<string, List<string>>();
+
+            public OverlayPoint(double xAxisLookupValue, double yAxisLookupBalue)
+            {
+                this.xAxisLookupValue = xAxisLookupValue;
+                this.yAxisLookupBalue = yAxisLookupBalue;
+            }
+
+            public void AddData(string header, string value)
+            {
+                if (!Data.ContainsKey(header))
+                {
+                    Data.Add(header, new List<string>() { value });
+                }
+                else
+                {
+                    Data[header].Add(value);
+                }
             }
         }
 
@@ -840,6 +896,24 @@ namespace NSFW.TimingEditor
 
         private void dataGrid_CurrentCellChanged(object sender, EventArgs e)
         {
+        }
+
+        private void statusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+        }
+
+        private void timingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tableList.Items.Clear();
+            tableList.Items.AddRange(tableListEntries.Where(p => p.TuningMode == TuningMode.Timing).ToArray());
+            tableList.SelectedIndex = 0;
+        }
+
+        private void mAFToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tableList.Items.Clear();
+            tableList.Items.AddRange(tableListEntries.Where(p => p.TuningMode == TuningMode.MAF).ToArray());
+            tableList.SelectedIndex = 0;
         }
     }
 }

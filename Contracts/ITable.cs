@@ -6,16 +6,16 @@ namespace NSFW.TimingEditor
     {
         bool IsReadOnly { get; set; }
         bool IsPopulated { get; }
-        IList<double> RowHeaders { get; }
-        IList<double> ColumnHeaders { get; }
+        List<double> RowHeaders { get; }
+        List<double> ColumnHeaders { get; }
 
         ITable Clone();
 
         void CopyTo(ITable destination);
 
-        double GetCell(int x, int y);
+        double GetCell(int column, int row);
 
-        void SetCell(int x, int y, double value);
+        void SetCell(int column, int row, double value);
 
         void Reset();
 

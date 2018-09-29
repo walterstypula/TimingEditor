@@ -41,17 +41,22 @@
             this.redoButton = new System.Windows.Forms.Button();
             this.undoButton = new System.Windows.Forms.Button();
             this.smoothComboBox = new System.Windows.Forms.ComboBox();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.tuningModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.timingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mAFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).BeginInit();
             this.statusStrip1.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableList
             // 
             this.tableList.FormattingEnabled = true;
             this.tableList.IntegralHeight = false;
-            this.tableList.Location = new System.Drawing.Point(12, 12);
+            this.tableList.Location = new System.Drawing.Point(12, 27);
             this.tableList.Name = "tableList";
-            this.tableList.Size = new System.Drawing.Size(200, 115);
+            this.tableList.Size = new System.Drawing.Size(200, 100);
             this.tableList.TabIndex = 0;
             this.tableList.SelectedIndexChanged += new System.EventHandler(this.tableList_SelectedIndexChanged);
             this.tableList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tableList_MouseDown);
@@ -89,9 +94,9 @@
             this.horizontalPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.horizontalPanel.BackColor = System.Drawing.SystemColors.Window;
-            this.horizontalPanel.Location = new System.Drawing.Point(218, 12);
+            this.horizontalPanel.Location = new System.Drawing.Point(218, 27);
             this.horizontalPanel.Name = "horizontalPanel";
-            this.horizontalPanel.Size = new System.Drawing.Size(517, 200);
+            this.horizontalPanel.Size = new System.Drawing.Size(517, 185);
             this.horizontalPanel.TabIndex = 2;
             this.horizontalPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.horizontalPanel_MouseDown);
             // 
@@ -135,6 +140,7 @@
             this.statusStrip1.Size = new System.Drawing.Size(747, 22);
             this.statusStrip1.TabIndex = 6;
             this.statusStrip1.Text = "statusStrip";
+            this.statusStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.statusStrip1_ItemClicked);
             // 
             // toolStripStatusLabel1
             // 
@@ -197,6 +203,39 @@
             this.smoothComboBox.SelectedIndexChanged += new System.EventHandler(this.smoothComboBox_SelectedIndexChanged);
             this.smoothComboBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.smoothComboBox_MouseDown);
             // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tuningModeToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(747, 24);
+            this.menuStrip1.TabIndex = 12;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // tuningModeToolStripMenuItem
+            // 
+            this.tuningModeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.timingToolStripMenuItem,
+            this.mAFToolStripMenuItem});
+            this.tuningModeToolStripMenuItem.Name = "tuningModeToolStripMenuItem";
+            this.tuningModeToolStripMenuItem.Size = new System.Drawing.Size(91, 20);
+            this.tuningModeToolStripMenuItem.Text = "Tuning Mode";
+            // 
+            // timingToolStripMenuItem
+            // 
+            this.timingToolStripMenuItem.Name = "timingToolStripMenuItem";
+            this.timingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.timingToolStripMenuItem.Text = "Timing";
+            this.timingToolStripMenuItem.Click += new System.EventHandler(this.timingToolStripMenuItem_Click);
+            // 
+            // mAFToolStripMenuItem
+            // 
+            this.mAFToolStripMenuItem.Name = "mAFToolStripMenuItem";
+            this.mAFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.mAFToolStripMenuItem.Text = "MAF";
+            this.mAFToolStripMenuItem.Click += new System.EventHandler(this.mAFToolStripMenuItem_Click);
+            // 
             // TimingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -208,12 +247,14 @@
             this.Controls.Add(this.logOverlayButton);
             this.Controls.Add(this.smoothButton);
             this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.pasteButton);
             this.Controls.Add(this.copyButton);
             this.Controls.Add(this.verticalPanel);
             this.Controls.Add(this.horizontalPanel);
             this.Controls.Add(this.dataGrid);
             this.Controls.Add(this.tableList);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "TimingForm";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.MainForm_Load);
@@ -223,6 +264,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -243,7 +286,10 @@
         private System.Windows.Forms.Button redoButton;
         private System.Windows.Forms.Button undoButton;
         private System.Windows.Forms.ComboBox smoothComboBox;
-
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem tuningModeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem timingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mAFToolStripMenuItem;
     }
 }
 

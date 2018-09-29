@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace NSFW.TimingEditor.Utils
@@ -29,82 +30,62 @@ namespace NSFW.TimingEditor.Utils
 
         public static void LoadTable(string tableText, ITable table)
         {
-            /*using (FileStream file = new FileStream("c:\\temp\\paste.txt", FileMode.Create))
-            {
-                StreamWriter writer = new StreamWriter(file);
-                writer.Write(tableText);
-                writer.Flush();
-            }*/
-
             StringReader reader = new StringReader(tableText);
             string line = reader.ReadLine();
-
+            
             if (line.StartsWith("[Table2D]"))
             {
                 line = line.Replace("2", "3");
                 table.Is2dTable = true;
             }
-
-            if (!line.StartsWith("[Table3D]"))
+            else if (!line.StartsWith("[Table3D]"))
             {
                 throw new ApplicationException("Doesn't start with [Table3D].");
             }
-
-            string columnHeaders = reader.ReadLine();
-            if (string.IsNullOrEmpty(columnHeaders))
+            
+            line = reader.ReadLine();
+            if (string.IsNullOrEmpty(line))
             {
                 throw new ApplicationException("Doesn't contain column headers.");
             }
 
-            string[] columnHeaderValueStrings = columnHeaders.Split('\t');
-            double[] columnHeaderValues = GetValues(columnHeaderValueStrings);
-
-            List<double> rowHeaderValues = new List<double>();
+            table.ColumnHeaders.AddRange(GetValues(line));
+            
             List<List<double>> tableData = new List<List<double>>();
             while (true)
             {
-                string rowText = reader.ReadLine();
-                if (string.IsNullOrEmpty(rowText))
+                line = reader.ReadLine();
+                if (string.IsNullOrEmpty(line))
                 {
                     break;
                 }
-
+            
                 if (table.Is2dTable)
                 {
-                    rowText = rowText.Insert(0, "0.0\t");
+                    line = line.Insert(0, "0.0\t");
                 }
+            
+                double[] columnValues = GetValues(line);
+                table.RowHeaders.Add(columnValues[0]);
+                
+                var tableRowData = columnValues.Skip(1).ToArray();
+                tableData.Add(tableRowData.ToList());
+            }
+            
+            //table.Reset();
+            table.PopulateCells(tableData);
+        }
 
-                string[] columnStrings = rowText.Split('\t');
-                double[] columnValues = GetValues(columnStrings);
-                rowHeaderValues.Add(columnValues[0]);
-                List<double> data = new List<double>();
-                for (int i = 1; i < columnValues.Length; i++)
+        public static void PopulateCells(this ITable table, List<List<double>> tableData)
+        {
+            for (int rowNumber = 0; rowNumber < tableData.Count; rowNumber++)
+            {
+                for (int columnNumber = 0; columnNumber < tableData[rowNumber].Count; columnNumber++)
                 {
-                    data.Add(columnValues[i]);
-                }
-                tableData.Add(data);
-            }
+                    List<double> row = tableData[rowNumber];
+                    double value = row[columnNumber];
 
-            table.Reset();
-
-            for (int i = 0; i < columnHeaderValues.Length; i++)
-            {
-                table.ColumnHeaders.Add(columnHeaderValues[i]);
-            }
-
-            for (int i = 0; i < rowHeaderValues.Count; i++)
-            {
-                table.RowHeaders.Add(rowHeaderValues[i]);
-            }
-
-            for (int x = 0; x < columnHeaderValues.Length; x++)
-            {
-                for (int y = 0; y < rowHeaderValues.Count; y++)
-                {
-                    List<double> row = tableData[y];
-                    double value = row[x];
-
-                    table.SetCell(x, y, value);
+                    table.SetCell(columnNumber, rowNumber, value);
                 }
             }
 
@@ -330,7 +311,7 @@ namespace NSFW.TimingEditor.Utils
         }
 
         public static void ShowTable(Form form, ITable table, DataGridView dataGridView)
-        {
+        {                       
             DataGridViewCell template = new DataGridViewTextBoxCell();
             //template.Style.BackColor = Color.Wheat;
 
@@ -405,6 +386,12 @@ namespace NSFW.TimingEditor.Utils
                     }
                 }
         */
+
+        public static double[] GetValues(string line)
+        {
+            var splitArray = line.Split('\t');
+            return GetValues(splitArray);
+        }
 
         public static double[] GetValues(string[] valueStrings)
         {

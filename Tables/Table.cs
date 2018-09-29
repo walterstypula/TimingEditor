@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using NSFW.TimingEditor;
 
 namespace NSFW.TimingEditor.Tables
 {
     public class Table : ITable
     {
-        private double[][] cells;
+        private List<double[]> cells;
 
         public bool IsReadOnly { get; set; }
         public bool IsPopulated { get; private set; }
-        public IList<double> RowHeaders { get; private set; }
-        public IList<double> ColumnHeaders { get; private set; }
+        public List<double> RowHeaders { get; private set; } = new List<double>();
+        public List<double> ColumnHeaders { get; private set; } = new List<double>();
         public bool Is2dTable { get; set; }
 
         public Table()
@@ -30,11 +29,11 @@ namespace NSFW.TimingEditor.Tables
             result.IsPopulated = IsPopulated;
             result.IsReadOnly = IsReadOnly;
 
-            result.cells = new double[cells.Length][];
-            for (int x = 0; x < cells.Length; x++)
+            result.cells = new List<double[]>();
+            for (int x = 0; x < cells.Count; x++)
             {
                 result.cells[x] = new double[cells[0].Length];
-                for (int y = 0; y < cells.Length; y++)
+                for (int y = 0; y < cells.Count; y++)
                 {
                     result.cells[x][y] = cells[x][y];
                 }
@@ -74,7 +73,7 @@ namespace NSFW.TimingEditor.Tables
                 other.ColumnHeaders.Add(ColumnHeaders[i]);
             }
 
-            for (int x = 0; x < cells.Length; x++)
+            for (int x = 0; x < cells.Count; x++)
             {
                 for (int y = 0; y < cells[0].Length; y++)
                 {
@@ -117,12 +116,12 @@ namespace NSFW.TimingEditor.Tables
             IsPopulated = true;
         }
 
-        public double GetCell(int x, int y)
+        public double GetCell(int columnNumber, int rowNumber)
         {
-            return cells[x][y];
+            return cells[rowNumber][columnNumber];
         }
 
-        public void SetCell(int x, int y, double value)
+        public void SetCell(int columnNumber, int rowNumber, double value)
         {
             if (IsReadOnly)
             {
@@ -131,14 +130,16 @@ namespace NSFW.TimingEditor.Tables
 
             if (cells == null)
             {
-                cells = new double[ColumnHeaders.Count][];
-                for (int i = 0; i < cells.Length; i++)
+                cells = new List<double[]>();
+
+                for (int i = 0; i < RowHeaders.Count; i++)
                 {
-                    cells[i] = new double[RowHeaders.Count];
+                    cells.Add(new double[ColumnHeaders.Count]);
                 }
             }
-            double[] column = cells[x];
-            column[y] = value;
+
+            double[] row = cells[rowNumber];
+            row[columnNumber] = value;
         }
     }
 }

@@ -9,32 +9,32 @@ namespace NSFW.TimingEditor
         private ITable table;
         private double oldValue;
         private double newValue;
-        private int x;
-        private int y;
+        private int columnNumber;
+        private int rowNumber;
 
         public ITable Table { get { return table; } }
-        public int Y { get { return y; } }
-        public int X { get { return x; } }
+        public int Y { get { return rowNumber; } }
+        public int X { get { return columnNumber; } }
         public double OldValue { get { return oldValue; } }
         public double NewValue { get { return newValue; } }
 
-        public EditCell(ITable table, int x, int y, double newValue)
+        public EditCell(ITable table, int columnNumber, int rowNumber, double newValue)
         {
             this.table = table;
-            this.x = x;
-            this.y = y;
+            this.columnNumber = columnNumber;
+            this.rowNumber = rowNumber;
             this.newValue = newValue;
-            oldValue = this.table.GetCell(this.x, this.y);
+            oldValue = this.table.GetCell(this.columnNumber, this.rowNumber);
         }
 
         public override void Execute()
         {
-            table.SetCell(x, y, newValue);
+            table.SetCell(columnNumber, rowNumber, newValue);
         }
 
         public override void Undo()
         {
-            table.SetCell(x, y, oldValue);
+            table.SetCell(columnNumber, rowNumber, oldValue);
         }
     }
 
