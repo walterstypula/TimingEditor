@@ -767,53 +767,6 @@ namespace NSFW.TimingEditor
             }
         }
 
-        public class Overlay
-        {
-            private string xAxisHeader;
-            private string yAxisHeader;
-            private StringBuilder logData;
-
-            public List<OverlayPoint> ProcessOverlay(int rows, int columns)
-            {
-            }
-
-            public void AddLog(string content, params string[] dataHeaders)
-            {
-                var reader = new StringReader(content);
-                var line = reader.ReadLine();
-                int xAxisHeaderIndex = line.IndexOf(xAxisHeader);
-                int yAxisHeaderIndex = line.IndexOf(yAxisHeader);
-
-                //Get index of xAxisHeader
-                //Get index of yAxisHeader
-            }
-        }
-
-        public class OverlayPoint
-        {
-            public double xAxisLookupValue { get; }
-            public double yAxisLookupBalue { get; }
-            public readonly Dictionary<string, List<string>> Data = new Dictionary<string, List<string>>();
-
-            public OverlayPoint(double xAxisLookupValue, double yAxisLookupBalue)
-            {
-                this.xAxisLookupValue = xAxisLookupValue;
-                this.yAxisLookupBalue = yAxisLookupBalue;
-            }
-
-            public void AddData(string header, string value)
-            {
-                if (!Data.ContainsKey(header))
-                {
-                    Data.Add(header, new List<string>() { value });
-                }
-                else
-                {
-                    Data[header].Add(value);
-                }
-            }
-        }
-
         private void dataGrid_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
             try

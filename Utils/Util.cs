@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 namespace NSFW.TimingEditor.Utils
@@ -14,6 +15,22 @@ namespace NSFW.TimingEditor.Utils
         public static string DoubleFormat = "0.00";
         public static int RowHeaderWidth = 60;
         public static int ColumnWidth = 40;
+
+        public static string Print(this IEnumerable<OverlayPoint> list)
+        {
+            var sb = new StringBuilder();
+            foreach (var item in list)
+            {
+                sb.AppendLine(item.ToString());
+            }
+
+            return sb.ToString();
+        }
+
+        public static int IndexOf(this string[] array, string columnName)
+        {
+            return Array.IndexOf(array, columnName);
+        }
 
         public static double ValueAsDouble(this DataGridViewCell cell)
         {
@@ -426,6 +443,11 @@ namespace NSFW.TimingEditor.Utils
         public static double LinearInterpolation(double x, double x1, double x2, double y1, double y2)
         {
             return (x1 == x2) ? 0.0 : (y1 + (x - x1) * (y2 - y1) / (x2 - x1));
+        }
+
+        public static int ClosestValueIndex(this double[] list, string val)
+        {
+            return ClosestValueIndex(list.ToList(), double.Parse(val));
         }
 
         public static int ClosestValueIndex(this IList<double> list, double val)

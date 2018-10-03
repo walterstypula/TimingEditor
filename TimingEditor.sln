@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28010.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimingEditor", "TimingEditor.csproj", "{58B679D0-1E61-4200-8A62-DA978D2FBE90}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimingEditor.Tests", "..\TimingEditor.Tests\TimingEditor.Tests.csproj", "{06984EE0-0D66-4C26-83B0-86930238FEFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,14 @@ Global
 		{58B679D0-1E61-4200-8A62-DA978D2FBE90}.Release|Any CPU.Build.0 = Release|Any CPU
 		{58B679D0-1E61-4200-8A62-DA978D2FBE90}.Release|x86.ActiveCfg = Release|x86
 		{58B679D0-1E61-4200-8A62-DA978D2FBE90}.Release|x86.Build.0 = Release|x86
+		{06984EE0-0D66-4C26-83B0-86930238FEFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06984EE0-0D66-4C26-83B0-86930238FEFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06984EE0-0D66-4C26-83B0-86930238FEFC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{06984EE0-0D66-4C26-83B0-86930238FEFC}.Debug|x86.Build.0 = Debug|Any CPU
+		{06984EE0-0D66-4C26-83B0-86930238FEFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06984EE0-0D66-4C26-83B0-86930238FEFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06984EE0-0D66-4C26-83B0-86930238FEFC}.Release|x86.ActiveCfg = Release|Any CPU
+		{06984EE0-0D66-4C26-83B0-86930238FEFC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

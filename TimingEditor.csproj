@@ -82,6 +82,7 @@
     <Compile Include="Contracts\ITable.cs" />
     <Compile Include="Controls\CustomDataGridViewCell.cs" />
     <Compile Include="Enums\Operation.cs" />
+    <Compile Include="Overlay.cs" />
     <Compile Include="TableListEntry.cs" />
     <Compile Include="Tables\CombinedTable.cs" />
     <Compile Include="Tables\PassThroughTable.cs" />
