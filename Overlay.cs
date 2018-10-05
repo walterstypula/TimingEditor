@@ -9,21 +9,49 @@ namespace NSFW.TimingEditor
 {
     internal class OverlayHeaderInfo
     {
-        internal readonly string XAxisHeader;
-        internal readonly string YAxisHeader;
+        internal string XAxisHeader;
+        internal string YAxisHeader;
         internal int XAxisHeaderIndex = -1;
         internal int YAxisHeaderIndex = -1;
         internal readonly Dictionary<string, int> HeaderIndices = new Dictionary<string, int>();
         private readonly string[] _line;
 
-        internal OverlayHeaderInfo(string logHeaderLine, string xAxisHeader, string yAxisHeader)
+        internal OverlayHeaderInfo(string logHeaderLine)
         {
-            if (string.IsNullOrWhiteSpace(logHeaderLine))
+            if (logHeaderLine.Length <= 0)
             {
                 throw new ApplicationException($"First line in log file does not contains headers.");
             }
-            _line = logHeaderLine.Split(',');
 
+            _line = logHeaderLine.Split(',');
+        }
+
+        internal OverlayHeaderInfo(string[] logHeaderLine)
+        {
+            if (logHeaderLine.Length <= 0)
+            {
+                throw new ApplicationException($"First line in log file does not contains headers.");
+            }
+
+            _line = logHeaderLine;
+        }
+
+        internal OverlayHeaderInfo(string logHeaderLine, string xAxisHeader, string yAxisHeader)
+            : this(logHeaderLine)
+        {
+            XAxisHeader = xAxisHeader;
+            YAxisHeader = yAxisHeader;
+        }
+
+        internal OverlayHeaderInfo(string[] logHeaderLine, string xAxisHeader, string yAxisHeader)
+            : this(logHeaderLine)
+        {
+            XAxisHeader = xAxisHeader;
+            YAxisHeader = yAxisHeader;
+        }
+
+        internal void AddAxisHeaders(string xAxisHeader, string yAxisHeader)
+        {
             XAxisHeader = xAxisHeader;
             YAxisHeader = yAxisHeader;
         }

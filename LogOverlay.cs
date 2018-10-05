@@ -10,9 +10,12 @@ namespace NSFW.TimingEditor
             InitializeComponent();
         }
 
-        public LogOverlayForm(string[] headers)
+        private bool _isMaf;
+
+        public LogOverlayForm(string[] headers, bool isMaf = false)
             : this()
         {
+            _isMaf = isMaf;
             InitializeForm(headers);
         }
 
@@ -34,7 +37,12 @@ namespace NSFW.TimingEditor
                 headerListBox.Items.Add(s);
                 xAxisComboBox.Items.Add(s);
                 yAxisComboBox.Items.Add(s);
-                if (Regex.IsMatch(s, ".*\\bengine[_\\s]load\\b.*", RegexOptions.IgnoreCase))
+
+                if (_isMaf && Regex.IsMatch(s, ".*\\bmass[_\\s]airflow\\b.*", RegexOptions.IgnoreCase))
+                {
+                    engLoad = s;
+                }
+                else if (Regex.IsMatch(s, ".*\\bengine[_\\s]load\\b.*", RegexOptions.IgnoreCase))
                 {
                     engLoad = s;
                 }

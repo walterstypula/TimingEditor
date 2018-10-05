@@ -49,7 +49,7 @@ namespace NSFW.TimingEditor.Utils
         {
             StringReader reader = new StringReader(tableText);
             string line = reader.ReadLine();
-            
+
             if (line.StartsWith("[Table2D]"))
             {
                 line = line.Replace("2", "3");
@@ -59,7 +59,7 @@ namespace NSFW.TimingEditor.Utils
             {
                 throw new ApplicationException("Doesn't start with [Table3D].");
             }
-            
+
             line = reader.ReadLine();
             if (string.IsNullOrEmpty(line))
             {
@@ -67,7 +67,7 @@ namespace NSFW.TimingEditor.Utils
             }
 
             table.ColumnHeaders.AddRange(GetValues(line));
-            
+
             List<List<double>> tableData = new List<List<double>>();
             while (true)
             {
@@ -76,19 +76,19 @@ namespace NSFW.TimingEditor.Utils
                 {
                     break;
                 }
-            
+
                 if (table.Is2dTable)
                 {
                     line = line.Insert(0, "0.0\t");
                 }
-            
+
                 double[] columnValues = GetValues(line);
                 table.RowHeaders.Add(columnValues[0]);
-                
+
                 var tableRowData = columnValues.Skip(1).ToArray();
                 tableData.Add(tableRowData.ToList());
             }
-            
+
             //table.Reset();
             table.PopulateCells(tableData);
         }
@@ -267,7 +267,7 @@ namespace NSFW.TimingEditor.Utils
             }
         }
 
-        public static void ColorTable(DataGridView dataGridView, ITable table, int selectedX, int selectedY, string[,] cellHit)
+        public static void ColorTable(DataGridView dataGridView, ITable table, int selectedX, int selectedY, List<OverlayPoint> cellHit)
         {
             double min, max, unbrightness;
             Color color;
@@ -284,7 +284,9 @@ namespace NSFW.TimingEditor.Utils
 
                     if (cellHit != null)
                     {
-                        if (cellHit[x, y] != null)
+                        var highlight = cellHit.FirstOrDefault(p => p.XAxisIndex == x && p.YAxisIndex == y);
+
+                        if (highlight != null)
                         {
                             dataGridView.Rows[y].Cells[x] = new CustomDataGridViewCell();
                         }
@@ -328,7 +330,7 @@ namespace NSFW.TimingEditor.Utils
         }
 
         public static void ShowTable(Form form, ITable table, DataGridView dataGridView)
-        {                       
+        {
             DataGridViewCell template = new DataGridViewTextBoxCell();
             //template.Style.BackColor = Color.Wheat;
 
@@ -378,7 +380,16 @@ namespace NSFW.TimingEditor.Utils
             form.Width += delta;
 
             int oldHeight = dataGridView.Height;
-            int newHeight = dataGridView.ColumnHeadersHeight + 2;
+
+            var scrollBarHeight = 0;
+
+            foreach (var scroll in dataGridView.Controls.OfType<HScrollBar>())
+            {
+                scrollBarHeight = scroll.Visible ? SystemInformation.HorizontalScrollBarHeight : 0;
+            }
+
+            int newHeight = dataGridView.ColumnHeadersHeight + 2 + scrollBarHeight;
+
             for (int i = 0; i < dataGridView.Rows.Count; i++)
             {
                 newHeight += dataGridView.Rows[i].Height;
