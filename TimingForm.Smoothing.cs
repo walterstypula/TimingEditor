@@ -5,17 +5,17 @@ using NSFW.TimingEditor.Utils;
 
 namespace NSFW.TimingEditor
 {
-    public partial class TimingForm : Form
+    public partial class TimingForm
     {
         private void smoothButton_Click(object sender, EventArgs e)
         {
-            disposeCellPopup();
+            DisposeCellPopup();
             Smooth(dataGrid.SelectedCells, true);
         }
 
         private bool Smooth(DataGridViewSelectedCellCollection selectedCells, bool forReal)
         {
-            bool ret = false;
+            var ret = false;
             if (smoothComboBox.SelectedIndex == 0 || smoothComboBox.SelectedIndex == 1)
             {
                 if (SelectedRow(selectedCells))

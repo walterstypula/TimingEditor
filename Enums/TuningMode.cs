@@ -1,8 +1,8 @@
-﻿namespace NSFW.TimingEditor
+﻿namespace NSFW.TimingEditor.Enums
 {
     public enum TuningMode
     {
         Timing,
-        MAF
+        Maf
     }
 }

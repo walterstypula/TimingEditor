@@ -58,8 +58,8 @@
             this.tableList.Name = "tableList";
             this.tableList.Size = new System.Drawing.Size(200, 100);
             this.tableList.TabIndex = 0;
-            this.tableList.SelectedIndexChanged += new System.EventHandler(this.tableList_SelectedIndexChanged);
-            this.tableList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tableList_MouseDown);
+            this.tableList.SelectedIndexChanged += new System.EventHandler(this.TableList_SelectedIndexChanged);
+            this.tableList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TableList_MouseDown);
             // 
             // dataGrid
             // 
@@ -77,16 +77,15 @@
             this.dataGrid.Size = new System.Drawing.Size(517, 332);
             this.dataGrid.TabIndex = 1;
             this.dataGrid.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGrid_CellBeginEdit);
-            this.dataGrid.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_CellEnter);
-            this.dataGrid.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_CellLeave);
-            this.dataGrid.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_CellMouseEnter);
-            this.dataGrid.CellStateChanged += new System.Windows.Forms.DataGridViewCellStateChangedEventHandler(this.dataGrid_CellStateChanged);
-            this.dataGrid.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_CellValueChanged);
-            this.dataGrid.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGrid_ColumnHeaderMouseClick);
-            this.dataGrid.CurrentCellChanged += new System.EventHandler(this.dataGrid_CurrentCellChanged);
-            this.dataGrid.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGrid_EditingControlShowing);
-            this.dataGrid.RowHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGrid_RowHeaderMouseClick);
-            this.dataGrid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGrid_KeyDown);
+            this.dataGrid.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellEnter);
+            this.dataGrid.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellLeave);
+            this.dataGrid.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellMouseEnter);
+            this.dataGrid.CellStateChanged += new System.Windows.Forms.DataGridViewCellStateChangedEventHandler(this.DataGrid_CellStateChanged);
+            this.dataGrid.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellValueChanged);
+            this.dataGrid.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DataGrid_ColumnHeaderMouseClick);
+            this.dataGrid.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.DataGrid_EditingControlShowing);
+            this.dataGrid.RowHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DataGrid_RowHeaderMouseClick);
+            this.dataGrid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DataGrid_KeyDown);
             this.dataGrid.Leave += new System.EventHandler(this.dataGrid_Leave);
             // 
             // horizontalPanel
@@ -98,7 +97,7 @@
             this.horizontalPanel.Name = "horizontalPanel";
             this.horizontalPanel.Size = new System.Drawing.Size(517, 185);
             this.horizontalPanel.TabIndex = 2;
-            this.horizontalPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.horizontalPanel_MouseDown);
+            this.horizontalPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.HorizontalPanel_MouseDown);
             // 
             // verticalPanel
             // 
@@ -109,7 +108,7 @@
             this.verticalPanel.Name = "verticalPanel";
             this.verticalPanel.Size = new System.Drawing.Size(200, 332);
             this.verticalPanel.TabIndex = 3;
-            this.verticalPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.verticalPanel_MouseDown);
+            this.verticalPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.VerticalPanel_MouseDown);
             // 
             // copyButton
             // 
@@ -140,7 +139,6 @@
             this.statusStrip1.Size = new System.Drawing.Size(747, 22);
             this.statusStrip1.TabIndex = 6;
             this.statusStrip1.Text = "statusStrip";
-            this.statusStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.statusStrip1_ItemClicked);
             // 
             // toolStripStatusLabel1
             // 
@@ -167,7 +165,7 @@
             this.logOverlayButton.TabIndex = 8;
             this.logOverlayButton.Text = "Log &Overlay";
             this.logOverlayButton.UseVisualStyleBackColor = true;
-            this.logOverlayButton.Click += new System.EventHandler(this.logOverlayButton_Click);
+            this.logOverlayButton.Click += new System.EventHandler(this.LogOverlayButton_Click);
             // 
             // redoButton
             // 
@@ -177,7 +175,7 @@
             this.redoButton.TabIndex = 9;
             this.redoButton.Text = "&Redo";
             this.redoButton.UseVisualStyleBackColor = true;
-            this.redoButton.Click += new System.EventHandler(this.redoButton_Click);
+            this.redoButton.Click += new System.EventHandler(this.RedoButton_Click);
             // 
             // undoButton
             // 
@@ -187,7 +185,7 @@
             this.undoButton.TabIndex = 10;
             this.undoButton.Text = "&Undo";
             this.undoButton.UseVisualStyleBackColor = true;
-            this.undoButton.Click += new System.EventHandler(this.undoButton_Click);
+            this.undoButton.Click += new System.EventHandler(this.UndoButton_Click);
             // 
             // smoothComboBox
             // 
@@ -200,8 +198,8 @@
             this.smoothComboBox.Name = "smoothComboBox";
             this.smoothComboBox.Size = new System.Drawing.Size(62, 21);
             this.smoothComboBox.TabIndex = 11;
-            this.smoothComboBox.SelectedIndexChanged += new System.EventHandler(this.smoothComboBox_SelectedIndexChanged);
-            this.smoothComboBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.smoothComboBox_MouseDown);
+            this.smoothComboBox.SelectedIndexChanged += new System.EventHandler(this.SmoothComboBox_SelectedIndexChanged);
+            this.smoothComboBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SmoothComboBox_MouseDown);
             // 
             // menuStrip1
             // 
@@ -227,14 +225,14 @@
             this.timingToolStripMenuItem.Name = "timingToolStripMenuItem";
             this.timingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.timingToolStripMenuItem.Text = "Timing";
-            this.timingToolStripMenuItem.Click += new System.EventHandler(this.timingToolStripMenuItem_Click);
+            this.timingToolStripMenuItem.Click += new System.EventHandler(this.TimingToolStripMenuItem_Click);
             // 
             // mAFToolStripMenuItem
             // 
             this.mAFToolStripMenuItem.Name = "mAFToolStripMenuItem";
             this.mAFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.mAFToolStripMenuItem.Text = "MAF";
-            this.mAFToolStripMenuItem.Click += new System.EventHandler(this.mAFToolStripMenuItem_Click);
+            this.mAFToolStripMenuItem.Text = "Maf";
+            this.mAFToolStripMenuItem.Click += new System.EventHandler(this.MAFToolStripMenuItem_Click);
             // 
             // TimingForm
             // 

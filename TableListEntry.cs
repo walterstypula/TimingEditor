@@ -1,11 +1,12 @@
-﻿namespace NSFW.TimingEditor
+﻿using NSFW.TimingEditor.Enums;
+
+namespace NSFW.TimingEditor
 {
     public class TableListEntry
     {
         public string Description { get; }
         public ITable Table { get; }
         public bool AllowPaste { get; }
-        public bool HasData { get; }
         public string StatusText { get; }
         public TuningMode TuningMode { get; }
 
@@ -14,7 +15,6 @@
             Description = description;
             Table = table;
             AllowPaste = allowPaste;
-            HasData = false;
             StatusText = statusText;
             TuningMode = tuningMode;
         }

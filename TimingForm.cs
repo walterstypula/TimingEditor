@@ -1,4 +1,5 @@
-﻿using NSFW.TimingEditor.Tables;
+﻿using NSFW.TimingEditor.Enums;
+using NSFW.TimingEditor.Tables;
 using NSFW.TimingEditor.Utils;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace NSFW.TimingEditor
 {
     public partial class TimingForm : Form
     {
-        private readonly TimingTables _tables = new TimingTables();
+        private readonly TuningTables _tables = new TuningTables();
         private bool _changingTables;
         private bool _inCellMouseEnter;
         private int _selectedColumn;
@@ -59,13 +60,13 @@ namespace NSFW.TimingEditor
             tableListEntries.Add(new TableListEntry("Delta total timing", _tables.DeltaTotalTiming, false,
                 "This table shows the difference between the initial total timing and the modified total timing.", TuningMode.Timing));
             tableListEntries.Add(new TableListEntry("Target Fuel Map", _tables.TargetFuel, true,
-                "This table is the Target Fuel table used for MAF adjustments.", TuningMode.Timing));
+                "This table is the Target Fuel table used for Maf adjustments.", TuningMode.Timing));
             tableListEntries.Add(new TableListEntry("Maf", _tables.InitialMaf, true,
-                "This table is MAF.", TuningMode.MAF));
+                "This table is Maf.", TuningMode.Maf));
             tableListEntries.Add(new TableListEntry("Modified Maf", _tables.ModifiedMaf, true,
-                "This table is MAF adjustments.", TuningMode.MAF));
+                "This table is Maf adjustments.", TuningMode.Maf));
             tableListEntries.Add(new TableListEntry("Delta Maf", _tables.DeltaMaf, true,
-                "This table shows the difference between MAF and Modified MAF adjustments.", TuningMode.MAF));
+                "This table shows the difference between Maf and Modified Maf adjustments.", TuningMode.Maf));
 
             tableList.Items.AddRange(tableListEntries.Where(p => p.TuningMode == TuningMode.Timing).ToArray());
 
@@ -103,7 +104,7 @@ namespace NSFW.TimingEditor
                         _tables.InitialMaf.IsReadOnly = true;
                         Util.LoadTable(content, _tables.ModifiedMaf);
                     }
-                    tableList_SelectedIndexChanged(null, null);
+                    TableList_SelectedIndexChanged(null, null);
                 }
                 catch (IOException)
                 {
@@ -119,15 +120,15 @@ namespace NSFW.TimingEditor
             tableList.SelectedIndex = 0;
         }
 
-        private void tableList_SelectedIndexChanged(object sender, EventArgs e)
+        private void TableList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            disposeCellPopup();
-            if (tableList.SelectedItem == null)
+            DisposeCellPopup();
+
+            if (!(tableList.SelectedItem is TableListEntry entry))
             {
                 return;
             }
 
-            var entry = tableList.SelectedItem as TableListEntry;
             var title = $"Timing Editor: {entry.Description}";
             pasteButton.Enabled = entry.AllowPaste;
             statusStrip1.Items[0].Text = entry.StatusText;
@@ -184,12 +185,12 @@ namespace NSFW.TimingEditor
                 smoothButton.Enabled = false;
                 logOverlayButton.Enabled = false;
             }
-            disposeCellPopup();
+            DisposeCellPopup();
         }
 
         private void copyButton_Click(object sender, EventArgs e)
         {
-            disposeCellPopup();
+            DisposeCellPopup();
             var entry = tableList.SelectedItem as TableListEntry;
             if (entry == null)
             {
@@ -213,7 +214,7 @@ namespace NSFW.TimingEditor
 
         private void pasteButton_Click(object sender, EventArgs e)
         {
-            disposeCellPopup();
+            DisposeCellPopup();
             TableListEntry entry = tableList.SelectedItem as TableListEntry;
             if (entry == null)
             {
@@ -289,26 +290,15 @@ namespace NSFW.TimingEditor
             }
         }
 
-        private void dataGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        private void DataGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (_changingTables || _inCellMouseEnter)
-            {
-                return;
-            }
-
-            var entry = tableList.SelectedItem as TableListEntry;
-            if (entry == null)
+            if (_changingTables || _inCellMouseEnter || !(tableList.SelectedItem is TableListEntry entry))
             {
                 return;
             }
 
             var table = entry.Table;
-            if (table == null)
-            {
-                return;
-            }
-
-            if (table.IsReadOnly)
+            if (table == null || table.IsReadOnly)
             {
                 return;
             }
@@ -320,26 +310,20 @@ namespace NSFW.TimingEditor
             {
                 var edit = new EditCell(table, e.ColumnIndex, e.RowIndex, value);
                 CommandHistory.Instance.Execute(edit);
-
-                // The "smooth" button stops working if this code is enabled...
-                /*                foreach (DataGridViewCell cell in this.dataGrid.SelectedCells)
-                                {
-                                    // TODO: create an "EditSelectedCells" command, execute that instead, for better undo/redo
-                                    EditCell edit = new EditCell(table, cell.ColumnIndex, cell.RowIndex, value);
-                                    CommandHistory.Instance.Execute(edit);
-                                    cell.Value = value;
-                                }
-                 */
             }
 
             DrawSideViews(e.ColumnIndex, e.RowIndex);
         }
 
-        private void dataGrid_CellStateChanged(object sender, DataGridViewCellStateChangedEventArgs e)
+        private void DataGrid_CellStateChanged(object sender, DataGridViewCellStateChangedEventArgs e)
         {
+            if (!(tableList.SelectedItem is TableListEntry entry))
+            {
+                return;
+            }
+
             var selectedCells = dataGrid.SelectedCells;
 
-            var entry = tableList.SelectedItem as TableListEntry;
             if (entry.Table.IsReadOnly)
             {
                 smoothButton.Enabled = false;
@@ -347,20 +331,12 @@ namespace NSFW.TimingEditor
             }
             else
             {
-                if (Smooth(selectedCells, false))
-                {
-                    smoothButton.Enabled = true;
-                }
-                else
-                {
-                    smoothButton.Enabled = false;
-                }
-
+                smoothButton.Enabled = Smooth(selectedCells, false);
                 logOverlayButton.Enabled = true;
             }
         }
 
-        private void dataGrid_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+        private void DataGrid_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
         {
             SuspendLayout();
             if (dataGrid.ColumnCount > 0 && dataGrid.RowCount > 0)
@@ -368,7 +344,10 @@ namespace NSFW.TimingEditor
                 _inCellMouseEnter = true;
                 _selectedColumn = e.ColumnIndex;
                 _selectedRow = e.RowIndex;
-                var entry = tableList.SelectedItem as TableListEntry;
+
+                if (!(tableList.SelectedItem is TableListEntry entry))
+                    return;
+
                 Util.ColorTable(dataGrid, entry.Table, _selectedColumn, _selectedRow, null);
                 _inCellMouseEnter = false;
             }
@@ -377,81 +356,78 @@ namespace NSFW.TimingEditor
             PerformLayout();
         }
 
-        private void dataGrid_KeyDown(object sender, KeyEventArgs e)
+        private void DataGrid_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Control)
-            {
-                if (e.KeyCode == Keys.Z)
-                {
-                    undoButton_Click(this, e);
-                }
+            if (!e.Control)
+                return;
 
-                if (e.KeyCode == Keys.Y)
-                {
-                    redoButton_Click(this, e);
-                }
+            switch (e.KeyCode)
+            {
+                case Keys.Z:
+                    UndoButton_Click(this, e);
+                    break;
+
+                case Keys.Y:
+                    RedoButton_Click(this, e);
+                    break;
             }
         }
 
-        private void dataGrid_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        private void DataGrid_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
-            if (!_editControlKeyDownSubscribed)
-            {
-                e.Control.KeyDown += dataGridEditControl_KeyDown;
-                _editControlKeyDownSubscribed = true;
-            }
+            if (_editControlKeyDownSubscribed)
+                return;
+
+            e.Control.KeyDown += DataGridEditControl_KeyDown;
+            _editControlKeyDownSubscribed = true;
         }
 
-        private void dataGridEditControl_KeyDown(object sender, KeyEventArgs e)
+        private void DataGridEditControl_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyValue == 187)
+            switch (e.KeyCode)
             {
-                Delta(+0.35);
-                e.Handled = true;
-                dataGrid.CancelEdit();
-                dataGrid.EndEdit();
+                case Keys.OemMinus:
+                    Delta(-0.35);
+                    break;
+
+                case Keys.Oemplus:
+                    Delta(+0.35);
+                    break;
             }
 
-            if (e.KeyValue == 189)
-            {
-                Delta(-0.35);
-                e.Handled = true;
-                dataGrid.CancelEdit();
-                dataGrid.EndEdit();
-            }
+            e.Handled = true;
+            dataGrid.CancelEdit();
+            dataGrid.EndEdit();
         }
 
         private void Delta(double delta)
         {
             foreach (DataGridViewCell cell in dataGrid.SelectedCells)
             {
-                if (double.TryParse(cell.Value.ToString(), out var value))
-                {
-                    value += delta;
-                    cell.Value = value.ToString();
-                }
+                if (!double.TryParse(cell.Value.ToString(), out var value))
+                    continue;
+
+                value += delta;
+                cell.Value = value.ToString();
             }
         }
 
         private bool TryGetValue(int x, int y, out double value)
         {
             value = 0;
-
             var o = dataGrid.Rows[y].Cells[x].Value;
-            if (o == null)
-            {
-                return false;
-            }
-
-            return double.TryParse(o.ToString(), out value);
+            return o != null && double.TryParse(o.ToString(), out value);
         }
 
-        private void redoButton_Click(object sender, EventArgs e)
+        private void RedoButton_Click(object sender, EventArgs e)
         {
+            if (!(tableList.SelectedItem is TableListEntry entry))
+                return;
+
             CommandHistory.Instance.Redo();
 
             _changingTables = true;
-            var entry = tableList.SelectedItem as TableListEntry;
+
             Util.ShowTable(this, entry.Table, dataGrid);
             dataGrid.ClearSelection();
             if (entry.Table == _tables.InitialAdvanceTiming || entry.Table == _tables.ModifiedAdvanceTiming
@@ -465,51 +441,51 @@ namespace NSFW.TimingEditor
             }
 
             _changingTables = false;
-            disposeCellPopup();
+            DisposeCellPopup();
             DrawSideViews(_selectedColumn, _selectedRow);
         }
 
-        private void undoButton_Click(object sender, EventArgs e)
+        private void UndoButton_Click(object sender, EventArgs e)
         {
-            var command = CommandHistory.Instance.Undo();
+            if (!(tableList.SelectedItem is TableListEntry entry))
+                return;
+
+            CommandHistory.Instance.Undo();
 
             _changingTables = true;
-            var entry = tableList.SelectedItem as TableListEntry;
             Util.ShowTable(this, entry.Table, dataGrid);
             dataGrid.ClearSelection();
             Util.ColorTable(dataGrid, entry.Table, _selectedColumn, _selectedRow, _overlay);
 
             _changingTables = false;
-            disposeCellPopup();
+            DisposeCellPopup();
             DrawSideViews(_selectedColumn, _selectedRow);
         }
 
-        private void dataGrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void DataGrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (dataGrid.SelectionMode != DataGridViewSelectionMode.ColumnHeaderSelect)
-            {
-                dataGrid.SelectionMode = DataGridViewSelectionMode.ColumnHeaderSelect;
-                dataGrid.Columns[e.ColumnIndex].Selected = true;
-            }
-        }
-
-        private void dataGrid_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            if (dataGrid.SelectionMode != DataGridViewSelectionMode.RowHeaderSelect)
-            {
-                dataGrid.SelectionMode = DataGridViewSelectionMode.RowHeaderSelect;
-                dataGrid.Rows[e.RowIndex].Selected = true;
-            }
-        }
-
-        private void smoothComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var selectedCells = dataGrid.SelectedCells;
-            var entry = tableList.SelectedItem as TableListEntry;
-            if (entry == null)
-            {
+            if (dataGrid.SelectionMode == DataGridViewSelectionMode.ColumnHeaderSelect)
                 return;
-            }
+
+            dataGrid.SelectionMode = DataGridViewSelectionMode.ColumnHeaderSelect;
+            dataGrid.Columns[e.ColumnIndex].Selected = true;
+        }
+
+        private void DataGrid_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (dataGrid.SelectionMode == DataGridViewSelectionMode.RowHeaderSelect)
+                return;
+
+            dataGrid.SelectionMode = DataGridViewSelectionMode.RowHeaderSelect;
+            dataGrid.Rows[e.RowIndex].Selected = true;
+        }
+
+        private void SmoothComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!(tableList.SelectedItem is TableListEntry entry))
+                return;
+
+            var selectedCells = dataGrid.SelectedCells;
 
             if (entry.Table.IsReadOnly)
             {
@@ -525,31 +501,31 @@ namespace NSFW.TimingEditor
             smoothButton.Enabled = false;
         }
 
-        private void disposeCellPopup()
+        private void DisposeCellPopup()
         {
-            if (_cellPopup != null)
-            {
-                _cellPopup.Dispose();
-                _cellPopup = null;
-            }
+            if (_cellPopup == null)
+                return;
+
+            _cellPopup.Dispose();
+            _cellPopup = null;
         }
 
-        private void logOverlayButton_Click(object sender, EventArgs e)
+        private void LogOverlayButton_Click(object sender, EventArgs e)
         {
-            var entry = tableList.SelectedItem as TableListEntry;
-            if (entry == null)
+            if (!(tableList.SelectedItem is TableListEntry entry))
             {
                 return;
             }
 
-            disposeCellPopup();
+            DisposeCellPopup();
             dataGrid.ClearSelection();
             if (entry.Table.IsReadOnly)
             {
                 logOverlayButton.Enabled = false;
                 return;
             }
-            else if (!entry.Table.IsPopulated)
+
+            if (!entry.Table.IsPopulated)
             {
                 MessageBox.Show(@"Error: Please populate table first");
                 return;
@@ -613,30 +589,35 @@ namespace NSFW.TimingEditor
             }
         }
 
-        private void dataGrid_CellEnter(object sender, DataGridViewCellEventArgs e)
+        private void DataGrid_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
+            if (!(tableList.SelectedItem is TableListEntry entry))
+                return;
+
             try
             {
-                disposeCellPopup();
-                var entry = tableList.SelectedItem as TableListEntry;
-                if (e.ColumnIndex >= 0 && e.RowIndex >= 0 && entry != null && dataGrid.GetCellCount(DataGridViewElementStates.Selected) == 1 &&
-                    dataGrid.SelectedCells[0].RowIndex == e.RowIndex && dataGrid.SelectedCells[0].ColumnIndex == e.ColumnIndex && dataGrid[e.ColumnIndex, e.RowIndex].IsInEditMode == false)
-                {
-                    if (_overlay != null)
-                    {
-                        var selectedDataPoint = _overlay.FirstOrDefault(p =>
-                            p.XAxisIndex == e.ColumnIndex && p.YAxisIndex == e.RowIndex);
+                DisposeCellPopup();
 
-                        if (selectedDataPoint != null)
-                        {
-                            _cellPopup = new CellPopup();
-                            _cellPopup.textBox.Text = selectedDataPoint.ToString();
-                            Rectangle r = dataGrid.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, false);
-                            _cellPopup.Location = dataGrid.PointToScreen(new Point(r.Location.X + r.Width, r.Location.Y - _cellPopup.Height));
-                            _cellPopup.Show(dataGrid);
-                        }
-                    }
-                }
+                var result = e.ColumnIndex >= 0 && e.RowIndex >= 0 &&
+                             dataGrid.GetCellCount(DataGridViewElementStates.Selected) == 1 &&
+                             dataGrid.SelectedCells[0].RowIndex == e.RowIndex &&
+                             dataGrid.SelectedCells[0].ColumnIndex == e.ColumnIndex &&
+                             dataGrid[e.ColumnIndex, e.RowIndex].IsInEditMode == false;
+
+                if (!result) return;
+
+                var selectedDataPoint = _overlay?.FirstOrDefault(p =>
+                    p.XAxisIndex == e.ColumnIndex && p.YAxisIndex == e.RowIndex);
+
+                if (selectedDataPoint == null)
+                    return;
+
+                _cellPopup = new CellPopup();
+                _cellPopup.textBox.Text = selectedDataPoint.ToString();
+
+                var r = dataGrid.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, false);
+                _cellPopup.Location = dataGrid.PointToScreen(new Point(r.Location.X + r.Width, r.Location.Y - _cellPopup.Height));
+                _cellPopup.Show(dataGrid);
             }
             catch (Exception ex)
             {
@@ -646,63 +627,55 @@ namespace NSFW.TimingEditor
 
         private void dataGrid_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            disposeCellPopup();
+            DisposeCellPopup();
         }
 
         private void dataGrid_Leave(object sender, EventArgs e)
         {
-            disposeCellPopup();
+            DisposeCellPopup();
         }
 
         private void TimingForm_MouseDown(object sender, MouseEventArgs e)
         {
-            disposeCellPopup();
+            DisposeCellPopup();
         }
 
         private void TimingForm_ResizeBegin(object sender, EventArgs e)
         {
-            disposeCellPopup();
+            DisposeCellPopup();
         }
 
         private void TimingForm_LocationChanged(object sender, EventArgs e)
         {
-            disposeCellPopup();
+            DisposeCellPopup();
         }
 
-        private void tableList_MouseDown(object sender, MouseEventArgs e)
+        private void TableList_MouseDown(object sender, MouseEventArgs e)
         {
-            disposeCellPopup();
+            DisposeCellPopup();
         }
 
-        private void horizontalPanel_MouseDown(object sender, MouseEventArgs e)
+        private void HorizontalPanel_MouseDown(object sender, MouseEventArgs e)
         {
-            disposeCellPopup();
+            DisposeCellPopup();
         }
 
-        private void verticalPanel_MouseDown(object sender, MouseEventArgs e)
+        private void VerticalPanel_MouseDown(object sender, MouseEventArgs e)
         {
-            disposeCellPopup();
+            DisposeCellPopup();
         }
 
-        private void smoothComboBox_MouseDown(object sender, MouseEventArgs e)
+        private void SmoothComboBox_MouseDown(object sender, MouseEventArgs e)
         {
-            disposeCellPopup();
+            DisposeCellPopup();
         }
 
-        private void dataGrid_CellLeave(object sender, DataGridViewCellEventArgs e)
+        private void DataGrid_CellLeave(object sender, DataGridViewCellEventArgs e)
         {
-            disposeCellPopup();
+            DisposeCellPopup();
         }
 
-        private void dataGrid_CurrentCellChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void statusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-        }
-
-        private void timingToolStripMenuItem_Click(object sender, EventArgs e)
+        private void TimingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             tableList.Items.Clear();
             tableList.Items.AddRange(tableListEntries.Where(p => p.TuningMode == TuningMode.Timing).ToArray());
@@ -710,10 +683,10 @@ namespace NSFW.TimingEditor
             _isMaf = false;
         }
 
-        private void mAFToolStripMenuItem_Click(object sender, EventArgs e)
+        private void MAFToolStripMenuItem_Click(object sender, EventArgs e)
         {
             tableList.Items.Clear();
-            tableList.Items.AddRange(tableListEntries.Where(p => p.TuningMode == TuningMode.MAF).ToArray());
+            tableList.Items.AddRange(tableListEntries.Where(p => p.TuningMode == TuningMode.Maf).ToArray());
             tableList.SelectedIndex = 0;
             _isMaf = true;
         }
