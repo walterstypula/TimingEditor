@@ -3,6 +3,7 @@
     public enum TuningMode
     {
         Timing,
-        Maf
+        Maf,
+        Both
     }
 }

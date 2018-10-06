@@ -1,13 +1,14 @@
-﻿using System;
+﻿using NSFW.TimingEditor.Utils;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using NSFW.TimingEditor.Utils;
 
 namespace NSFW.TimingEditor
 {
     public partial class TimingForm
     {
-        private void smoothButton_Click(object sender, EventArgs e)
+        private void SmoothButton_Click(object sender, EventArgs e)
         {
             DisposeCellPopup();
             Smooth(dataGrid.SelectedCells, true);
@@ -16,37 +17,39 @@ namespace NSFW.TimingEditor
         private bool Smooth(DataGridViewSelectedCellCollection selectedCells, bool forReal)
         {
             var ret = false;
+            IList<DataGridViewCell> cells;
             if (smoothComboBox.SelectedIndex == 0 || smoothComboBox.SelectedIndex == 1)
             {
                 if (SelectedRow(selectedCells))
                 {
                     if (forReal)
                     {
-                        IList<DataGridViewCell> cells = SortCellsByRow(selectedCells);
+                        cells = SortCellsByRow(selectedCells);
                         SmoothHorizontal(cells);
                     }
                     ret = true;
                 }
             }
-            if (smoothComboBox.SelectedIndex == 0 || smoothComboBox.SelectedIndex == 2)
-            {
-                if (SelectedColumn(selectedCells))
-                {
-                    if (forReal)
-                    {
-                        IList<DataGridViewCell> cells = SortCellsByColumn(selectedCells);
-                        SmoothVertical(cells);
-                    }
-                    ret = true;
-                }
-            }
-            return ret;
+
+            if (smoothComboBox.SelectedIndex != 0 && smoothComboBox.SelectedIndex != 2)
+                return ret;
+
+            if (!SelectedColumn(selectedCells))
+                return ret;
+
+            if (!forReal)
+                return true;
+
+            cells = SortCellsByColumn(selectedCells);
+            SmoothVertical(cells);
+
+            return true;
         }
 
-        private bool SelectedColumn(System.Collections.ICollection selectedCells)
+        private static bool SelectedColumn(System.Collections.ICollection selectedCells)
         {
-            int column = -1;
-            int total = 0;
+            var column = -1;
+            var total = 0;
             foreach (DataGridViewCell cell in selectedCells)
             {
                 total++;
@@ -59,16 +62,13 @@ namespace NSFW.TimingEditor
                 }
             }
 
-            if ((column == -1) || (total <= 2))
-                return false;
-
-            return true;
+            return (column != -1) && (total > 2);
         }
 
-        private bool SelectedRow(System.Collections.ICollection selectedCells)
+        private static bool SelectedRow(IEnumerable selectedCells)
         {
-            int row = -1;
-            int total = 0;
+            var row = -1;
+            var total = 0;
             foreach (DataGridViewCell cell in selectedCells)
             {
                 total++;
@@ -81,10 +81,7 @@ namespace NSFW.TimingEditor
                 }
             }
 
-            if ((row == -1) || (total <= 2))
-                return false;
-
-            return true;
+            return (row != -1) && (total > 2);
         }
 
         private void SmoothHorizontal(IList<DataGridViewCell> cells)
@@ -103,7 +100,7 @@ namespace NSFW.TimingEditor
                     for (; start < end; ++start)
                     {
                         x = dataGrid.Columns[cells[start].ColumnIndex].HeaderCell.ValueAsDouble();
-                        double value = Util.LinearInterpolation(x, x1, x2, y1, y2);
+                        var value = Util.LinearInterpolation(x, x1, x2, y1, y2);
                         cells[start].Value = value.ToString(Util.DoubleFormat);
                     }
                 }
@@ -133,7 +130,7 @@ namespace NSFW.TimingEditor
                     for (; start < end; ++start)
                     {
                         x = dataGrid.Rows[cells[start].RowIndex].HeaderCell.ValueAsDouble();
-                        double value = Util.LinearInterpolation(x, x1, x2, y1, y2);
+                        var value = Util.LinearInterpolation(x, x1, x2, y1, y2);
                         cells[start].Value = value.ToString(Util.DoubleFormat);
                     }
                 }
@@ -149,7 +146,7 @@ namespace NSFW.TimingEditor
 
         private List<DataGridViewCell> SortCellsByRow(DataGridViewSelectedCellCollection input)
         {
-            List<DataGridViewCell> result = new List<DataGridViewCell>();
+            var result = new List<DataGridViewCell>();
             foreach (DataGridViewCell cell in input)
             {
                 if (cell == null)
@@ -174,9 +171,9 @@ namespace NSFW.TimingEditor
             return result;
         }
 
-        private List<DataGridViewCell> SortCellsByColumn(DataGridViewSelectedCellCollection input)
+        private static List<DataGridViewCell> SortCellsByColumn(DataGridViewSelectedCellCollection input)
         {
-            List<DataGridViewCell> result = new List<DataGridViewCell>();
+            var result = new List<DataGridViewCell>();
             foreach (DataGridViewCell cell in input)
             {
                 if (cell == null)

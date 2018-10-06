@@ -13,6 +13,7 @@ namespace NSFW.TimingEditor.Tables
         public bool IsReadOnly { get { return false; } set { throw new InvalidOperationException(); } }
         public List<double> RowHeaders { get { return advanceTable.RowHeaders; } }
         public List<double> ColumnHeaders { get { return advanceTable.ColumnHeaders; } }
+        public string XAxisHeader { get; set; }
 
         public PassThroughTable(ITable baseTable)
         {
@@ -20,7 +21,7 @@ namespace NSFW.TimingEditor.Tables
             advanceTable = new Table();
         }
 
-        public bool Is2dTable { get; set; }
+        public bool Is2DTable { get; set; }
 
         public ITable Clone()
         {

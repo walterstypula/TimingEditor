@@ -11,7 +11,8 @@ namespace NSFW.TimingEditor.Tables
         public bool IsPopulated { get; private set; }
         public List<double> RowHeaders { get; private set; } = new List<double>();
         public List<double> ColumnHeaders { get; private set; } = new List<double>();
-        public bool Is2dTable { get; set; }
+        public string XAxisHeader { get; set; }
+        public bool Is2DTable { get; set; }
 
         public Table()
         {
@@ -19,7 +20,7 @@ namespace NSFW.TimingEditor.Tables
 
         public Table(bool is2dTable)
         {
-            Is2dTable = Is2dTable;
+            Is2DTable = Is2DTable;
         }
 
         public ITable Clone()

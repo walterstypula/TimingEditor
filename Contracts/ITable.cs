@@ -9,6 +9,8 @@ namespace NSFW.TimingEditor
         List<double> RowHeaders { get; }
         List<double> ColumnHeaders { get; }
 
+        string XAxisHeader { get; }
+
         ITable Clone();
 
         void CopyTo(ITable destination);
@@ -21,11 +23,6 @@ namespace NSFW.TimingEditor
 
         void Populated();
 
-        bool Is2dTable { get; set; }
-    }
-
-    public interface I2DTable
-    {
-        IList<double> ColumnHeaders { get; }
+        bool Is2DTable { get; set; }
     }
 }

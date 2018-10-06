@@ -10,7 +10,7 @@ namespace NSFW.TimingEditor
         public string StatusText { get; }
         public TuningMode TuningMode { get; }
 
-        public TableListEntry(string description, ITable table, bool allowPaste, string statusText, TuningMode tuningMode)
+        public TableListEntry(ITable table, string description, bool allowPaste, string statusText, TuningMode tuningMode)
         {
             Description = description;
             Table = table;

@@ -32,7 +32,7 @@ namespace NSFW.TimingEditor
 
             string engLoad = null;
             string engSpeed = null;
-            foreach (string s in headers)
+            foreach (var s in headers)
             {
                 headerListBox.Items.Add(s);
                 xAxisComboBox.Items.Add(s);

@@ -34,26 +34,30 @@ namespace NSFW.TimingEditor.Utils
 
         public static double ValueAsDouble(this DataGridViewCell cell)
         {
-            if (cell.Value is double)
+            switch (cell.Value)
             {
-                return (double)cell.Value;
+                case double d:
+                    return d;
+
+                case string s:
+                    return double.Parse(s);
+
+                default:
+                    throw new FormatException($"Can't parse {cell.Value}");
             }
-            if (cell.Value is string)
-            {
-                return double.Parse(cell.Value as string);
-            }
-            throw new FormatException("Can't parse " + cell.Value.ToString());
         }
 
         public static void LoadTable(string tableText, ITable table)
         {
-            StringReader reader = new StringReader(tableText);
-            string line = reader.ReadLine();
+            var reader = new StringReader(tableText);
+            var line = reader.ReadLine();
+
+            if (line == null)
+                return;
 
             if (line.StartsWith("[Table2D]"))
             {
-                line = line.Replace("2", "3");
-                table.Is2dTable = true;
+                table.Is2DTable = true;
             }
             else if (!line.StartsWith("[Table3D]"))
             {
@@ -68,7 +72,7 @@ namespace NSFW.TimingEditor.Utils
 
             table.ColumnHeaders.AddRange(GetValues(line));
 
-            List<List<double>> tableData = new List<List<double>>();
+            var tableData = new List<List<double>>();
             while (true)
             {
                 line = reader.ReadLine();
@@ -77,12 +81,12 @@ namespace NSFW.TimingEditor.Utils
                     break;
                 }
 
-                if (table.Is2dTable)
+                if (table.Is2DTable)
                 {
                     line = line.Insert(0, "0.0\t");
                 }
 
-                double[] columnValues = GetValues(line);
+                var columnValues = GetValues(line);
                 table.RowHeaders.Add(columnValues[0]);
 
                 var tableRowData = columnValues.Skip(1).ToArray();
@@ -93,14 +97,14 @@ namespace NSFW.TimingEditor.Utils
             table.PopulateCells(tableData);
         }
 
-        public static void PopulateCells(this ITable table, List<List<double>> tableData)
+        private static void PopulateCells(this ITable table, IReadOnlyList<List<double>> tableData)
         {
-            for (int rowNumber = 0; rowNumber < tableData.Count; rowNumber++)
+            for (var rowNumber = 0; rowNumber < tableData.Count; rowNumber++)
             {
-                for (int columnNumber = 0; columnNumber < tableData[rowNumber].Count; columnNumber++)
+                for (var columnNumber = 0; columnNumber < tableData[rowNumber].Count; columnNumber++)
                 {
-                    List<double> row = tableData[rowNumber];
-                    double value = row[columnNumber];
+                    var row = tableData[rowNumber];
+                    var value = row[columnNumber];
 
                     table.SetCell(columnNumber, rowNumber, value);
                 }
@@ -111,10 +115,10 @@ namespace NSFW.TimingEditor.Utils
 
         public static string CopyTable(ITable table)
         {
-            StringWriter writer = new StringWriter();
+            var writer = new StringWriter();
             writer.WriteLine("[Table3D]");
 
-            for (int i = 0; i < table.ColumnHeaders.Count; i++)
+            for (var i = 0; i < table.ColumnHeaders.Count; i++)
             {
                 if (i != 0)
                 {
@@ -125,9 +129,9 @@ namespace NSFW.TimingEditor.Utils
             }
             writer.WriteLine();
 
-            for (int row = 0; row < table.RowHeaders.Count; row++)
+            for (var row = 0; row < table.RowHeaders.Count; row++)
             {
-                for (int column = 0; column < table.ColumnHeaders.Count; column++)
+                for (var column = 0; column < table.ColumnHeaders.Count; column++)
                 {
                     if (column == 0)
                     {
@@ -146,37 +150,37 @@ namespace NSFW.TimingEditor.Utils
 
         public static Table PadLeft(Table source, int desiredColumns)
         {
-            Table result = new Table();
+            var result = new Table();
             result.Reset();
-            int newColumnCount = desiredColumns - source.ColumnHeaders.Count;
-            for (int i = 0; i < newColumnCount; i++)
+            var newColumnCount = desiredColumns - source.ColumnHeaders.Count;
+            for (var i = 0; i < newColumnCount; i++)
             {
                 result.ColumnHeaders.Add(0);
             }
-            for (int i = newColumnCount; i < newColumnCount + source.ColumnHeaders.Count; i++)
+            for (var i = newColumnCount; i < newColumnCount + source.ColumnHeaders.Count; i++)
             {
                 result.ColumnHeaders.Add(source.ColumnHeaders[i - newColumnCount]);
             }
 
-            for (int i = 0; i < source.RowHeaders.Count; i++)
+            for (var i = 0; i < source.RowHeaders.Count; i++)
             {
                 result.RowHeaders.Add(source.RowHeaders[i]);
             }
 
-            for (int x = 0; x < source.ColumnHeaders.Count; x++)
+            for (var x = 0; x < source.ColumnHeaders.Count; x++)
             {
-                for (int y = 0; y < source.RowHeaders.Count; y++)
+                for (var y = 0; y < source.RowHeaders.Count; y++)
                 {
-                    double value = source.GetCell(x, y);
+                    var value = source.GetCell(x, y);
                     result.SetCell(x + newColumnCount, y, value);
                 }
             }
 
-            for (int x = 0; x < newColumnCount; x++)
+            for (var x = 0; x < newColumnCount; x++)
             {
-                for (int y = 0; y < source.RowHeaders.Count; y++)
+                for (var y = 0; y < source.RowHeaders.Count; y++)
                 {
-                    double value = source.GetCell(0, y);
+                    var value = source.GetCell(0, y);
                     result.SetCell(x, y, value);
                 }
             }
@@ -187,24 +191,24 @@ namespace NSFW.TimingEditor.Utils
 
         public static Table TrimLeft(ITable source, int columnsToRemove)
         {
-            Table result = new Table();
+            var result = new Table();
             result.Reset();
 
-            for (int i = columnsToRemove; i < source.ColumnHeaders.Count; i++)
+            for (var i = columnsToRemove; i < source.ColumnHeaders.Count; i++)
             {
                 result.ColumnHeaders.Add(source.ColumnHeaders[i]);
             }
 
-            for (int i = 0; i < source.RowHeaders.Count; i++)
+            for (var i = 0; i < source.RowHeaders.Count; i++)
             {
                 result.RowHeaders.Add(source.RowHeaders[i]);
             }
 
-            for (int x = columnsToRemove; x < source.ColumnHeaders.Count; x++)
+            for (var x = columnsToRemove; x < source.ColumnHeaders.Count; x++)
             {
-                for (int y = 0; y < source.RowHeaders.Count; y++)
+                for (var y = 0; y < source.RowHeaders.Count; y++)
                 {
-                    double value = source.GetCell(x, y);
+                    var value = source.GetCell(x, y);
                     result.SetCell(x - columnsToRemove, y, value);
                 }
             }
@@ -213,22 +217,24 @@ namespace NSFW.TimingEditor.Utils
             return result;
         }
 
-        private static DataGridViewCellStyle defaultStyle;
+        private static DataGridViewCellStyle _defaultStyle;
         //private static DataGridViewCellStyle selectedStyle;
 
-        public static DataGridViewCellStyle DefaultStyle
+        private static DataGridViewCellStyle DefaultStyle
         {
             get
             {
-                if (defaultStyle == null)
+                if (_defaultStyle != null)
+                    return _defaultStyle;
+
+                _defaultStyle = new DataGridViewCellStyle
                 {
-                    defaultStyle = new DataGridViewCellStyle();
-                    defaultStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-                    defaultStyle.BackColor = System.Drawing.Color.White;
-                    defaultStyle.SelectionBackColor = Color.Black;
-                    defaultStyle.SelectionForeColor = Color.White;
-                }
-                return defaultStyle;
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    BackColor = Color.White,
+                    SelectionBackColor = Color.Black,
+                    SelectionForeColor = Color.White
+                };
+                return _defaultStyle;
             }
         }
 
@@ -256,31 +262,31 @@ namespace NSFW.TimingEditor.Utils
                 return;
             }
 
-            for (int x = 0; x < table.ColumnHeaders.Count; x++)
+            for (var x = 0; x < table.ColumnHeaders.Count; x++)
             {
-                for (int y = 0; y < table.RowHeaders.Count; y++)
+                for (var y = 0; y < table.RowHeaders.Count; y++)
                 {
-                    double cell = table.GetCell(x, y);
+                    var cell = table.GetCell(x, y);
                     min = Math.Min(cell, min);
                     max = Math.Max(cell, max);
                 }
             }
         }
 
-        public static void ColorTable(DataGridView dataGridView, ITable table, int selectedX, int selectedY, List<OverlayPoint> cellHit)
+        public static void ColorTable(DataGridView dataGridView, ITable table, int selectedX, int selectedY, Overlay overlay)
         {
-            double min, max, unbrightness;
-            Color color;
-            DataGridViewCellStyle style;
+            table.GetMinMax(out var min, out var max);
+            var middle = (max + min) / 2;
 
-            table.GetMinMax(out min, out max);
-            double middle = (max + min) / 2;
+            overlay?.SetXAvisHeader(table.XAxisHeader);
 
-            for (int x = 0; x < dataGridView.Columns.Count; x++)
+            var cellHit = overlay?.ProcessOverlay(table.ColumnHeaders.ToArray(), table.RowHeaders.ToArray());
+
+            for (var x = 0; x < dataGridView.Columns.Count; x++)
             {
-                for (int y = 0; y < dataGridView.Rows.Count; y++)
+                for (var y = 0; y < dataGridView.Rows.Count; y++)
                 {
-                    double value = table.GetCell(x, y);
+                    var value = table.GetCell(x, y);
 
                     if (cellHit != null)
                     {
@@ -288,7 +294,7 @@ namespace NSFW.TimingEditor.Utils
 
                         if (highlight != null)
                         {
-                            dataGridView.Rows[y].Cells[x] = new CustomDataGridViewCell();
+                            dataGridView.Rows[y].Cells[x] = new CustomDataGridViewCell(highlight);
                         }
                         else if (dataGridView.Rows[y].Cells[x] is CustomDataGridViewCell)
                         {
@@ -296,6 +302,7 @@ namespace NSFW.TimingEditor.Utils
                         }
                     }
 
+                    Color color;
                     if ((x == selectedX) || (y == selectedY))
                     {
                         color = Color.Gray;
@@ -308,20 +315,21 @@ namespace NSFW.TimingEditor.Utils
                         }
                         else
                         {
+                            double brightness;
                             if (value > middle)
                             {
-                                unbrightness = 1 - (value - middle) / (max - middle);
-                                color = Color.FromArgb(255, 255, (int)(255 * unbrightness));
+                                brightness = 1 - (value - middle) / (max - middle);
+                                color = Color.FromArgb(255, 255, (int)(255 * brightness));
                             }
                             else
                             {
-                                unbrightness = ((1 - (middle - value) / (middle - min)) + 1) / 2;
-                                color = Color.FromArgb((int)(255 * unbrightness), (int)(255 * unbrightness), 255);
+                                brightness = ((1 - (middle - value) / (middle - min)) + 1) / 2;
+                                color = Color.FromArgb((int)(255 * brightness), (int)(255 * brightness), 255);
                             }
                         }
                     }
 
-                    style = DefaultStyle.Clone();
+                    var style = DefaultStyle.Clone();
                     style.BackColor = color;
                     dataGridView.Rows[y].Cells[x].Value = value.ToString(DoubleFormat);
                     dataGridView.Rows[y].Cells[x].Style = style;
@@ -336,9 +344,9 @@ namespace NSFW.TimingEditor.Utils
 
             dataGridView.Columns.Clear();
             dataGridView.RowHeadersWidth = RowHeaderWidth;
-            for (int i = 0; i < table.ColumnHeaders.Count; i++)
+            for (var i = 0; i < table.ColumnHeaders.Count; i++)
             {
-                DataGridViewColumn column = new DataGridViewColumn(template);
+                var column = new DataGridViewColumn(template);
                 column.HeaderCell.Value = table.ColumnHeaders[i];
                 column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
                 column.Width = ColumnWidth;
@@ -348,38 +356,36 @@ namespace NSFW.TimingEditor.Utils
             }
 
             dataGridView.Rows.Clear();
-            for (int i = 0; i < table.RowHeaders.Count; i++)
+            foreach (var t in table.RowHeaders)
             {
-                DataGridViewRow row = new DataGridViewRow();
-                row.HeaderCell.Value = table.RowHeaders[i].ToString();
+                var row = new DataGridViewRow();
+                row.HeaderCell.Value = t.ToString();
                 row.HeaderCell.Style = DefaultStyle;
                 dataGridView.Rows.Add(row);
             }
 
-            for (int x = 0; x < dataGridView.Columns.Count; x++)
+            for (var x = 0; x < dataGridView.Columns.Count; x++)
             {
-                for (int y = 0; y < dataGridView.Rows.Count; y++)
+                for (var y = 0; y < dataGridView.Rows.Count; y++)
                 {
-                    double value = table.GetCell(x, y);
-                    DataGridViewCellStyle style = DefaultStyle.Clone();
+                    var value = table.GetCell(x, y);
 
                     dataGridView.Rows[y].Cells[x].Value = value.ToString(DoubleFormat);
                     dataGridView.Rows[y].Cells[x].Style = DefaultStyle;
                 }
             }
 
-            int oldWidth = dataGridView.Width;
-            int newWidth = dataGridView.RowHeadersWidth + 2;
-            for (int i = 0; i < dataGridView.Columns.Count; i++)
+            var oldWidth = dataGridView.Width;
+            var newWidth = dataGridView.RowHeadersWidth + 2;
+            for (var i = 0; i < dataGridView.Columns.Count; i++)
             {
                 newWidth += dataGridView.Columns[i].Width;
             }
 
-            int delta = newWidth - oldWidth;
-            //dataGridView.Width += delta;
+            var delta = newWidth - oldWidth;
             form.Width += delta;
 
-            int oldHeight = dataGridView.Height;
+            var oldHeight = dataGridView.Height;
 
             var scrollBarHeight = 0;
 
@@ -388,9 +394,9 @@ namespace NSFW.TimingEditor.Utils
                 scrollBarHeight = scroll.Visible ? SystemInformation.HorizontalScrollBarHeight : 0;
             }
 
-            int newHeight = dataGridView.ColumnHeadersHeight + 2 + scrollBarHeight;
+            var newHeight = dataGridView.ColumnHeadersHeight + 2 + scrollBarHeight;
 
-            for (int i = 0; i < dataGridView.Rows.Count; i++)
+            for (var i = 0; i < dataGridView.Rows.Count; i++)
             {
                 newHeight += dataGridView.Rows[i].Height;
             }
@@ -423,8 +429,8 @@ namespace NSFW.TimingEditor.Utils
 
         public static double[] GetValues(string[] valueStrings)
         {
-            double[] result = new double[valueStrings.Length];
-            for (int i = 0; i < result.Length; i++)
+            var result = new double[valueStrings.Length];
+            for (var i = 0; i < result.Length; i++)
             {
                 Exception exception = null;
                 try
@@ -456,21 +462,20 @@ namespace NSFW.TimingEditor.Utils
             return (x1 == x2) ? 0.0 : (y1 + (x - x1) * (y2 - y1) / (x2 - x1));
         }
 
-        public static int ClosestValueIndex(this double[] list, string val)
+        public static int ClosestValueIndex(this IEnumerable<double> list, string val)
         {
             return ClosestValueIndex(list.ToList(), double.Parse(val));
         }
 
-        public static int ClosestValueIndex(this IList<double> list, double val)
+        private static int ClosestValueIndex(this IList<double> list, double val)
         {
-            int index = ((List<double>)list).BinarySearch(val);
-            if (index < 0)
-            {
-                int idxPrev = Math.Max(0, -index - 2);
-                int idxNext = Math.Min(list.Count - 1, -index - 1);
-                return val - list[idxPrev] <= list[idxNext] - val ? idxPrev : idxNext;
-            }
-            return index;
+            var index = ((List<double>)list).BinarySearch(val);
+            if (index >= 0)
+                return index;
+
+            var idxPrev = Math.Max(0, -index - 2);
+            var idxNext = Math.Min(list.Count - 1, -index - 1);
+            return val - list[idxPrev] <= list[idxNext] - val ? idxPrev : idxNext;
         }
     }
 }

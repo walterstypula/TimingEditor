@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace NSFW.TimingEditor
 {
@@ -14,7 +15,7 @@ namespace NSFW.TimingEditor
         internal int XAxisHeaderIndex = -1;
         internal int YAxisHeaderIndex = -1;
         internal readonly Dictionary<string, int> HeaderIndices = new Dictionary<string, int>();
-        private readonly string[] _line;
+        private readonly string[] _headers;
 
         internal OverlayHeaderInfo(string logHeaderLine)
         {
@@ -23,49 +24,31 @@ namespace NSFW.TimingEditor
                 throw new ApplicationException($"First line in log file does not contains headers.");
             }
 
-            _line = logHeaderLine.Split(',');
-        }
-
-        internal OverlayHeaderInfo(string[] logHeaderLine)
-        {
-            if (logHeaderLine.Length <= 0)
-            {
-                throw new ApplicationException($"First line in log file does not contains headers.");
-            }
-
-            _line = logHeaderLine;
+            _headers = logHeaderLine.Split(',');
         }
 
         internal OverlayHeaderInfo(string logHeaderLine, string xAxisHeader, string yAxisHeader)
             : this(logHeaderLine)
         {
-            XAxisHeader = xAxisHeader;
-            YAxisHeader = yAxisHeader;
+            SetAxisHeaders(xAxisHeader, yAxisHeader);
         }
 
-        internal OverlayHeaderInfo(string[] logHeaderLine, string xAxisHeader, string yAxisHeader)
-            : this(logHeaderLine)
+        internal void SetAxisHeaders(string xAxisHeader, string yAxisHeader)
         {
-            XAxisHeader = xAxisHeader;
-            YAxisHeader = yAxisHeader;
-        }
-
-        internal void AddAxisHeaders(string xAxisHeader, string yAxisHeader)
-        {
-            XAxisHeader = xAxisHeader;
-            YAxisHeader = yAxisHeader;
-        }
-
-        internal void AddHeaderInfo(params string[] displayDataHeaders)
-        {
-            XAxisHeaderIndex = _line.IndexOf(XAxisHeader);
-            YAxisHeaderIndex = _line.IndexOf(YAxisHeader);
+            XAxisHeaderIndex = _headers.IndexOf(xAxisHeader);
+            YAxisHeaderIndex = _headers.IndexOf(yAxisHeader);
 
             if (YAxisHeaderIndex == -1 || XAxisHeaderIndex == -1)
             {
                 throw new ApplicationException($"Either {XAxisHeader} or {YAxisHeader} headers not found in log file.");
             }
 
+            XAxisHeader = xAxisHeader;
+            YAxisHeader = yAxisHeader;
+        }
+
+        internal void AddHeaderInfo(params string[] displayDataHeaders)
+        {
             foreach (var header in displayDataHeaders)
             {
                 if (HeaderIndices.ContainsKey(header))
@@ -73,7 +56,7 @@ namespace NSFW.TimingEditor
                     throw new ApplicationException($"Duplicate header found.");
                 }
 
-                var headerIndex = Array.IndexOf(_line, header);
+                var headerIndex = Array.IndexOf(_headers, header);
 
                 if (headerIndex == -1)
                 {
@@ -82,6 +65,20 @@ namespace NSFW.TimingEditor
 
                 HeaderIndices.Add(header, headerIndex);
             }
+        }
+
+        public bool SetXAvisHeader(string regEx)
+        {
+            if (regEx == null)
+                return false;
+
+            var result = _headers.FirstOrDefault(header => Regex.IsMatch(header, regEx, RegexOptions.IgnoreCase));
+
+            if (result == null)
+                return false;
+
+            SetAxisHeaders(result, YAxisHeader);
+            return true;
         }
     }
 
@@ -93,6 +90,11 @@ namespace NSFW.TimingEditor
         public Overlay(string logHeaderLine, string xAxisHeader, string yAxisHeader)
         {
             _overlayHeaders = new OverlayHeaderInfo(logHeaderLine, xAxisHeader, yAxisHeader);
+        }
+
+        public bool SetXAvisHeader(string regEx)
+        {
+            return _overlayHeaders.SetXAvisHeader(regEx);
         }
 
         public List<OverlayPoint> ProcessOverlay(double[] columnHeaderValues, double[] rowHeaderValues)
@@ -143,7 +145,7 @@ namespace NSFW.TimingEditor
 
         public void AddLog(string content)
         {
-            _logData.AppendLine(content);
+            _logData.AppendLine(content.Trim());
         }
     }
 
