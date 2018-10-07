@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace NSFW.TimingEditor
 {
-
     public class EditCell : Command
     {
         private ITable table;
@@ -155,8 +154,8 @@ namespace NSFW.TimingEditor
                 return null;
             }
 
-            int lastIndex = commands.Count - 1;
-            Command command = commands[lastIndex];
+            var lastIndex = commands.Count - 1;
+            var command = commands[lastIndex];
             commands.RemoveAt(lastIndex);
 
             command.Undo();
@@ -174,8 +173,8 @@ namespace NSFW.TimingEditor
                 return null;
             }
 
-            int lastIndex = undone.Count - 1;
-            Command command = undone[lastIndex];
+            var lastIndex = undone.Count - 1;
+            var command = undone[lastIndex];
             undone.RemoveAt(lastIndex);
 
             command.Execute();

@@ -280,7 +280,7 @@ namespace NSFW.TimingEditor.Utils
 
             overlay?.SetXAvisHeader(table.XAxisHeader);
 
-            var cellHit = overlay?.ProcessOverlay(table.ColumnHeaders.ToArray(), table.RowHeaders.ToArray());
+            var cellHit = overlay?.ProcessOverlay(table.ColumnHeaders, table.RowHeaders);
 
             for (var x = 0; x < dataGridView.Columns.Count; x++)
             {
@@ -467,7 +467,7 @@ namespace NSFW.TimingEditor.Utils
             return ClosestValueIndex(list.ToList(), double.Parse(val));
         }
 
-        private static int ClosestValueIndex(this IList<double> list, double val)
+        public static int ClosestValueIndex(this IList<double> list, double val)
         {
             var index = ((List<double>)list).BinarySearch(val);
             if (index >= 0)

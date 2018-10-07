@@ -1,5 +1,6 @@
 ﻿using NSFW.TimingEditor.Controls;
 using NSFW.TimingEditor.Enums;
+using NSFW.TimingEditor.Extensions;
 using NSFW.TimingEditor.Tables;
 using NSFW.TimingEditor.Utils;
 using System;
@@ -665,6 +666,8 @@ namespace NSFW.TimingEditor
             tableList.Items.AddRange(_tableListEntries.Where(p => p.TuningMode == TuningMode.Timing || p.TuningMode == TuningMode.Both).ToArray());
             tableList.SelectedIndex = 0;
             _isMaf = false;
+            AutoTune.Visible = _isMaf;
+            AutoTune.Enabled = _isMaf;
         }
 
         private void MAFToolStripMenuItem_Click(object sender, EventArgs e)
@@ -673,6 +676,8 @@ namespace NSFW.TimingEditor
             tableList.Items.AddRange(_tableListEntries.Where(p => p.TuningMode == TuningMode.Maf || p.TuningMode == TuningMode.Both).ToArray());
             tableList.SelectedIndex = 0;
             _isMaf = true;
+            AutoTune.Visible = _isMaf;
+            AutoTune.Enabled = _isMaf;
         }
 
         private void AdditionalLogOverlay_Click(object sender, EventArgs e)
@@ -704,6 +709,52 @@ namespace NSFW.TimingEditor
 
             Util.ColorTable(dataGrid, entry.Table, _selectedColumn, _selectedRow, _overlay);
             dataGrid.Refresh();
+        }
+
+        private void AutoTune_Click(object sender, EventArgs e)
+        {
+            if (!(tableList.SelectedItem is TableListEntry entry) || entry.Table != _tables.ModifiedMaf)
+            {
+                return;
+            }
+
+            var overlayPoints = _overlay.ProcessOverlay(_tables.ModifiedMaf.ColumnHeaders, _tables.ModifiedMaf.RowHeaders);
+
+            foreach (var op in overlayPoints)
+            {
+                var allCurrentAfrData = op.ValueData[WideBandHeaders.AEM_UEGO_9600];
+                var validAutoTuneAfrData = allCurrentAfrData.SkipOutliers(k: 1.4, selector: result => result.Value);
+
+                if (validAutoTuneAfrData.Count() <= 1)
+                {
+                    continue;
+                }
+
+                var afrErrorList = new List<double>();
+
+                foreach (var currentAfr in validAutoTuneAfrData)
+                {
+                    var xTargetAfrValue = _tables.TargetFuel.ColumnHeaders.ClosestValueIndex(currentAfr.Load);
+                    var yTargetAfrValue = _tables.TargetFuel.RowHeaders.ClosestValueIndex(currentAfr.Rpm);
+                    var targetAfr = _tables.TargetFuel.GetCell(xTargetAfrValue, yTargetAfrValue);
+
+                    afrErrorList.Add(CalcAfrError(currentAfr.Value, targetAfr));
+                }
+
+                var targetCell = dataGrid[op.XAxisIndex, op.YAxisIndex] as CustomDataGridViewCell;
+                var avgAfrError = afrErrorList.Average();
+
+                var currentValue = double.Parse(targetCell.Value.ToString());
+                var correction = currentValue * 0.01;
+
+                var newValue = currentValue + avgAfrError * correction;
+                targetCell.Value = newValue.ToString();
+            }
+        }
+
+        private static double CalcAfrError(double currentAfr, double targetAfr)
+        {
+            return (currentAfr - targetAfr) / targetAfr * 100;
         }
     }
 }

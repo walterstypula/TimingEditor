@@ -9,7 +9,7 @@ namespace NSFW.TimingEditor
         List<double> RowHeaders { get; }
         List<double> ColumnHeaders { get; }
 
-        string XAxisHeader { get; }
+        string XAxisHeader { get; set; }
 
         ITable Clone();
 

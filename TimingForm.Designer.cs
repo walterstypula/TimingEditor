@@ -46,6 +46,7 @@
             this.timingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mAFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AdditionalLogOverlay = new System.Windows.Forms.Button();
+            this.AutoTune = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -246,11 +247,24 @@
             this.AdditionalLogOverlay.UseVisualStyleBackColor = true;
             this.AdditionalLogOverlay.Click += new System.EventHandler(this.AdditionalLogOverlay_Click);
             // 
+            // AutoTune
+            // 
+            this.AutoTune.Enabled = false;
+            this.AutoTune.Location = new System.Drawing.Point(134, 192);
+            this.AutoTune.Name = "AutoTune";
+            this.AutoTune.Size = new System.Drawing.Size(78, 23);
+            this.AutoTune.TabIndex = 14;
+            this.AutoTune.Text = "AutoTune";
+            this.AutoTune.UseVisualStyleBackColor = true;
+            this.AutoTune.Visible = false;
+            this.AutoTune.Click += new System.EventHandler(this.AutoTune_Click);
+            // 
             // TimingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(747, 581);
+            this.Controls.Add(this.AutoTune);
             this.Controls.Add(this.AdditionalLogOverlay);
             this.Controls.Add(this.smoothComboBox);
             this.Controls.Add(this.undoButton);
@@ -302,6 +316,7 @@
         private System.Windows.Forms.ToolStripMenuItem timingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mAFToolStripMenuItem;
         private System.Windows.Forms.Button AdditionalLogOverlay;
+        private System.Windows.Forms.Button AutoTune;
     }
 }
 

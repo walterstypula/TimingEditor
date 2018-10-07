@@ -38,15 +38,15 @@ namespace NSFW.TimingEditor
                 xAxisComboBox.Items.Add(s);
                 yAxisComboBox.Items.Add(s);
 
-                if (_isMaf && Regex.IsMatch(s, ".*\\bmass[_\\s]airflow\\b.*", RegexOptions.IgnoreCase))
+                if (_isMaf && Regex.IsMatch(s, RequiredLogHeaders.EngineLoadRegEx, RegexOptions.IgnoreCase))
                 {
                     engLoad = s;
                 }
-                else if (Regex.IsMatch(s, ".*\\bengine[_\\s]load\\b.*", RegexOptions.IgnoreCase))
+                else if (Regex.IsMatch(s, RequiredLogHeaders.MafvRegEx, RegexOptions.IgnoreCase))
                 {
                     engLoad = s;
                 }
-                else if (Regex.IsMatch(s, ".*\\b(engine[_\\s]speed|rpm)\\b.*", RegexOptions.IgnoreCase))
+                else if (Regex.IsMatch(s, RequiredLogHeaders.RpmRegEx, RegexOptions.IgnoreCase))
                 {
                     engSpeed = s;
                 }
