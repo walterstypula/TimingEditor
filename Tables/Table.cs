@@ -31,6 +31,7 @@ namespace NSFW.TimingEditor.Tables
             result.IsReadOnly = IsReadOnly;
 
             result.cells = new List<double[]>();
+                       
             for (int x = 0; x < cells.Count; x++)
             {
                 result.cells[x] = new double[cells[0].Length];
@@ -74,11 +75,11 @@ namespace NSFW.TimingEditor.Tables
                 other.ColumnHeaders.Add(ColumnHeaders[i]);
             }
 
-            for (int x = 0; x < cells.Count; x++)
+            for (int y = 0; y < cells.Count; y++)
             {
-                for (int y = 0; y < cells[0].Length; y++)
+                for (int x = 0; x < cells[0].Length; x++)
                 {
-                    other.SetCell(x, y, cells[x][y]);
+                    other.SetCell(x, y, cells[y][x]);
                 }
             }
 
