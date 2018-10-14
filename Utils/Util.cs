@@ -53,7 +53,9 @@ namespace NSFW.TimingEditor.Utils
             var line = reader.ReadLine();
 
             if (line == null)
+            {
                 return;
+            }
 
             if (line.StartsWith("[Table2D]"))
             {
@@ -225,7 +227,9 @@ namespace NSFW.TimingEditor.Utils
             get
             {
                 if (_defaultStyle != null)
+                {
                     return _defaultStyle;
+                }
 
                 _defaultStyle = new DataGridViewCellStyle
                 {
@@ -421,6 +425,18 @@ namespace NSFW.TimingEditor.Utils
                 }
         */
 
+        internal static List<DataGridViewCell> ToList(this DataGridViewSelectedCellCollection collection)
+        {
+            var list = new List<DataGridViewCell>();
+
+            foreach (DataGridViewCell i in collection)
+            {
+                list.Add(i);
+            }
+
+            return list;
+        }
+
         public static double[] GetValues(string line)
         {
             var splitArray = line.Split('\t');
@@ -457,6 +473,78 @@ namespace NSFW.TimingEditor.Utils
             return result;
         }
 
+        /// <summary>
+        /// Originally written by John Wakefield of http://www.robosoup.com/2014/01/cleaning-noisy-time-series-data-low-pass-filter-c.html.
+        /// Minor modifications made to prevent skewing of start and end.
+        /// </summary>
+        /// <param name="noisy"></param>
+        /// <param name="range"></param>
+        /// <param name="decay"></param>
+        /// <returns></returns>
+        internal static double[] CleanData(List<double> noisy, int range, double decay)
+        {
+            var originalSize = noisy.Count;
+
+            for (int i = 0; i < range; i++)
+            {
+                noisy.Insert(0, noisy.First());
+                noisy.Add(noisy.Last());
+            }
+
+            double[] clean = new double[noisy.Count];
+            double[] coefficients = Coefficients(range, decay);
+            // Calculate divisor value.
+            double divisor = 0;
+            for (int i = -range; i <= range; i++)
+            {
+                divisor += coefficients[Math.Abs(i)];
+            }
+            // Clean main data.
+            for (int i = range; i < clean.Length - range; i++)
+            {
+                double temp = 0;
+                for (int j = -range; j <= range; j++)
+                {
+                    temp += noisy[i + j] * coefficients[Math.Abs(j)];
+                }
+
+                clean[i] = temp / divisor;
+            }
+            // Calculate leading and trailing slopes.
+            double leadSum = 0;
+            double trailSum = 0;
+            int leadRef = range;
+            int trailRef = clean.Length - range - 1;
+            for (int i = 1; i <= range; i++)
+            {
+                leadSum += (clean[leadRef] - clean[leadRef + i]) / i;
+                trailSum += (clean[trailRef] - clean[trailRef - i]) / i;
+            }
+            double leadSlope = leadSum / range;
+            double trailSlope = trailSum / range;
+            // Clean edges.
+            for (int i = 1; i <= range; i++)
+            {
+                clean[leadRef - i] = clean[leadRef] + leadSlope * i;
+                clean[trailRef + i] = clean[trailRef] + trailSlope * i;
+            }
+
+            var skip = (clean.Length - originalSize) / 2;
+            return clean.Skip(skip).Take(originalSize).ToArray();
+        }
+
+        private static double[] Coefficients(int range, double decay)
+        {
+            // Precalculate coefficients.
+            double[] coefficients = new double[range + 1];
+            for (int i = 0; i <= range; i++)
+            {
+                coefficients[i] = Math.Pow(decay, i);
+            }
+
+            return coefficients;
+        }
+
         public static double LinearInterpolation(double x, double x1, double x2, double y1, double y2)
         {
             return (x1 == x2) ? 0.0 : (y1 + (x - x1) * (y2 - y1) / (x2 - x1));
@@ -471,7 +559,9 @@ namespace NSFW.TimingEditor.Utils
         {
             var index = ((List<double>)list).BinarySearch(val);
             if (index >= 0)
+            {
                 return index;
+            }
 
             var idxPrev = Math.Max(0, -index - 2);
             var idxNext = Math.Min(list.Count - 1, -index - 1);

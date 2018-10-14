@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace NSFW.TimingEditor
@@ -11,39 +12,48 @@ namespace NSFW.TimingEditor
         private void SmoothButton_Click(object sender, EventArgs e)
         {
             DisposeCellPopup();
-            Smooth(dataGrid.SelectedCells, true);
+            Smooth(dataGrid.SelectedCells);
         }
 
-        private bool Smooth(DataGridViewSelectedCellCollection selectedCells, bool forReal)
+        private static void SmoothVertically(DataGridViewSelectedCellCollection selectedCells, int range, double decay)
         {
-            var ret = false;
-            IList<DataGridViewCell> cells;
-            if (smoothComboBox.SelectedIndex == 0 || smoothComboBox.SelectedIndex == 1)
+            var columnsGroup = selectedCells.ToList().GroupBy(p => p.ColumnIndex);
+            SmoothCells(columnsGroup, range, decay);
+        }
+
+        private static void SmoothHorizontally(DataGridViewSelectedCellCollection selectedCells, int range, double decay)
+        {
+            var rowsGroup = selectedCells.ToList().GroupBy(p => p.RowIndex);
+            SmoothCells(rowsGroup, range, decay);
+        }
+
+        private static void SmoothCells(IEnumerable<IGrouping<int, DataGridViewCell>> groupedCells, int range, double decay)
+        {
+            foreach (var r in groupedCells)
             {
-                if (SelectedRow(selectedCells))
+                if (r.Count() < 3)
                 {
-                    if (forReal)
-                    {
-                        cells = SortCellsByRow(selectedCells);
-                        SmoothHorizontal(cells);
-                    }
-                    ret = true;
+                    continue;
+                }
+
+                var cells = r.OrderBy(p => p.ColumnIndex).ToArray();
+                var values = cells.Select(p => p.ValueAsDouble()).ToList();
+                var cleanData = Util.CleanData(values, range, decay);
+
+                for (int i = 0; i < cleanData.Length; i++)
+                {
+                    cells[i].Value = cleanData[i].ToString();
                 }
             }
+        }
 
-            if (smoothComboBox.SelectedIndex != 0 && smoothComboBox.SelectedIndex != 2)
-                return ret;
+        private static void Smooth(DataGridViewSelectedCellCollection selectedCells)
+        {
+            var decay = 0.25;
+            var range = 1;
 
-            if (!SelectedColumn(selectedCells))
-                return ret;
-
-            if (!forReal)
-                return true;
-
-            cells = SortCellsByColumn(selectedCells);
-            SmoothVertical(cells);
-
-            return true;
+            SmoothHorizontally(selectedCells, range, decay);
+            SmoothVertically(selectedCells, range, decay);
         }
 
         private static bool SelectedColumn(System.Collections.ICollection selectedCells)
@@ -54,11 +64,15 @@ namespace NSFW.TimingEditor
             {
                 total++;
                 if (column == -1)
+                {
                     column = cell.ColumnIndex;
+                }
                 else
                 {
                     if (column != cell.ColumnIndex)
+                    {
                         total--;
+                    }
                 }
             }
 
@@ -73,129 +87,19 @@ namespace NSFW.TimingEditor
             {
                 total++;
                 if (row == -1)
+                {
                     row = cell.RowIndex;
+                }
                 else
                 {
                     if (row != cell.RowIndex)
+                    {
                         total--;
+                    }
                 }
             }
 
             return (row != -1) && (total > 2);
-        }
-
-        private void SmoothHorizontal(IList<DataGridViewCell> cells)
-        {
-            try
-            {
-                double x, x1, x2, y1, y2;
-                for (int start = 0, end = 0; end < cells.Count;)
-                {
-                    x1 = dataGrid.Columns[cells[start].ColumnIndex].HeaderCell.ValueAsDouble();
-                    y1 = cells[start].ValueAsDouble();
-                    for (end = start; end < cells.Count && cells[start].RowIndex == cells[end].RowIndex; ++end)
-                        continue;
-                    x2 = dataGrid.Columns[cells[end - 1].ColumnIndex].HeaderCell.ValueAsDouble();
-                    y2 = cells[end - 1].ValueAsDouble();
-                    for (; start < end; ++start)
-                    {
-                        x = dataGrid.Columns[cells[start].ColumnIndex].HeaderCell.ValueAsDouble();
-                        var value = Util.LinearInterpolation(x, x1, x2, y1, y2);
-                        cells[start].Value = value.ToString(Util.DoubleFormat);
-                    }
-                }
-            }
-            catch (FormatException e)
-            {
-                statusStrip1.Items[0].Text = e.Message;
-            }
-            catch (ArgumentNullException)
-            {
-            }
-        }
-
-        private void SmoothVertical(IList<DataGridViewCell> cells)
-        {
-            try
-            {
-                double x, x1, x2, y1, y2;
-                for (int start = 0, end = 0; end < cells.Count;)
-                {
-                    x1 = dataGrid.Rows[cells[start].RowIndex].HeaderCell.ValueAsDouble();
-                    y1 = cells[start].ValueAsDouble();
-                    for (end = start; end < cells.Count && cells[start].ColumnIndex == cells[end].ColumnIndex; ++end)
-                        continue;
-                    x2 = dataGrid.Rows[cells[end - 1].RowIndex].HeaderCell.ValueAsDouble();
-                    y2 = cells[end - 1].ValueAsDouble();
-                    for (; start < end; ++start)
-                    {
-                        x = dataGrid.Rows[cells[start].RowIndex].HeaderCell.ValueAsDouble();
-                        var value = Util.LinearInterpolation(x, x1, x2, y1, y2);
-                        cells[start].Value = value.ToString(Util.DoubleFormat);
-                    }
-                }
-            }
-            catch (FormatException e)
-            {
-                statusStrip1.Items[0].Text = e.Message;
-            }
-            catch (ArgumentNullException)
-            {
-            }
-        }
-
-        private List<DataGridViewCell> SortCellsByRow(DataGridViewSelectedCellCollection input)
-        {
-            var result = new List<DataGridViewCell>();
-            foreach (DataGridViewCell cell in input)
-            {
-                if (cell == null)
-                {
-                    continue;
-                }
-                result.Add(cell);
-            }
-            result.Sort(delegate (DataGridViewCell a, DataGridViewCell b)
-            {
-                if (a.RowIndex < b.RowIndex)
-                    return -1;
-                else if (a.RowIndex == b.RowIndex)
-                {
-                    if (a.ColumnIndex < b.ColumnIndex)
-                        return -1;
-                    else if (a.ColumnIndex == b.ColumnIndex)
-                        return 0;
-                }
-                return 1;
-            });
-            return result;
-        }
-
-        private static List<DataGridViewCell> SortCellsByColumn(DataGridViewSelectedCellCollection input)
-        {
-            var result = new List<DataGridViewCell>();
-            foreach (DataGridViewCell cell in input)
-            {
-                if (cell == null)
-                {
-                    continue;
-                }
-                result.Add(cell);
-            }
-            result.Sort(delegate (DataGridViewCell a, DataGridViewCell b)
-            {
-                if (a.ColumnIndex < b.ColumnIndex)
-                    return -1;
-                else if (a.ColumnIndex == b.ColumnIndex)
-                {
-                    if (a.RowIndex < b.RowIndex)
-                        return -1;
-                    else if (a.RowIndex == b.RowIndex)
-                        return 0;
-                }
-                return 1;
-            });
-            return result;
         }
     }
 }

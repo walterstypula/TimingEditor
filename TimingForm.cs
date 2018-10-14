@@ -30,8 +30,7 @@ namespace NSFW.TimingEditor
         public TimingForm()
         {
             InitializeComponent();
-            smoothComboBox.SelectedIndex = 0;
-            smoothButton.Enabled = false;
+            smoothButton.Enabled = true;
         }
 
         private void CommandHistory_UpdateButtons(object sender, EventArgs args)
@@ -129,6 +128,8 @@ namespace NSFW.TimingEditor
                 return;
             }
 
+            smoothButton.Enabled = !entry.Table.IsReadOnly;
+
             var title = $"Timing Editor: {entry.Description}";
             pasteButton.Enabled = entry.AllowPaste;
             statusStrip1.Items[0].Text = entry.StatusText;
@@ -156,7 +157,7 @@ namespace NSFW.TimingEditor
                     _changingTables = false;
                     foreach (int[] pair in selectedIndices)
                     {
-                        if (dataGrid.Rows.Count < pair[1] || dataGrid.Rows[pair[1]].Cells.Count < pair[0])
+                        if (dataGrid.Rows.Count <= pair[1] || dataGrid.Rows[pair[1]].Cells.Count <= pair[0])
                         {
                             continue;
                         }
@@ -178,10 +179,6 @@ namespace NSFW.TimingEditor
                 _changingTables = false;
             }
 
-            if (entry.Table.IsReadOnly)
-            {
-                smoothButton.Enabled = false;
-            }
             DisposeCellPopup();
         }
 
@@ -310,25 +307,6 @@ namespace NSFW.TimingEditor
             DrawSideViews(e.ColumnIndex, e.RowIndex);
         }
 
-        private void DataGrid_CellStateChanged(object sender, DataGridViewCellStateChangedEventArgs e)
-        {
-            if (!(tableList.SelectedItem is TableListEntry entry))
-            {
-                return;
-            }
-
-            var selectedCells = dataGrid.SelectedCells;
-
-            if (entry.Table.IsReadOnly)
-            {
-                smoothButton.Enabled = false;
-            }
-            else
-            {
-                smoothButton.Enabled = Smooth(selectedCells, false);
-            }
-        }
-
         private void DataGrid_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
         {
             SuspendLayout();
@@ -339,7 +317,9 @@ namespace NSFW.TimingEditor
                 _selectedRow = e.RowIndex;
 
                 if (!(tableList.SelectedItem is TableListEntry entry))
+                {
                     return;
+                }
 
                 Util.ColorTable(dataGrid, entry.Table, _selectedColumn, _selectedRow, null);
                 _inCellMouseEnter = false;
@@ -352,7 +332,9 @@ namespace NSFW.TimingEditor
         private void DataGrid_KeyDown(object sender, KeyEventArgs e)
         {
             if (!e.Control)
+            {
                 return;
+            }
 
             switch (e.KeyCode)
             {
@@ -369,7 +351,9 @@ namespace NSFW.TimingEditor
         private void DataGrid_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
             if (_editControlKeyDownSubscribed)
+            {
                 return;
+            }
 
             e.Control.KeyDown += DataGridEditControl_KeyDown;
             _editControlKeyDownSubscribed = true;
@@ -398,7 +382,9 @@ namespace NSFW.TimingEditor
             foreach (DataGridViewCell cell in dataGrid.SelectedCells)
             {
                 if (!double.TryParse(cell.Value.ToString(), out var value))
+                {
                     continue;
+                }
 
                 value += delta;
                 cell.Value = value.ToString();
@@ -415,7 +401,9 @@ namespace NSFW.TimingEditor
         private void RedoButton_Click(object sender, EventArgs e)
         {
             if (!(tableList.SelectedItem is TableListEntry entry))
+            {
                 return;
+            }
 
             CommandHistory.Instance.Redo();
 
@@ -441,7 +429,9 @@ namespace NSFW.TimingEditor
         private void UndoButton_Click(object sender, EventArgs e)
         {
             if (!(tableList.SelectedItem is TableListEntry entry))
+            {
                 return;
+            }
 
             CommandHistory.Instance.Undo();
 
@@ -458,7 +448,9 @@ namespace NSFW.TimingEditor
         private void DataGrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (dataGrid.SelectionMode == DataGridViewSelectionMode.ColumnHeaderSelect)
+            {
                 return;
+            }
 
             dataGrid.SelectionMode = DataGridViewSelectionMode.ColumnHeaderSelect;
             dataGrid.Columns[e.ColumnIndex].Selected = true;
@@ -467,37 +459,20 @@ namespace NSFW.TimingEditor
         private void DataGrid_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (dataGrid.SelectionMode == DataGridViewSelectionMode.RowHeaderSelect)
+            {
                 return;
+            }
 
             dataGrid.SelectionMode = DataGridViewSelectionMode.RowHeaderSelect;
             dataGrid.Rows[e.RowIndex].Selected = true;
         }
 
-        private void SmoothComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!(tableList.SelectedItem is TableListEntry entry))
-                return;
-
-            var selectedCells = dataGrid.SelectedCells;
-
-            if (entry.Table.IsReadOnly)
-            {
-                smoothButton.Enabled = false;
-                return;
-            }
-
-            if (Smooth(selectedCells, false))
-            {
-                smoothButton.Enabled = true;
-                return;
-            }
-            smoothButton.Enabled = false;
-        }
-
         private void DisposeCellPopup()
         {
             if (_cellPopup == null)
+            {
                 return;
+            }
 
             _cellPopup.Dispose();
             _cellPopup = null;
@@ -579,7 +554,9 @@ namespace NSFW.TimingEditor
         private void DataGrid_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
             if (!(tableList.SelectedItem is TableListEntry))
+            {
                 return;
+            }
 
             try
             {
@@ -592,10 +569,14 @@ namespace NSFW.TimingEditor
                              dataGrid[e.ColumnIndex, e.RowIndex].IsInEditMode == false;
 
                 if (!result)
+                {
                     return;
+                }
 
                 if (!(dataGrid[e.ColumnIndex, e.RowIndex] is CustomDataGridViewCell item))
+                {
                     return;
+                }
 
                 _cellPopup = new CellPopup();
                 _cellPopup.TextBox.Text = item.PointData.ToString();

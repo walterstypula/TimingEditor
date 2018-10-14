@@ -40,7 +40,6 @@
             this.logOverlayButton = new System.Windows.Forms.Button();
             this.redoButton = new System.Windows.Forms.Button();
             this.undoButton = new System.Windows.Forms.Button();
-            this.smoothComboBox = new System.Windows.Forms.ComboBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.tuningModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,7 +81,6 @@
             this.dataGrid.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellEnter);
             this.dataGrid.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellLeave);
             this.dataGrid.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellMouseEnter);
-            this.dataGrid.CellStateChanged += new System.Windows.Forms.DataGridViewCellStateChangedEventHandler(this.DataGrid_CellStateChanged);
             this.dataGrid.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellValueChanged);
             this.dataGrid.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DataGrid_ColumnHeaderMouseClick);
             this.dataGrid.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.DataGrid_EditingControlShowing);
@@ -124,7 +122,7 @@
             // 
             // pasteButton
             // 
-            this.pasteButton.Location = new System.Drawing.Point(74, 132);
+            this.pasteButton.Location = new System.Drawing.Point(72, 132);
             this.pasteButton.Name = "pasteButton";
             this.pasteButton.Size = new System.Drawing.Size(54, 23);
             this.pasteButton.TabIndex = 5;
@@ -151,7 +149,7 @@
             // 
             // smoothButton
             // 
-            this.smoothButton.Location = new System.Drawing.Point(12, 190);
+            this.smoothButton.Location = new System.Drawing.Point(12, 189);
             this.smoothButton.Name = "smoothButton";
             this.smoothButton.Size = new System.Drawing.Size(54, 23);
             this.smoothButton.TabIndex = 7;
@@ -161,9 +159,9 @@
             // 
             // logOverlayButton
             // 
-            this.logOverlayButton.Location = new System.Drawing.Point(134, 132);
+            this.logOverlayButton.Location = new System.Drawing.Point(132, 132);
             this.logOverlayButton.Name = "logOverlayButton";
-            this.logOverlayButton.Size = new System.Drawing.Size(78, 23);
+            this.logOverlayButton.Size = new System.Drawing.Size(80, 23);
             this.logOverlayButton.TabIndex = 8;
             this.logOverlayButton.Text = "Log &Overlay";
             this.logOverlayButton.UseVisualStyleBackColor = true;
@@ -188,20 +186,6 @@
             this.undoButton.Text = "&Undo";
             this.undoButton.UseVisualStyleBackColor = true;
             this.undoButton.Click += new System.EventHandler(this.UndoButton_Click);
-            // 
-            // smoothComboBox
-            // 
-            this.smoothComboBox.FormattingEnabled = true;
-            this.smoothComboBox.Items.AddRange(new object[] {
-            "Table",
-            "Horiz",
-            "Vert"});
-            this.smoothComboBox.Location = new System.Drawing.Point(72, 192);
-            this.smoothComboBox.Name = "smoothComboBox";
-            this.smoothComboBox.Size = new System.Drawing.Size(56, 21);
-            this.smoothComboBox.TabIndex = 11;
-            this.smoothComboBox.SelectedIndexChanged += new System.EventHandler(this.SmoothComboBox_SelectedIndexChanged);
-            this.smoothComboBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SmoothComboBox_MouseDown);
             // 
             // menuStrip1
             // 
@@ -239,9 +223,9 @@
             // AdditionalLogOverlay
             // 
             this.AdditionalLogOverlay.Enabled = false;
-            this.AdditionalLogOverlay.Location = new System.Drawing.Point(134, 161);
+            this.AdditionalLogOverlay.Location = new System.Drawing.Point(132, 161);
             this.AdditionalLogOverlay.Name = "AdditionalLogOverlay";
-            this.AdditionalLogOverlay.Size = new System.Drawing.Size(78, 23);
+            this.AdditionalLogOverlay.Size = new System.Drawing.Size(80, 23);
             this.AdditionalLogOverlay.TabIndex = 13;
             this.AdditionalLogOverlay.Text = "Addt’l Log";
             this.AdditionalLogOverlay.UseVisualStyleBackColor = true;
@@ -250,9 +234,9 @@
             // AutoTune
             // 
             this.AutoTune.Enabled = false;
-            this.AutoTune.Location = new System.Drawing.Point(134, 192);
+            this.AutoTune.Location = new System.Drawing.Point(132, 189);
             this.AutoTune.Name = "AutoTune";
-            this.AutoTune.Size = new System.Drawing.Size(78, 23);
+            this.AutoTune.Size = new System.Drawing.Size(80, 23);
             this.AutoTune.TabIndex = 14;
             this.AutoTune.Text = "AutoTune";
             this.AutoTune.UseVisualStyleBackColor = true;
@@ -266,7 +250,6 @@
             this.ClientSize = new System.Drawing.Size(747, 581);
             this.Controls.Add(this.AutoTune);
             this.Controls.Add(this.AdditionalLogOverlay);
-            this.Controls.Add(this.smoothComboBox);
             this.Controls.Add(this.undoButton);
             this.Controls.Add(this.redoButton);
             this.Controls.Add(this.logOverlayButton);
@@ -310,7 +293,6 @@
         private System.Windows.Forms.Button logOverlayButton;
         private System.Windows.Forms.Button redoButton;
         private System.Windows.Forms.Button undoButton;
-        private System.Windows.Forms.ComboBox smoothComboBox;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem tuningModeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem timingToolStripMenuItem;
