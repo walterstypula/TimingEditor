@@ -18,26 +18,26 @@ namespace NSFW.TimingEditor.Tables
         {
         }
 
-        public Table(bool is2dTable)
+        public Table(bool is2DTable)
         {
-            Is2DTable = Is2DTable;
+            Is2DTable = is2DTable;
         }
 
         public ITable Clone()
         {
-            Table result = new Table();
+            var result = new Table();
 
             result.IsPopulated = IsPopulated;
             result.IsReadOnly = IsReadOnly;
 
             result.cells = new List<double[]>();
-                       
-            for (int x = 0; x < cells.Count; x++)
+
+            for (var row = 0; row < cells.Count; row++)
             {
-                result.cells[x] = new double[cells[0].Length];
-                for (int y = 0; y < cells.Count; y++)
+                result.cells[row] = new double[cells[0].Length];
+                for (var column = 0; column < cells.Count; column++)
                 {
-                    result.cells[x][y] = cells[x][y];
+                    result.cells[row][column] = cells[row][column];
                 }
             }
 
@@ -65,21 +65,21 @@ namespace NSFW.TimingEditor.Tables
                 other.IsReadOnly = false;
             }
 
-            for (int i = 0; i < RowHeaders.Count; i++)
+            foreach (var header in RowHeaders)
             {
-                other.RowHeaders.Add(RowHeaders[i]);
+                other.RowHeaders.Add(header);
             }
 
-            for (int i = 0; i < ColumnHeaders.Count; i++)
+            foreach (var header in ColumnHeaders)
             {
-                other.ColumnHeaders.Add(ColumnHeaders[i]);
+                other.ColumnHeaders.Add(header);
             }
 
-            for (int y = 0; y < cells.Count; y++)
+            for (var row = 0; row < cells.Count; row++)
             {
-                for (int x = 0; x < cells[0].Length; x++)
+                for (var column = 0; column < cells[0].Length; column++)
                 {
-                    other.SetCell(x, y, cells[y][x]);
+                    other.SetCell(column, row, cells[row][column]);
                 }
             }
 
