@@ -12,8 +12,9 @@ namespace NSFW.TimingEditor.Tables
         private Operation operation;
 
         public bool IsReadOnly { get { return a.IsReadOnly || b.IsReadOnly || operation != Operation.Sum; } set { throw new InvalidOperationException(); } }
-        public IList<double> RowHeaders { get { return a.RowHeaders; } }
-        public IList<double> ColumnHeaders { get { return a.ColumnHeaders; } }
+        public List<double> RowHeaders { get { return a.RowHeaders; } }
+        public List<double> ColumnHeaders { get { return a.ColumnHeaders; } }
+        public string XAxisHeader { get; set; }
 
         public CombinedTable(ITable a, ITable b, Operation operation)
         {
@@ -45,7 +46,7 @@ namespace NSFW.TimingEditor.Tables
             }
         }
 
-        public bool Is2dTable { get; set; }
+        public bool Is2DTable { get; set; }
 
         public void Reset()
         {
@@ -72,16 +73,16 @@ namespace NSFW.TimingEditor.Tables
             }
         }
 
-        public void SetCell(int x, int y, double value)
+        public void SetCell(int columnNumber, int rowNumber, double value)
         {
-            double oldTotalValue = GetCell(x, y);
+            double oldTotalValue = GetCell(columnNumber, rowNumber);
             double delta = value - oldTotalValue;
 
             if (operation == Operation.Sum)
             {
-                double oldValue = a.GetCell(x, y);
+                double oldValue = a.GetCell(columnNumber, rowNumber);
                 double newValue = oldValue + delta;
-                a.SetCell(x, y, newValue);
+                a.SetCell(columnNumber, rowNumber, newValue);
                 return;
             }
 

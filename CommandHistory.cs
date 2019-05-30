@@ -3,38 +3,37 @@ using System.Collections.Generic;
 
 namespace NSFW.TimingEditor
 {
-
     public class EditCell : Command
     {
         private ITable table;
         private double oldValue;
         private double newValue;
-        private int x;
-        private int y;
+        private int columnNumber;
+        private int rowNumber;
 
         public ITable Table { get { return table; } }
-        public int Y { get { return y; } }
-        public int X { get { return x; } }
+        public int Y { get { return rowNumber; } }
+        public int X { get { return columnNumber; } }
         public double OldValue { get { return oldValue; } }
         public double NewValue { get { return newValue; } }
 
-        public EditCell(ITable table, int x, int y, double newValue)
+        public EditCell(ITable table, int columnNumber, int rowNumber, double newValue)
         {
             this.table = table;
-            this.x = x;
-            this.y = y;
+            this.columnNumber = columnNumber;
+            this.rowNumber = rowNumber;
             this.newValue = newValue;
-            oldValue = this.table.GetCell(this.x, this.y);
+            oldValue = this.table.GetCell(this.columnNumber, this.rowNumber);
         }
 
         public override void Execute()
         {
-            table.SetCell(x, y, newValue);
+            table.SetCell(columnNumber, rowNumber, newValue);
         }
 
         public override void Undo()
         {
-            table.SetCell(x, y, oldValue);
+            table.SetCell(columnNumber, rowNumber, oldValue);
         }
     }
 
@@ -155,8 +154,8 @@ namespace NSFW.TimingEditor
                 return null;
             }
 
-            int lastIndex = commands.Count - 1;
-            Command command = commands[lastIndex];
+            var lastIndex = commands.Count - 1;
+            var command = commands[lastIndex];
             commands.RemoveAt(lastIndex);
 
             command.Undo();
@@ -174,8 +173,8 @@ namespace NSFW.TimingEditor
                 return null;
             }
 
-            int lastIndex = undone.Count - 1;
-            Command command = undone[lastIndex];
+            var lastIndex = undone.Count - 1;
+            var command = undone[lastIndex];
             undone.RemoveAt(lastIndex);
 
             command.Execute();

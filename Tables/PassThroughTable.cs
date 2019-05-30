@@ -11,8 +11,9 @@ namespace NSFW.TimingEditor.Tables
         private bool populated;
 
         public bool IsReadOnly { get { return false; } set { throw new InvalidOperationException(); } }
-        public IList<double> RowHeaders { get { return advanceTable.RowHeaders; } }
-        public IList<double> ColumnHeaders { get { return advanceTable.ColumnHeaders; } }
+        public List<double> RowHeaders { get { return advanceTable.RowHeaders; } }
+        public List<double> ColumnHeaders { get { return advanceTable.ColumnHeaders; } }
+        public string XAxisHeader { get; set; }
 
         public PassThroughTable(ITable baseTable)
         {
@@ -20,7 +21,7 @@ namespace NSFW.TimingEditor.Tables
             advanceTable = new Table();
         }
 
-        public bool Is2dTable { get; set; }
+        public bool Is2DTable { get; set; }
 
         public ITable Clone()
         {
@@ -79,20 +80,20 @@ namespace NSFW.TimingEditor.Tables
             return advanceTable.GetCell(x, y);
         }
 
-        public void SetCell(int x, int y, double value)
+        public void SetCell(int columnNumber, int rowNumber, double value)
         {
             if (populated)
             {
-                double oldTotalValue = advanceTable.GetCell(x, y);
+                double oldTotalValue = advanceTable.GetCell(columnNumber, rowNumber);
                 double delta = value - oldTotalValue;
 
-                double oldBaseValue = baseTable.GetCell(x, y);
-                baseTable.SetCell(x, y, oldBaseValue - delta);
-                advanceTable.SetCell(x, y, oldTotalValue + delta);
+                double oldBaseValue = baseTable.GetCell(columnNumber, rowNumber);
+                baseTable.SetCell(columnNumber, rowNumber, oldBaseValue - delta);
+                advanceTable.SetCell(columnNumber, rowNumber, oldTotalValue + delta);
             }
             else
             {
-                advanceTable.SetCell(x, y, value);
+                advanceTable.SetCell(columnNumber, rowNumber, value);
             }
         }
     }
