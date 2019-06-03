@@ -704,7 +704,7 @@ namespace NSFW.TimingEditor
             foreach (var op in overlayPoints)
             {
                 var allCurrentAfrData = op.ValueData[WideBandHeaders.AEM_UEGO_9600];
-                var validAutoTuneAfrData = allCurrentAfrData.SkipOutliers(k: 1.4, selector: result => result.Value);
+                var validAutoTuneAfrData = allCurrentAfrData;// allCurrentAfrData.SkipOutliers(k: 3, selector: result => result.Value);
 
                 if (validAutoTuneAfrData.Count() <= 1)
                 {
@@ -722,7 +722,10 @@ namespace NSFW.TimingEditor
                     afrErrorList.Add(CalcAfrError(currentAfr.Value, targetAfr));
                 }
 
-                var targetCell = dataGrid[op.XAxisIndex, op.YAxisIndex] as CustomDataGridViewCell;
+                var targetCell = dataGrid[op.RowIndex, op.ColumnIndex] as CustomDataGridViewCell;
+
+                afrErrorList = afrErrorList.SkipOutliers(k: 1, selector: result => result).ToList();
+                
                 var avgAfrError = afrErrorList.Average();
 
                 var currentValue = double.Parse(targetCell.Value.ToString());

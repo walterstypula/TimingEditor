@@ -10,10 +10,10 @@ namespace NSFW.TimingEditor
 {
     internal class OverlayHeaderInfo
     {
-        internal string XAxisHeader;
-        internal string YAxisHeader;
-        internal int XAxisHeaderIndex = -1;
-        internal int YAxisHeaderIndex = -1;
+        internal string RowHeader;
+        internal string ColumnHeader;
+        internal int RowHeaderIndex = -1;
+        internal int ColumnHeaderIndex = -1;
         internal readonly Dictionary<string, int> HeaderIndices = new Dictionary<string, int>();
         private readonly string[] _headers;
 
@@ -34,7 +34,7 @@ namespace NSFW.TimingEditor
         internal OverlayHeaderInfo(string logHeaderLine, string xAxisHeader, string yAxisHeader)
             : this(logHeaderLine)
         {
-            SetAxisHeaders(xAxisHeader, yAxisHeader);
+            SetHeaders(xAxisHeader, yAxisHeader);
 
             for (var i = 0; i < _headers.Length; i++)
             {
@@ -53,18 +53,18 @@ namespace NSFW.TimingEditor
             }
         }
 
-        internal void SetAxisHeaders(string xAxisHeader, string yAxisHeader)
+        internal void SetHeaders(string rowHeader, string columnHeader)
         {
-            XAxisHeaderIndex = _headers.IndexOf(xAxisHeader);
-            YAxisHeaderIndex = _headers.IndexOf(yAxisHeader);
+            RowHeaderIndex = _headers.IndexOf(rowHeader);
+            ColumnHeaderIndex = _headers.IndexOf(columnHeader);
 
-            if (YAxisHeaderIndex == -1 || XAxisHeaderIndex == -1)
+            if (ColumnHeaderIndex == -1 || RowHeaderIndex == -1)
             {
-                throw new ApplicationException($"Either {XAxisHeader} or {YAxisHeader} headers not found in log file.");
+                throw new ApplicationException($"Either {RowHeader} or {ColumnHeader} headers not found in log file.");
             }
 
-            XAxisHeader = xAxisHeader;
-            YAxisHeader = yAxisHeader;
+            RowHeader = rowHeader;
+            ColumnHeader = columnHeader;
         }
 
         internal void AddHeaderInfo(params string[] displayDataHeaders)
@@ -87,7 +87,7 @@ namespace NSFW.TimingEditor
             }
         }
 
-        public bool SetXAvisHeader(string regEx)
+        public bool SetRowHeader(string regEx)
         {
             if (regEx == null)
                 return false;
@@ -97,7 +97,7 @@ namespace NSFW.TimingEditor
             if (result == null)
                 return false;
 
-            SetAxisHeaders(result, YAxisHeader);
+            SetHeaders(result, ColumnHeader);
             return true;
         }
     }
@@ -112,9 +112,9 @@ namespace NSFW.TimingEditor
             _overlayHeaders = new OverlayHeaderInfo(logHeaderLine, xAxisHeader, yAxisHeader);
         }
 
-        public bool SetXAvisHeader(string regEx)
+        public bool SetRowHeader(string regEx)
         {
-            return _overlayHeaders.SetXAvisHeader(regEx);
+            return _overlayHeaders.SetRowHeader(regEx);
         }
 
         public List<OverlayPoint> ProcessOverlay(IEnumerable<double> columnHeaderValues, IEnumerable<double> rowHeaderValues)
@@ -137,8 +137,8 @@ namespace NSFW.TimingEditor
                 }
 
                 var lineArray = line.Split(',');
-                var xAxisValue = lineArray[_overlayHeaders.XAxisHeaderIndex];
-                var yAxisValue = lineArray[_overlayHeaders.YAxisHeaderIndex];
+                var xAxisValue = lineArray[_overlayHeaders.RowHeaderIndex];
+                var yAxisValue = lineArray[_overlayHeaders.ColumnHeaderIndex];
 
                 var xIndex = columnHeaderValues.ClosestValueIndex(xAxisValue);
                 var yIndex = rowHeaderValues.ClosestValueIndex(yAxisValue);
@@ -149,7 +149,7 @@ namespace NSFW.TimingEditor
                 var load = lineArray[_overlayHeaders.EngineLoadIndex];
                 var mafv = lineArray[_overlayHeaders.MafvIndex];
 
-                var point = list.FirstOrDefault(p => p.XAxisIndex == xIndex && p.YAxisIndex == yIndex)
+                var point = list.FirstOrDefault(p => p.RowIndex == xIndex && p.ColumnIndex == yIndex)
                                 ?? new OverlayPoint(xIndex, yIndex, xAxisValueRef, yAxisValueRef);
 
                 if (!list.Contains(point))
@@ -180,11 +180,11 @@ namespace NSFW.TimingEditor
 
     public class OverlayPoint
     {
-        public int XAxisIndex { get; }
-        public int YAxisIndex { get; }
+        public int RowIndex { get; }
+        public int ColumnIndex { get; }
 
-        public double XAxisValue { get; }
-        public double YAxisValue { get; }
+        public double RowValue { get; }
+        public double ColumnValue { get; }
 
         public readonly Dictionary<string, List<string>> LogData = new Dictionary<string, List<string>>();
 
@@ -192,10 +192,10 @@ namespace NSFW.TimingEditor
 
         public OverlayPoint(int xAxisIndex, int yAxisIndex, double xAvisValue, double yAxisValue)
         {
-            XAxisIndex = xAxisIndex;
-            YAxisIndex = yAxisIndex;
-            XAxisValue = xAvisValue;
-            YAxisValue = yAxisValue;
+            RowIndex = xAxisIndex;
+            ColumnIndex = yAxisIndex;
+            RowValue = xAvisValue;
+            ColumnValue = yAxisValue;
         }
 
         public void AddData(string header, double rpm, double load, double mafv, double value)

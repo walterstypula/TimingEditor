@@ -49,8 +49,8 @@ namespace NSFW.TimingEditor
 
         private static void Smooth(DataGridViewSelectedCellCollection selectedCells)
         {
-            var decay = 0.25;
-            var range = 1;
+            var decay = 0.15;
+            var range = 100;
 
             SmoothHorizontally(selectedCells, range, decay);
             SmoothVertically(selectedCells, range, decay);

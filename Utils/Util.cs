@@ -282,7 +282,7 @@ namespace NSFW.TimingEditor.Utils
             table.GetMinMax(out var min, out var max);
             var middle = (max + min) / 2;
 
-            overlay?.SetXAvisHeader(table.XAxisHeader);
+            overlay?.SetRowHeader(table.XAxisHeader);
 
             var cellHit = overlay?.ProcessOverlay(table.ColumnHeaders, table.RowHeaders);
 
@@ -294,7 +294,7 @@ namespace NSFW.TimingEditor.Utils
 
                     if (cellHit != null)
                     {
-                        var highlight = cellHit.FirstOrDefault(p => p.XAxisIndex == x && p.YAxisIndex == y);
+                        var highlight = cellHit.FirstOrDefault(p => p.RowIndex == x && p.ColumnIndex == y);
 
                         if (highlight != null)
                         {
