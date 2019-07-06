@@ -387,7 +387,7 @@ namespace NSFW.TimingEditor.Utils
             }
 
             var delta = newWidth - oldWidth;
-            form.Width += delta;
+            dataGridView.Width += delta;
 
             var oldHeight = dataGridView.Height;
 
@@ -406,24 +406,9 @@ namespace NSFW.TimingEditor.Utils
             }
 
             delta = newHeight - oldHeight;
-            //dataGridView.Height += delta;
-            form.Height += delta;
+            dataGridView.Height += delta;
+            //form.Height += delta;
         }
-
-        /*        public static void Highlight(DataGridView grid, int selectedColumn, int selectedRow)
-                {
-                    for (int row = 0; row < grid.Rows.Count; row++)
-                    {
-                        for (int column = 0; column < grid.Columns.Count; column++)
-                        {
-                            DataGridViewCellStyle style =
-                                (row == selectedRow || column == selectedColumn) ?
-                                SelectedStyle : DefaultStyle;
-                            grid.Rows[row].Cells[column].Style = style;
-                        }
-                    }
-                }
-        */
 
         internal static List<DataGridViewCell> ToList(this DataGridViewSelectedCellCollection collection)
         {

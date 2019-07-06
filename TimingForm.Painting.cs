@@ -2,13 +2,35 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Linq.Expressions;
 
 namespace NSFW.TimingEditor
 {
     public partial class TimingForm
     {
+        private (int, int) GetGridSize()
+        {
+            if (dataGrid.Rows.Count == 0 || dataGrid.Rows[0].Cells.Count == 0)
+            {
+                return (0, 0);
+            }
+
+            var width = 0;
+            var height = 0;
+
+            width = dataGrid.PreferredSize.Width - dataGrid.Rows[0].Cells[1].Size.Width + 5;
+            height = dataGrid.PreferredSize.Height - dataGrid.Rows[0].Cells[1].Size.Width + 5;
+
+            return (width, height);
+        }
+
         private void DrawSideViews(int activeColumn, int activeRow)
         {
+            var (width, height) = GetGridSize();
+            horizontalPanel.Width = width;
+            verticalPanel.Height = height;
+            horizontalPanel.Left = dataGrid.RowHeadersWidth;
+
             var horizontalPanelBitmap = new Bitmap(horizontalPanel.Width, horizontalPanel.Height);
             var horizontalPanelBackBuffer = Graphics.FromImage(horizontalPanelBitmap);
             //Graphics horizontalPanelBackBuffer = horizontalPanel.CreateGraphics();

@@ -41,6 +41,8 @@ namespace NSFW.TimingEditor
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            dataGrid.Scroll += DataGrid_Scroll;
+
             CommandHistory.Instance.UpdateCommandHistoryButtons += CommandHistory_UpdateButtons;
             CommandHistory_UpdateButtons(null, null);
 
@@ -117,6 +119,11 @@ namespace NSFW.TimingEditor
             }
 
             tableList.SelectedIndex = 0;
+        }
+
+        private void DataGrid_Scroll(object sender, ScrollEventArgs e)
+        {
+            flowLayoutPanel1.HorizontalScroll.Value = e.NewValue;
         }
 
         private void TableList_SelectedIndexChanged(object sender, EventArgs e)
@@ -736,6 +743,11 @@ namespace NSFW.TimingEditor
         private static double CalcAfrError(double currentAfr, double targetAfr)
         {
             return (currentAfr - targetAfr) / targetAfr * 100;
+        }
+
+        private void FlowLayoutPanel1_Scroll(object sender, ScrollEventArgs e)
+        {
+            dataGrid.HorizontalScrollingOffset = e.NewValue;
         }
     }
 }
