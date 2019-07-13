@@ -35,8 +35,8 @@ namespace NSFW.TimingEditor
 
         private void CommandHistory_UpdateButtons(object sender, EventArgs args)
         {
-            undoButton.Enabled = CommandHistory.Instance.CanUndo;
-            redoButton.Enabled = CommandHistory.Instance.CanRedo;
+            undoToolStripMenuItem.Enabled = CommandHistory.Instance.CanUndo;
+            redoToolStripMenuItem.Enabled = CommandHistory.Instance.CanRedo;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -138,7 +138,7 @@ namespace NSFW.TimingEditor
             smoothButton.Enabled = !entry.Table.IsReadOnly;
 
             var title = $"Timing Editor: {entry.Description}";
-            pasteButton.Enabled = entry.AllowPaste;
+            pasteToolStripMenuItem.Enabled = entry.AllowPaste;
             statusStrip1.Items[0].Text = entry.StatusText;
 
             Text = title;
@@ -189,7 +189,7 @@ namespace NSFW.TimingEditor
             DisposeCellPopup();
         }
 
-        private void CopyButton_Click(object sender, EventArgs e)
+        private void CopyClick(object sender, EventArgs e)
         {
             DisposeCellPopup();
             if (!(tableList.SelectedItem is TableListEntry entry))
@@ -212,7 +212,7 @@ namespace NSFW.TimingEditor
             Clipboard.SetData(DataFormats.Text, text);
         }
 
-        private void PasteButton_Click(object sender, EventArgs e)
+        private void PasteClick(object sender, EventArgs e)
         {
             DisposeCellPopup();
             if (!(tableList.SelectedItem is TableListEntry entry))
@@ -346,11 +346,11 @@ namespace NSFW.TimingEditor
             switch (e.KeyCode)
             {
                 case Keys.Z:
-                    UndoButton_Click(this, e);
+                    UndoClick(this, e);
                     break;
 
                 case Keys.Y:
-                    RedoButton_Click(this, e);
+                    RedoClick(this, e);
                     break;
             }
         }
@@ -405,7 +405,7 @@ namespace NSFW.TimingEditor
             return o != null && double.TryParse(o.ToString(), out value);
         }
 
-        private void RedoButton_Click(object sender, EventArgs e)
+        private void RedoClick(object sender, EventArgs e)
         {
             if (!(tableList.SelectedItem is TableListEntry entry))
             {
@@ -433,7 +433,7 @@ namespace NSFW.TimingEditor
             DrawSideViews(_selectedColumn, _selectedRow);
         }
 
-        private void UndoButton_Click(object sender, EventArgs e)
+        private void UndoClick(object sender, EventArgs e)
         {
             if (!(tableList.SelectedItem is TableListEntry entry))
             {
@@ -732,7 +732,7 @@ namespace NSFW.TimingEditor
                 var targetCell = dataGrid[op.RowIndex, op.ColumnIndex] as CustomDataGridViewCell;
 
                 afrErrorList = afrErrorList.SkipOutliers(k: 1, selector: result => result).ToList();
-                
+
                 var avgAfrError = afrErrorList.Average();
 
                 var currentValue = double.Parse(targetCell.Value.ToString());
@@ -751,6 +751,48 @@ namespace NSFW.TimingEditor
         private void FlowLayoutPanel1_Scroll(object sender, ScrollEventArgs e)
         {
             dataGrid.HorizontalScrollingOffset = e.NewValue;
+        }
+
+        private void TuningModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tableList.Items.Clear();
+            _isMaf = !_isMaf;
+
+            if (_isMaf)
+            {
+                tableList.Items.AddRange(_tableListEntries.Where(p => p.TuningMode == TuningMode.Maf || p.TuningMode == TuningMode.Both).ToArray());
+                tuningModeToolStripMenuItem.Text = "Timing Tuning";
+
+            }
+            else
+            {
+                tableList.Items.AddRange(_tableListEntries.Where(p => p.TuningMode == TuningMode.Timing || p.TuningMode == TuningMode.Both).ToArray());
+                tuningModeToolStripMenuItem.Text = "MAF Tuning";
+            }
+
+            tableList.SelectedIndex = 0;
+            AutoTune.Visible = _isMaf;
+            AutoTune.Enabled = _isMaf;
+        }
+
+        private void CopyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CopyClick(sender, e);
+        }
+
+        private void PasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PasteClick(sender, e);
+        }
+
+        private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UndoClick(sender, e);
+        }
+
+        private void RedoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RedoClick(sender, e);
         }
     }
 }
