@@ -77,9 +77,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CellPopup.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Contracts\Command.cs" />
     <Compile Include="CommandHistory.cs" />
     <Compile Include="Contracts\ITable.cs" />

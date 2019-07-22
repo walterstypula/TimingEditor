@@ -11,7 +11,6 @@ namespace NSFW.TimingEditor
     {
         private void SmoothButton_Click(object sender, EventArgs e)
         {
-            DisposeCellPopup();
             Smooth(dataGrid.SelectedCells);
         }
 

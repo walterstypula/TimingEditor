@@ -5,7 +5,6 @@ using NSFW.TimingEditor.Tables;
 using NSFW.TimingEditor.Utils;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,7 +23,6 @@ namespace NSFW.TimingEditor
         private bool _editControlKeyDownSubscribed;
         private Overlay _overlay;
         private bool _isMaf;
-        private CellPopup _cellPopup;
         private readonly List<TableListEntry> _tableListEntries = new List<TableListEntry>();
 
         public TimingForm()
@@ -128,8 +126,6 @@ namespace NSFW.TimingEditor
 
         private void TableList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DisposeCellPopup();
-
             if (!(tableList.SelectedItem is TableListEntry entry))
             {
                 return;
@@ -185,13 +181,10 @@ namespace NSFW.TimingEditor
                 dataGrid.Columns.Clear();
                 _changingTables = false;
             }
-
-            DisposeCellPopup();
         }
 
         private void CopyClick(object sender, EventArgs e)
         {
-            DisposeCellPopup();
             if (!(tableList.SelectedItem is TableListEntry entry))
             {
                 return;
@@ -214,7 +207,6 @@ namespace NSFW.TimingEditor
 
         private void PasteClick(object sender, EventArgs e)
         {
-            DisposeCellPopup();
             if (!(tableList.SelectedItem is TableListEntry entry))
             {
                 return;
@@ -429,7 +421,7 @@ namespace NSFW.TimingEditor
             }
 
             _changingTables = false;
-            DisposeCellPopup();
+
             DrawSideViews(_selectedColumn, _selectedRow);
         }
 
@@ -448,7 +440,7 @@ namespace NSFW.TimingEditor
             Util.ColorTable(dataGrid, entry.Table, _selectedColumn, _selectedRow, _overlay);
 
             _changingTables = false;
-            DisposeCellPopup();
+
             DrawSideViews(_selectedColumn, _selectedRow);
         }
 
@@ -474,17 +466,6 @@ namespace NSFW.TimingEditor
             dataGrid.Rows[e.RowIndex].Selected = true;
         }
 
-        private void DisposeCellPopup()
-        {
-            if (_cellPopup == null)
-            {
-                return;
-            }
-
-            _cellPopup.Dispose();
-            _cellPopup = null;
-        }
-
         private void LogOverlayButton_Click(object sender, EventArgs e)
         {
             if (!(tableList.SelectedItem is TableListEntry entry))
@@ -492,7 +473,6 @@ namespace NSFW.TimingEditor
                 return;
             }
 
-            DisposeCellPopup();
             dataGrid.ClearSelection();
 
             if (!entry.Table.IsPopulated)
@@ -567,8 +547,6 @@ namespace NSFW.TimingEditor
 
             try
             {
-                DisposeCellPopup();
-
                 var result = e.ColumnIndex >= 0 && e.RowIndex >= 0 &&
                              dataGrid.GetCellCount(DataGridViewElementStates.Selected) == 1 &&
                              dataGrid.SelectedCells[0].RowIndex == e.RowIndex &&
@@ -585,12 +563,9 @@ namespace NSFW.TimingEditor
                     return;
                 }
 
-                _cellPopup = new CellPopup();
-                _cellPopup.TextBox.Text = item.PointData.ToString();
+                rtbOverlayCellData.Text = item.PointData.ToString();
 
                 var r = dataGrid.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, false);
-                _cellPopup.Location = dataGrid.PointToScreen(new Point(r.Location.X + r.Width, r.Location.Y - _cellPopup.Height));
-                _cellPopup.Show(dataGrid);
             }
             catch (Exception ex)
             {
@@ -600,52 +575,42 @@ namespace NSFW.TimingEditor
 
         private void DataGrid_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            DisposeCellPopup();
         }
 
         private void DataGrid_Leave(object sender, EventArgs e)
         {
-            DisposeCellPopup();
         }
 
         private void TimingForm_MouseDown(object sender, MouseEventArgs e)
         {
-            DisposeCellPopup();
         }
 
         private void TimingForm_ResizeBegin(object sender, EventArgs e)
         {
-            DisposeCellPopup();
         }
 
         private void TimingForm_LocationChanged(object sender, EventArgs e)
         {
-            DisposeCellPopup();
         }
 
         private void TableList_MouseDown(object sender, MouseEventArgs e)
         {
-            DisposeCellPopup();
         }
 
         private void HorizontalPanel_MouseDown(object sender, MouseEventArgs e)
         {
-            DisposeCellPopup();
         }
 
         private void VerticalPanel_MouseDown(object sender, MouseEventArgs e)
         {
-            DisposeCellPopup();
         }
 
         private void SmoothComboBox_MouseDown(object sender, MouseEventArgs e)
         {
-            DisposeCellPopup();
         }
 
         private void DataGrid_CellLeave(object sender, DataGridViewCellEventArgs e)
         {
-            DisposeCellPopup();
         }
 
         private void TimingToolStripMenuItem_Click(object sender, EventArgs e)
@@ -675,7 +640,6 @@ namespace NSFW.TimingEditor
                 return;
             }
 
-            DisposeCellPopup();
             dataGrid.ClearSelection();
 
             var file = new OpenFileDialog();
@@ -762,7 +726,6 @@ namespace NSFW.TimingEditor
             {
                 tableList.Items.AddRange(_tableListEntries.Where(p => p.TuningMode == TuningMode.Maf || p.TuningMode == TuningMode.Both).ToArray());
                 tuningModeToolStripMenuItem.Text = "Timing Tuning";
-
             }
             else
             {
@@ -793,6 +756,14 @@ namespace NSFW.TimingEditor
         private void RedoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             RedoClick(sender, e);
+        }
+
+        private void LogOverlayToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var ofd = new OpenFileDialog();
+
+            ofd.ShowDialog();
+            //var form = new LogOverlayForm();
         }
     }
 }

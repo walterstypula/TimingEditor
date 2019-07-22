@@ -42,15 +42,28 @@
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.logOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AdditionalLogOverlay = new System.Windows.Forms.Button();
             this.AutoTune = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.tlpOverlay = new System.Windows.Forms.TableLayoutPanel();
+            this.xAxisLabel = new System.Windows.Forms.Label();
+            this.yAxisComboBox = new System.Windows.Forms.ComboBox();
+            this.yAxisLabel = new System.Windows.Forms.Label();
+            this.lbOverlayHeaders = new System.Windows.Forms.CheckedListBox();
+            this.xAxisComboBox = new System.Windows.Forms.ComboBox();
+            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.okButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.rtbOverlayCellData = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            this.tlpOverlay.SuspendLayout();
+            this.tableLayoutPanel4.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -83,7 +96,7 @@
             this.dataGrid.Margin = new System.Windows.Forms.Padding(4);
             this.dataGrid.Name = "dataGrid";
             this.dataGrid.RowHeadersWidth = 51;
-            this.dataGrid.Size = new System.Drawing.Size(933, 450);
+            this.dataGrid.Size = new System.Drawing.Size(653, 450);
             this.dataGrid.TabIndex = 1;
             this.dataGrid.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.DataGrid_CellBeginEdit);
             this.dataGrid.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellEnter);
@@ -169,7 +182,8 @@
             this.copyToolStripMenuItem,
             this.pasteToolStripMenuItem,
             this.undoToolStripMenuItem,
-            this.redoToolStripMenuItem});
+            this.redoToolStripMenuItem,
+            this.logOverlayToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
@@ -212,6 +226,13 @@
             this.redoToolStripMenuItem.Text = "Redo";
             this.redoToolStripMenuItem.Click += new System.EventHandler(this.RedoToolStripMenuItem_Click);
             // 
+            // logOverlayToolStripMenuItem
+            // 
+            this.logOverlayToolStripMenuItem.Name = "logOverlayToolStripMenuItem";
+            this.logOverlayToolStripMenuItem.Size = new System.Drawing.Size(102, 24);
+            this.logOverlayToolStripMenuItem.Text = "Log Overlay";
+            this.logOverlayToolStripMenuItem.Click += new System.EventHandler(this.LogOverlayToolStripMenuItem_Click);
+            // 
             // AdditionalLogOverlay
             // 
             this.AdditionalLogOverlay.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -241,13 +262,16 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 240F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 941F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70.24442F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 29.75558F));
+            this.tableLayoutPanel1.Controls.Add(this.tlpOverlay, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.dataGrid, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.verticalPanel, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.rtbOverlayCellData, 2, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 28);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
@@ -257,6 +281,122 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1181, 766);
             this.tableLayoutPanel1.TabIndex = 15;
+            // 
+            // tlpOverlay
+            // 
+            this.tlpOverlay.ColumnCount = 2;
+            this.tlpOverlay.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.tlpOverlay.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tlpOverlay.Controls.Add(this.xAxisLabel, 0, 0);
+            this.tlpOverlay.Controls.Add(this.yAxisComboBox, 1, 1);
+            this.tlpOverlay.Controls.Add(this.yAxisLabel, 0, 1);
+            this.tlpOverlay.Controls.Add(this.lbOverlayHeaders, 0, 2);
+            this.tlpOverlay.Controls.Add(this.xAxisComboBox, 1, 0);
+            this.tlpOverlay.Controls.Add(this.tableLayoutPanel4, 0, 3);
+            this.tlpOverlay.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpOverlay.Location = new System.Drawing.Point(904, 3);
+            this.tlpOverlay.Name = "tlpOverlay";
+            this.tlpOverlay.RowCount = 4;
+            this.tlpOverlay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
+            this.tlpOverlay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
+            this.tlpOverlay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 200F));
+            this.tlpOverlay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.tlpOverlay.Size = new System.Drawing.Size(274, 302);
+            this.tlpOverlay.TabIndex = 17;
+            // 
+            // xAxisLabel
+            // 
+            this.xAxisLabel.AutoSize = true;
+            this.xAxisLabel.Location = new System.Drawing.Point(4, 0);
+            this.xAxisLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.xAxisLabel.Name = "xAxisLabel";
+            this.xAxisLabel.Size = new System.Drawing.Size(51, 17);
+            this.xAxisLabel.TabIndex = 3;
+            this.xAxisLabel.Text = "X-Axis:";
+            // 
+            // yAxisComboBox
+            // 
+            this.yAxisComboBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.yAxisComboBox.FormattingEnabled = true;
+            this.yAxisComboBox.Location = new System.Drawing.Point(64, 36);
+            this.yAxisComboBox.Margin = new System.Windows.Forms.Padding(4);
+            this.yAxisComboBox.Name = "yAxisComboBox";
+            this.yAxisComboBox.Size = new System.Drawing.Size(206, 24);
+            this.yAxisComboBox.TabIndex = 6;
+            // 
+            // yAxisLabel
+            // 
+            this.yAxisLabel.AutoSize = true;
+            this.yAxisLabel.Location = new System.Drawing.Point(4, 32);
+            this.yAxisLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.yAxisLabel.Name = "yAxisLabel";
+            this.yAxisLabel.Size = new System.Drawing.Size(51, 17);
+            this.yAxisLabel.TabIndex = 4;
+            this.yAxisLabel.Text = "Y-Axis:";
+            // 
+            // lbOverlayHeaders
+            // 
+            this.lbOverlayHeaders.CheckOnClick = true;
+            this.tlpOverlay.SetColumnSpan(this.lbOverlayHeaders, 2);
+            this.lbOverlayHeaders.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbOverlayHeaders.FormattingEnabled = true;
+            this.lbOverlayHeaders.Location = new System.Drawing.Point(4, 68);
+            this.lbOverlayHeaders.Margin = new System.Windows.Forms.Padding(4);
+            this.lbOverlayHeaders.Name = "lbOverlayHeaders";
+            this.lbOverlayHeaders.Size = new System.Drawing.Size(266, 192);
+            this.lbOverlayHeaders.Sorted = true;
+            this.lbOverlayHeaders.TabIndex = 0;
+            // 
+            // xAxisComboBox
+            // 
+            this.xAxisComboBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.xAxisComboBox.FormattingEnabled = true;
+            this.xAxisComboBox.Location = new System.Drawing.Point(64, 4);
+            this.xAxisComboBox.Margin = new System.Windows.Forms.Padding(4);
+            this.xAxisComboBox.Name = "xAxisComboBox";
+            this.xAxisComboBox.Size = new System.Drawing.Size(206, 24);
+            this.xAxisComboBox.TabIndex = 5;
+            // 
+            // tableLayoutPanel4
+            // 
+            this.tableLayoutPanel4.ColumnCount = 2;
+            this.tlpOverlay.SetColumnSpan(this.tableLayoutPanel4, 2);
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.Controls.Add(this.okButton, 0, 0);
+            this.tableLayoutPanel4.Controls.Add(this.cancelButton, 1, 0);
+            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 264);
+            this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+            this.tableLayoutPanel4.RowCount = 1;
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(274, 38);
+            this.tableLayoutPanel4.TabIndex = 10;
+            // 
+            // okButton
+            // 
+            this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.okButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.okButton.Location = new System.Drawing.Point(4, 4);
+            this.okButton.Margin = new System.Windows.Forms.Padding(4);
+            this.okButton.Name = "okButton";
+            this.okButton.Size = new System.Drawing.Size(129, 30);
+            this.okButton.TabIndex = 9;
+            this.okButton.Text = "OK";
+            this.okButton.UseVisualStyleBackColor = true;
+            // 
+            // cancelButton
+            // 
+            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.cancelButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cancelButton.Location = new System.Drawing.Point(141, 4);
+            this.cancelButton.Margin = new System.Windows.Forms.Padding(4);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(129, 30);
+            this.cancelButton.TabIndex = 8;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanel2
             // 
@@ -290,9 +430,19 @@
             this.flowLayoutPanel1.Location = new System.Drawing.Point(244, 4);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(933, 300);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(653, 300);
             this.flowLayoutPanel1.TabIndex = 0;
             this.flowLayoutPanel1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.FlowLayoutPanel1_Scroll);
+            // 
+            // rtbOverlayCellData
+            // 
+            this.rtbOverlayCellData.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtbOverlayCellData.EnableAutoDragDrop = true;
+            this.rtbOverlayCellData.Location = new System.Drawing.Point(904, 311);
+            this.rtbOverlayCellData.Name = "rtbOverlayCellData";
+            this.rtbOverlayCellData.Size = new System.Drawing.Size(274, 452);
+            this.rtbOverlayCellData.TabIndex = 7;
+            this.rtbOverlayCellData.Text = "";
             // 
             // TimingForm
             // 
@@ -317,6 +467,9 @@
             this.menuStrip1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            this.tlpOverlay.ResumeLayout(false);
+            this.tlpOverlay.PerformLayout();
+            this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -345,6 +498,17 @@
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem logOverlayToolStripMenuItem;
+        private System.Windows.Forms.TableLayoutPanel tlpOverlay;
+        private System.Windows.Forms.Label xAxisLabel;
+        private System.Windows.Forms.ComboBox yAxisComboBox;
+        private System.Windows.Forms.Label yAxisLabel;
+        private System.Windows.Forms.CheckedListBox lbOverlayHeaders;
+        private System.Windows.Forms.ComboBox xAxisComboBox;
+        private System.Windows.Forms.RichTextBox rtbOverlayCellData;
+        private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        private System.Windows.Forms.Button okButton;
     }
 }
 
