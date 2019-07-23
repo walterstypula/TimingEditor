@@ -35,6 +35,25 @@ namespace NSFW.TimingEditor
             : this(logHeaderLine)
         {
             SetHeaders(xAxisHeader, yAxisHeader);
+        }
+
+        internal void SetHeaders(string rowHeader, string columnHeader)
+        {
+            if (rowHeader == null || columnHeader == null)
+            {
+                return;
+            }
+
+            RowHeaderIndex = _headers.IndexOf(rowHeader);
+            ColumnHeaderIndex = _headers.IndexOf(columnHeader);
+
+            if (ColumnHeaderIndex == -1 || RowHeaderIndex == -1)
+            {
+                throw new ApplicationException($"Either {RowHeader} or {ColumnHeader} headers not found in log file.");
+            }
+
+            RowHeader = rowHeader;
+            ColumnHeader = columnHeader;
 
             for (var i = 0; i < _headers.Length; i++)
             {
@@ -53,22 +72,10 @@ namespace NSFW.TimingEditor
             }
         }
 
-        internal void SetHeaders(string rowHeader, string columnHeader)
-        {
-            RowHeaderIndex = _headers.IndexOf(rowHeader);
-            ColumnHeaderIndex = _headers.IndexOf(columnHeader);
-
-            if (ColumnHeaderIndex == -1 || RowHeaderIndex == -1)
-            {
-                throw new ApplicationException($"Either {RowHeader} or {ColumnHeader} headers not found in log file.");
-            }
-
-            RowHeader = rowHeader;
-            ColumnHeader = columnHeader;
-        }
-
         internal void AddHeaderInfo(params string[] displayDataHeaders)
         {
+            HeaderIndices.Clear();
+
             foreach (var header in displayDataHeaders)
             {
                 if (HeaderIndices.ContainsKey(header))
@@ -106,6 +113,21 @@ namespace NSFW.TimingEditor
     {
         private readonly OverlayHeaderInfo _overlayHeaders;
         private readonly StringBuilder _logData = new StringBuilder();
+
+        public Overlay(string logHeaderLine)
+        {
+            _overlayHeaders = new OverlayHeaderInfo(logHeaderLine);
+        }
+
+        public void SetHeaders(string xAxisHeader, string yAxisHeader)
+        {
+            if (xAxisHeader == null || yAxisHeader == null)
+            {
+                return;
+            }
+
+            _overlayHeaders.SetHeaders(xAxisHeader, yAxisHeader);
+        }
 
         public Overlay(string logHeaderLine, string xAxisHeader, string yAxisHeader)
         {

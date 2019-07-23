@@ -35,7 +35,6 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.smoothButton = new System.Windows.Forms.Button();
-            this.logOverlayButton = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.tuningModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,9 +51,6 @@
             this.yAxisLabel = new System.Windows.Forms.Label();
             this.lbOverlayHeaders = new System.Windows.Forms.CheckedListBox();
             this.xAxisComboBox = new System.Windows.Forms.ComboBox();
-            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-            this.okButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.rtbOverlayCellData = new System.Windows.Forms.RichTextBox();
@@ -63,7 +59,6 @@
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tlpOverlay.SuspendLayout();
-            this.tableLayoutPanel4.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -106,6 +101,7 @@
             this.dataGrid.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DataGrid_ColumnHeaderMouseClick);
             this.dataGrid.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.DataGrid_EditingControlShowing);
             this.dataGrid.RowHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DataGrid_RowHeaderMouseClick);
+            this.dataGrid.SelectionChanged += new System.EventHandler(this.DataGrid_SelectionChanged);
             this.dataGrid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DataGrid_KeyDown);
             this.dataGrid.Leave += new System.EventHandler(this.DataGrid_Leave);
             // 
@@ -161,18 +157,6 @@
             this.smoothButton.Text = "&Smooth";
             this.smoothButton.UseVisualStyleBackColor = true;
             this.smoothButton.Click += new System.EventHandler(this.SmoothButton_Click);
-            // 
-            // logOverlayButton
-            // 
-            this.logOverlayButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.logOverlayButton.Location = new System.Drawing.Point(120, 228);
-            this.logOverlayButton.Margin = new System.Windows.Forms.Padding(4);
-            this.logOverlayButton.Name = "logOverlayButton";
-            this.logOverlayButton.Size = new System.Drawing.Size(108, 30);
-            this.logOverlayButton.TabIndex = 8;
-            this.logOverlayButton.Text = "Log &Overlay";
-            this.logOverlayButton.UseVisualStyleBackColor = true;
-            this.logOverlayButton.Click += new System.EventHandler(this.LogOverlayButton_Click);
             // 
             // menuStrip1
             // 
@@ -250,7 +234,7 @@
             // 
             this.AutoTune.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AutoTune.Enabled = false;
-            this.AutoTune.Location = new System.Drawing.Point(4, 266);
+            this.AutoTune.Location = new System.Drawing.Point(120, 228);
             this.AutoTune.Margin = new System.Windows.Forms.Padding(4);
             this.AutoTune.Name = "AutoTune";
             this.AutoTune.Size = new System.Drawing.Size(108, 30);
@@ -292,15 +276,13 @@
             this.tlpOverlay.Controls.Add(this.yAxisLabel, 0, 1);
             this.tlpOverlay.Controls.Add(this.lbOverlayHeaders, 0, 2);
             this.tlpOverlay.Controls.Add(this.xAxisComboBox, 1, 0);
-            this.tlpOverlay.Controls.Add(this.tableLayoutPanel4, 0, 3);
             this.tlpOverlay.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpOverlay.Location = new System.Drawing.Point(904, 3);
             this.tlpOverlay.Name = "tlpOverlay";
-            this.tlpOverlay.RowCount = 4;
+            this.tlpOverlay.RowCount = 3;
             this.tlpOverlay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.tlpOverlay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.tlpOverlay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 200F));
-            this.tlpOverlay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
             this.tlpOverlay.Size = new System.Drawing.Size(274, 302);
             this.tlpOverlay.TabIndex = 17;
             // 
@@ -323,6 +305,7 @@
             this.yAxisComboBox.Name = "yAxisComboBox";
             this.yAxisComboBox.Size = new System.Drawing.Size(206, 24);
             this.yAxisComboBox.TabIndex = 6;
+            this.yAxisComboBox.SelectedIndexChanged += new System.EventHandler(this.YAxisComboBox_SelectedIndexChanged);
             // 
             // yAxisLabel
             // 
@@ -343,9 +326,10 @@
             this.lbOverlayHeaders.Location = new System.Drawing.Point(4, 68);
             this.lbOverlayHeaders.Margin = new System.Windows.Forms.Padding(4);
             this.lbOverlayHeaders.Name = "lbOverlayHeaders";
-            this.lbOverlayHeaders.Size = new System.Drawing.Size(266, 192);
+            this.lbOverlayHeaders.Size = new System.Drawing.Size(266, 230);
             this.lbOverlayHeaders.Sorted = true;
             this.lbOverlayHeaders.TabIndex = 0;
+            this.lbOverlayHeaders.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.LbOverlayHeaders_ItemCheck);
             // 
             // xAxisComboBox
             // 
@@ -356,47 +340,7 @@
             this.xAxisComboBox.Name = "xAxisComboBox";
             this.xAxisComboBox.Size = new System.Drawing.Size(206, 24);
             this.xAxisComboBox.TabIndex = 5;
-            // 
-            // tableLayoutPanel4
-            // 
-            this.tableLayoutPanel4.ColumnCount = 2;
-            this.tlpOverlay.SetColumnSpan(this.tableLayoutPanel4, 2);
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.Controls.Add(this.okButton, 0, 0);
-            this.tableLayoutPanel4.Controls.Add(this.cancelButton, 1, 0);
-            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 264);
-            this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-            this.tableLayoutPanel4.RowCount = 1;
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(274, 38);
-            this.tableLayoutPanel4.TabIndex = 10;
-            // 
-            // okButton
-            // 
-            this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.okButton.Location = new System.Drawing.Point(4, 4);
-            this.okButton.Margin = new System.Windows.Forms.Padding(4);
-            this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(129, 30);
-            this.okButton.TabIndex = 9;
-            this.okButton.Text = "OK";
-            this.okButton.UseVisualStyleBackColor = true;
-            // 
-            // cancelButton
-            // 
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cancelButton.Location = new System.Drawing.Point(141, 4);
-            this.cancelButton.Margin = new System.Windows.Forms.Padding(4);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(129, 30);
-            this.cancelButton.TabIndex = 8;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
+            this.xAxisComboBox.SelectedIndexChanged += new System.EventHandler(this.XAxisComboBox_SelectedIndexChanged);
             // 
             // tableLayoutPanel2
             // 
@@ -406,7 +350,6 @@
             this.tableLayoutPanel2.Controls.Add(this.tableList, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.AutoTune, 1, 1);
             this.tableLayoutPanel2.Controls.Add(this.AdditionalLogOverlay, 1, 2);
-            this.tableLayoutPanel2.Controls.Add(this.logOverlayButton, 1, 1);
             this.tableLayoutPanel2.Controls.Add(this.smoothButton, 0, 1);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(4, 4);
@@ -438,6 +381,7 @@
             // 
             this.rtbOverlayCellData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rtbOverlayCellData.EnableAutoDragDrop = true;
+            this.rtbOverlayCellData.Font = new System.Drawing.Font("Consolas", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtbOverlayCellData.Location = new System.Drawing.Point(904, 311);
             this.rtbOverlayCellData.Name = "rtbOverlayCellData";
             this.rtbOverlayCellData.Size = new System.Drawing.Size(274, 452);
@@ -469,7 +413,6 @@
             this.tableLayoutPanel1.PerformLayout();
             this.tlpOverlay.ResumeLayout(false);
             this.tlpOverlay.PerformLayout();
-            this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -486,7 +429,6 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.Button smoothButton;
-        private System.Windows.Forms.Button logOverlayButton;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem tuningModeToolStripMenuItem;
         private System.Windows.Forms.Button AdditionalLogOverlay;
@@ -506,9 +448,6 @@
         private System.Windows.Forms.CheckedListBox lbOverlayHeaders;
         private System.Windows.Forms.ComboBox xAxisComboBox;
         private System.Windows.Forms.RichTextBox rtbOverlayCellData;
-        private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
-        private System.Windows.Forms.Button okButton;
     }
 }
 

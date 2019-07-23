@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace NSFW.TimingEditor
@@ -466,21 +467,86 @@ namespace NSFW.TimingEditor
             dataGrid.Rows[e.RowIndex].Selected = true;
         }
 
+        private void InitializeForm(string[] headers)
+        {
+            if (headers.Length <= 0)
+            {
+                return;
+            }
+
+            lbOverlayHeaders.Items.Clear();
+            xAxisComboBox.Items.Clear();
+            yAxisComboBox.Items.Clear();
+
+            string engLoad = null;
+            string engSpeed = null;
+            foreach (var s in headers)
+            {
+                lbOverlayHeaders.Items.Add(s);
+                xAxisComboBox.Items.Add(s);
+                yAxisComboBox.Items.Add(s);
+
+                if (_isMaf && Regex.IsMatch(s, RequiredLogHeaders.EngineLoadRegEx, RegexOptions.IgnoreCase))
+                {
+                    engLoad = s;
+                }
+                else if (Regex.IsMatch(s, RequiredLogHeaders.MafvRegEx, RegexOptions.IgnoreCase))
+                {
+                    engLoad = s;
+                }
+                else if (Regex.IsMatch(s, RequiredLogHeaders.RpmRegEx, RegexOptions.IgnoreCase))
+                {
+                    engSpeed = s;
+                }
+            }
+
+            //xAxisComboBox.SelectedIndex = 0;
+            //yAxisComboBox.SelectedIndex = 0;
+
+            if (engLoad != null)
+            {
+                xAxisComboBox.SelectedItem = engLoad;
+            }
+
+            if (engSpeed != null)
+            {
+                yAxisComboBox.SelectedItem = engSpeed;
+            }
+        }
+
+        public string[] SelectedLogParameters
+        {
+            get
+            {
+                if (lbOverlayHeaders.CheckedItems.Count <= 0)
+                {
+                    return new string[0];
+                }
+
+                int i = 0;
+                string[] s = new string[lbOverlayHeaders.CheckedItems.Count];
+
+                foreach (object o in lbOverlayHeaders.CheckedItems)
+                {
+                    s[i++] = o.ToString();
+                }
+
+                return s;
+            }
+        }
+
+        public string XAxis
+        {
+            get { return xAxisComboBox.SelectedItem?.ToString(); }
+        }
+
+        public string YAxis
+        {
+            get { return yAxisComboBox.SelectedItem?.ToString(); }
+        }
+
         private void LogOverlayButton_Click(object sender, EventArgs e)
         {
-            if (!(tableList.SelectedItem is TableListEntry entry))
-            {
-                return;
-            }
-
-            dataGrid.ClearSelection();
-
-            if (!entry.Table.IsPopulated)
-            {
-                MessageBox.Show(@"Error: Please populate table first");
-                return;
-            }
-
             var file = new OpenFileDialog();
 
             if (file.ShowDialog() != DialogResult.OK)
@@ -499,34 +565,15 @@ namespace NSFW.TimingEditor
                 var header = line.Split(',')
                                  .Select(s => s.Trim())
                                  .ToArray();
+                _overlay = new Overlay(line);
+                InitializeForm(header);
 
-                var logOverlay = new LogOverlayForm(header, _isMaf);
-
-                if (DialogResult.OK != logOverlay.ShowDialog(this))
-                {
-                    return;
-                }
-
-                var selected = logOverlay.SelectedLogParameters;
-                if (selected.Length == 0)
-                {
-                    MessageBox.Show(@"Error: No parameters were selected");
-                }
-
-                var cursor = Cursor.Current;
-                Cursor.Current = Cursors.WaitCursor;
                 _changingTables = true;
 
                 var content = overlayStream.ReadToEnd();
-                _overlay = new Overlay(line, logOverlay.XAxis, logOverlay.YAxis);
-                _overlay.AddHeaderInfo(logOverlay.SelectedLogParameters);
-                _overlay.AddLog(content);
 
-                Util.ColorTable(dataGrid, entry.Table, _selectedColumn, _selectedRow, _overlay);
-                dataGrid.Refresh();
-                _changingTables = false;
-                Cursor.Current = cursor;
-                AdditionalLogOverlay.Enabled = true;
+                //_overlay.AddHeaderInfo(logOverlay.SelectedLogParameters);
+                _overlay.AddLog(content);
             }
             catch (Exception ex)
             {
@@ -540,37 +587,37 @@ namespace NSFW.TimingEditor
 
         private void DataGrid_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
-            if (!(tableList.SelectedItem is TableListEntry))
-            {
-                return;
-            }
+            //if (!(tableList.SelectedItem is TableListEntry))
+            //{
+            //    return;
+            //}
 
-            try
-            {
-                var result = e.ColumnIndex >= 0 && e.RowIndex >= 0 &&
-                             dataGrid.GetCellCount(DataGridViewElementStates.Selected) == 1 &&
-                             dataGrid.SelectedCells[0].RowIndex == e.RowIndex &&
-                             dataGrid.SelectedCells[0].ColumnIndex == e.ColumnIndex &&
-                             dataGrid[e.ColumnIndex, e.RowIndex].IsInEditMode == false;
+            //try
+            //{
+            //    var result = e.ColumnIndex >= 0 && e.RowIndex >= 0 &&
+            //                 dataGrid.GetCellCount(DataGridViewElementStates.Selected) == 1 &&
+            //                 dataGrid.SelectedCells[0].RowIndex == e.RowIndex &&
+            //                 dataGrid.SelectedCells[0].ColumnIndex == e.ColumnIndex &&
+            //                 dataGrid[e.ColumnIndex, e.RowIndex].IsInEditMode == false;
 
-                if (!result)
-                {
-                    return;
-                }
+            //    if (!result)
+            //    {
+            //        return;
+            //    }
 
-                if (!(dataGrid[e.ColumnIndex, e.RowIndex] is CustomDataGridViewCell item))
-                {
-                    return;
-                }
+            //    if (!(dataGrid[e.ColumnIndex, e.RowIndex] is CustomDataGridViewCell item))
+            //    {
+            //        return;
+            //    }
 
-                rtbOverlayCellData.Text = item.PointData.ToString();
+            //    rtbOverlayCellData.Text = item.PointData.ToString();
 
-                var r = dataGrid.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, false);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error: {ex}");
-            }
+            //    var r = dataGrid.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, false);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show($"Error: {ex}");
+            //}
         }
 
         private void DataGrid_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
@@ -760,10 +807,94 @@ namespace NSFW.TimingEditor
 
         private void LogOverlayToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var ofd = new OpenFileDialog();
+            LogOverlayButton_Click(sender, e);
+        }
 
-            ofd.ShowDialog();
-            //var form = new LogOverlayForm();
+        private void LbOverlayHeaders_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            var clb = sender as CheckedListBox;
+
+            var items = SelectedLogParameters.ToList();
+            var newItem = clb.Items[e.Index] as string;
+
+            if (e.NewValue == CheckState.Checked && !items.Contains(newItem))
+            {
+                items.Add(newItem);
+            }
+            else if (e.NewValue == CheckState.Unchecked && items.Contains(newItem))
+            {
+                items.Remove(newItem);
+            }
+
+            _overlay.AddHeaderInfo(items.ToArray());
+
+            if (!(tableList.SelectedItem is TableListEntry entry))
+            {
+                return;
+            }
+
+            if (!entry.Table.IsPopulated)
+            {
+                MessageBox.Show(@"Error: Please populate table first");
+                return;
+            }
+
+            Util.ColorTable(dataGrid, entry.Table, _selectedColumn, _selectedRow, _overlay);
+            
+            //dataGrid.Refresh();
+            _changingTables = false;
+            AdditionalLogOverlay.Enabled = true;
+
+            if (dataGrid.SelectedCells.Count != 1 || !(dataGrid.SelectedCells[0] is CustomDataGridViewCell item))
+            {
+                return;
+            }
+
+            rtbOverlayCellData.Text = item.PointData.ToString();
+        }
+
+        private void XAxisComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _overlay.SetHeaders(XAxis, YAxis);
+
+            if (!(tableList.SelectedItem is TableListEntry entry))
+            {
+                return;
+            }
+
+            if (!entry.Table.IsPopulated)
+            {
+                MessageBox.Show(@"Error: Please populate table first");
+                return;
+            }
+            Util.ColorTable(dataGrid, entry.Table, _selectedColumn, _selectedRow, _overlay);
+        }
+
+        private void YAxisComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _overlay.SetHeaders(XAxis, YAxis);
+
+            if (!(tableList.SelectedItem is TableListEntry entry))
+            {
+                return;
+            }
+
+            if (!entry.Table.IsPopulated)
+            {
+                MessageBox.Show(@"Error: Please populate table first");
+                return;
+            }
+            Util.ColorTable(dataGrid, entry.Table, _selectedColumn, _selectedRow, _overlay);
+        }
+
+        private void DataGrid_SelectionChanged(object sender, EventArgs e)
+        {
+            if(dataGrid.SelectedCells.Count != 1 || !(dataGrid.SelectedCells[0] is CustomDataGridViewCell item))
+            {
+                return;
+            }           
+
+            rtbOverlayCellData.Text = item.PointData.ToString();
         }
     }
 }
