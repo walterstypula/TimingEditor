@@ -29,7 +29,7 @@ namespace NSFW.TimingEditor
         public TimingForm()
         {
             InitializeComponent();
-            smoothButton.Enabled = true;
+            smoothToolStripMenuItem.Enabled = true;
         }
 
         private void CommandHistory_UpdateButtons(object sender, EventArgs args)
@@ -132,7 +132,7 @@ namespace NSFW.TimingEditor
                 return;
             }
 
-            smoothButton.Enabled = !entry.Table.IsReadOnly;
+            smoothToolStripMenuItem.Enabled = !entry.Table.IsReadOnly;
 
             var title = $"Timing Editor: {entry.Description}";
             pasteToolStripMenuItem.Enabled = entry.AllowPaste;
@@ -577,102 +577,8 @@ namespace NSFW.TimingEditor
             finally
             {
                 overlayStream.Close();
+                addLogToolStripMenuItem.Visible = true;
             }
-        }
-
-        private void DataGrid_CellEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            //if (!(tableList.SelectedItem is TableListEntry))
-            //{
-            //    return;
-            //}
-
-            //try
-            //{
-            //    var result = e.ColumnIndex >= 0 && e.RowIndex >= 0 &&
-            //                 dataGrid.GetCellCount(DataGridViewElementStates.Selected) == 1 &&
-            //                 dataGrid.SelectedCells[0].RowIndex == e.RowIndex &&
-            //                 dataGrid.SelectedCells[0].ColumnIndex == e.ColumnIndex &&
-            //                 dataGrid[e.ColumnIndex, e.RowIndex].IsInEditMode == false;
-
-            //    if (!result)
-            //    {
-            //        return;
-            //    }
-
-            //    if (!(dataGrid[e.ColumnIndex, e.RowIndex] is CustomDataGridViewCell item))
-            //    {
-            //        return;
-            //    }
-
-            //    rtbOverlayCellData.Text = item.PointData.ToString();
-
-            //    var r = dataGrid.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, false);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"Error: {ex}");
-            //}
-        }
-
-        private void DataGrid_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
-        {
-        }
-
-        private void DataGrid_Leave(object sender, EventArgs e)
-        {
-        }
-
-        private void TimingForm_MouseDown(object sender, MouseEventArgs e)
-        {
-        }
-
-        private void TimingForm_ResizeBegin(object sender, EventArgs e)
-        {
-        }
-
-        private void TimingForm_LocationChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void TableList_MouseDown(object sender, MouseEventArgs e)
-        {
-        }
-
-        private void HorizontalPanel_MouseDown(object sender, MouseEventArgs e)
-        {
-        }
-
-        private void VerticalPanel_MouseDown(object sender, MouseEventArgs e)
-        {
-        }
-
-        private void SmoothComboBox_MouseDown(object sender, MouseEventArgs e)
-        {
-        }
-
-        private void DataGrid_CellLeave(object sender, DataGridViewCellEventArgs e)
-        {
-        }
-
-        private void TimingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            tableList.Items.Clear();
-            tableList.Items.AddRange(_tableListEntries.Where(p => p.TuningMode == TuningMode.Timing || p.TuningMode == TuningMode.Both).ToArray());
-            tableList.SelectedIndex = 0;
-            _isMaf = false;
-            AutoTune.Visible = _isMaf;
-            AutoTune.Enabled = _isMaf;
-        }
-
-        private void MAFToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            tableList.Items.Clear();
-            tableList.Items.AddRange(_tableListEntries.Where(p => p.TuningMode == TuningMode.Maf || p.TuningMode == TuningMode.Both).ToArray());
-            tableList.SelectedIndex = 0;
-            _isMaf = true;
-            AutoTune.Visible = _isMaf;
-            AutoTune.Enabled = _isMaf;
         }
 
         private void AdditionalLogOverlay_Click(object sender, EventArgs e)
@@ -776,8 +682,8 @@ namespace NSFW.TimingEditor
             }
 
             tableList.SelectedIndex = 0;
-            AutoTune.Visible = _isMaf;
-            AutoTune.Enabled = _isMaf;
+            autoTuneToolStripMenuItem.Visible = _isMaf;
+            autoTuneToolStripMenuItem.Enabled = _isMaf;
         }
 
         private void CopyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -838,7 +744,6 @@ namespace NSFW.TimingEditor
 
             //dataGrid.Refresh();
             _changingTables = false;
-            AdditionalLogOverlay.Enabled = true;
 
             if (dataGrid.SelectedCells.Count != 1 || !(dataGrid.SelectedCells[0] is CustomDataGridViewCell item))
             {
@@ -890,6 +795,21 @@ namespace NSFW.TimingEditor
             }
 
             rtbOverlayCellData.Text = item.PointData.ToString();
+        }
+
+        private void AddLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AdditionalLogOverlay_Click(sender, e);
+        }
+
+        private void AutoTuneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AutoTune_Click(sender, e);
+        }
+
+        private void SmoothToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SmoothButton_Click(sender, e);
         }
     }
 }

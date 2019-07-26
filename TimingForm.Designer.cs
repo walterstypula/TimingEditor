@@ -34,7 +34,6 @@
             this.verticalPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.smoothButton = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.tuningModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -42,8 +41,8 @@
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.AdditionalLogOverlay = new System.Windows.Forms.Button();
-            this.AutoTune = new System.Windows.Forms.Button();
+            this.addLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.autoTuneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tlpOverlay = new System.Windows.Forms.TableLayoutPanel();
             this.xAxisLabel = new System.Windows.Forms.Label();
@@ -54,6 +53,7 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.rtbOverlayCellData = new System.Windows.Forms.RichTextBox();
+            this.smoothToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -71,10 +71,9 @@
             this.tableList.IntegralHeight = false;
             this.tableList.Location = new System.Drawing.Point(3, 3);
             this.tableList.Name = "tableList";
-            this.tableList.Size = new System.Drawing.Size(168, 176);
+            this.tableList.Size = new System.Drawing.Size(168, 238);
             this.tableList.TabIndex = 0;
             this.tableList.SelectedIndexChanged += new System.EventHandler(this.TableList_SelectedIndexChanged);
-            this.tableList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TableList_MouseDown);
             // 
             // dataGrid
             // 
@@ -90,9 +89,6 @@
             this.dataGrid.RowHeadersWidth = 51;
             this.dataGrid.Size = new System.Drawing.Size(489, 366);
             this.dataGrid.TabIndex = 1;
-            this.dataGrid.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.DataGrid_CellBeginEdit);
-            this.dataGrid.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellEnter);
-            this.dataGrid.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellLeave);
             this.dataGrid.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellMouseEnter);
             this.dataGrid.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellValueChanged);
             this.dataGrid.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DataGrid_ColumnHeaderMouseClick);
@@ -100,7 +96,6 @@
             this.dataGrid.RowHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DataGrid_RowHeaderMouseClick);
             this.dataGrid.SelectionChanged += new System.EventHandler(this.DataGrid_SelectionChanged);
             this.dataGrid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DataGrid_KeyDown);
-            this.dataGrid.Leave += new System.EventHandler(this.DataGrid_Leave);
             // 
             // horizontalPanel
             // 
@@ -109,7 +104,6 @@
             this.horizontalPanel.Name = "horizontalPanel";
             this.horizontalPanel.Size = new System.Drawing.Size(163, 220);
             this.horizontalPanel.TabIndex = 2;
-            this.horizontalPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.HorizontalPanel_MouseDown);
             // 
             // verticalPanel
             // 
@@ -120,7 +114,6 @@
             this.verticalPanel.Name = "verticalPanel";
             this.verticalPanel.Size = new System.Drawing.Size(174, 171);
             this.verticalPanel.TabIndex = 3;
-            this.verticalPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.VerticalPanel_MouseDown);
             // 
             // statusStrip1
             // 
@@ -140,17 +133,6 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(59, 17);
             this.toolStripStatusLabel1.Text = "statusText";
             // 
-            // smoothButton
-            // 
-            this.smoothButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.smoothButton.Location = new System.Drawing.Point(3, 185);
-            this.smoothButton.Name = "smoothButton";
-            this.smoothButton.Size = new System.Drawing.Size(81, 25);
-            this.smoothButton.TabIndex = 7;
-            this.smoothButton.Text = "&Smooth";
-            this.smoothButton.UseVisualStyleBackColor = true;
-            this.smoothButton.Click += new System.EventHandler(this.SmoothButton_Click);
-            // 
             // menuStrip1
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -160,7 +142,10 @@
             this.pasteToolStripMenuItem,
             this.undoToolStripMenuItem,
             this.redoToolStripMenuItem,
-            this.logOverlayToolStripMenuItem});
+            this.logOverlayToolStripMenuItem,
+            this.addLogToolStripMenuItem,
+            this.autoTuneToolStripMenuItem,
+            this.smoothToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(886, 24);
@@ -209,30 +194,20 @@
             this.logOverlayToolStripMenuItem.Text = "Log Overlay";
             this.logOverlayToolStripMenuItem.Click += new System.EventHandler(this.LogOverlayToolStripMenuItem_Click);
             // 
-            // AdditionalLogOverlay
+            // addLogToolStripMenuItem
             // 
-            this.AdditionalLogOverlay.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AdditionalLogOverlay.Enabled = false;
-            this.AdditionalLogOverlay.Location = new System.Drawing.Point(90, 216);
-            this.AdditionalLogOverlay.Name = "AdditionalLogOverlay";
-            this.AdditionalLogOverlay.Size = new System.Drawing.Size(81, 25);
-            this.AdditionalLogOverlay.TabIndex = 13;
-            this.AdditionalLogOverlay.Text = "Addt’l Log";
-            this.AdditionalLogOverlay.UseVisualStyleBackColor = true;
-            this.AdditionalLogOverlay.Click += new System.EventHandler(this.AdditionalLogOverlay_Click);
+            this.addLogToolStripMenuItem.Name = "addLogToolStripMenuItem";
+            this.addLogToolStripMenuItem.Size = new System.Drawing.Size(64, 20);
+            this.addLogToolStripMenuItem.Text = "Add Log";
+            this.addLogToolStripMenuItem.Visible = false;
+            this.addLogToolStripMenuItem.Click += new System.EventHandler(this.AddLogToolStripMenuItem_Click);
             // 
-            // AutoTune
+            // autoTuneToolStripMenuItem
             // 
-            this.AutoTune.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AutoTune.Enabled = false;
-            this.AutoTune.Location = new System.Drawing.Point(90, 185);
-            this.AutoTune.Name = "AutoTune";
-            this.AutoTune.Size = new System.Drawing.Size(81, 25);
-            this.AutoTune.TabIndex = 14;
-            this.AutoTune.Text = "AutoTune";
-            this.AutoTune.UseVisualStyleBackColor = true;
-            this.AutoTune.Visible = false;
-            this.AutoTune.Click += new System.EventHandler(this.AutoTune_Click);
+            this.autoTuneToolStripMenuItem.Name = "autoTuneToolStripMenuItem";
+            this.autoTuneToolStripMenuItem.Size = new System.Drawing.Size(72, 20);
+            this.autoTuneToolStripMenuItem.Text = "AutoTune";
+            this.autoTuneToolStripMenuItem.Click += new System.EventHandler(this.AutoTuneToolStripMenuItem_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -333,16 +308,11 @@
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.Controls.Add(this.tableList, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.AutoTune, 1, 1);
-            this.tableLayoutPanel2.Controls.Add(this.AdditionalLogOverlay, 1, 2);
-            this.tableLayoutPanel2.Controls.Add(this.smoothButton, 0, 1);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 3;
+            this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(174, 244);
             this.tableLayoutPanel2.TabIndex = 16;
             // 
@@ -372,6 +342,13 @@
             this.rtbOverlayCellData.TabIndex = 7;
             this.rtbOverlayCellData.Text = "";
             // 
+            // smoothToolStripMenuItem
+            // 
+            this.smoothToolStripMenuItem.Name = "smoothToolStripMenuItem";
+            this.smoothToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.smoothToolStripMenuItem.Text = "Smooth";
+            this.smoothToolStripMenuItem.Click += new System.EventHandler(this.SmoothToolStripMenuItem_Click);
+            // 
             // TimingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -384,9 +361,6 @@
             this.Name = "TimingForm";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.MainForm_Load);
-            this.ResizeBegin += new System.EventHandler(this.TimingForm_ResizeBegin);
-            this.LocationChanged += new System.EventHandler(this.TimingForm_LocationChanged);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TimingForm_MouseDown);
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
@@ -411,11 +385,8 @@
         private System.Windows.Forms.Panel verticalPanel;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.Button smoothButton;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem tuningModeToolStripMenuItem;
-        private System.Windows.Forms.Button AdditionalLogOverlay;
-        private System.Windows.Forms.Button AutoTune;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
@@ -431,6 +402,9 @@
         private System.Windows.Forms.CheckedListBox lbOverlayHeaders;
         private System.Windows.Forms.ComboBox xAxisComboBox;
         private System.Windows.Forms.RichTextBox rtbOverlayCellData;
+        private System.Windows.Forms.ToolStripMenuItem addLogToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem autoTuneToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem smoothToolStripMenuItem;
     }
 }
 
