@@ -282,8 +282,6 @@ namespace NSFW.TimingEditor.Utils
             table.GetMinMax(out var min, out var max);
             var middle = (max + min) / 2;
 
-            overlay?.SetRowHeader(table.XAxisHeader);
-
             var cellHit = overlay?.ProcessOverlay(table.ColumnHeaders, table.RowHeaders);
 
             for (var x = 0; x < dataGridView.Columns.Count; x++)

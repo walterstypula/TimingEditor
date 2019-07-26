@@ -486,11 +486,11 @@ namespace NSFW.TimingEditor
                 xAxisComboBox.Items.Add(s);
                 yAxisComboBox.Items.Add(s);
 
-                if (_isMaf && Regex.IsMatch(s, RequiredLogHeaders.EngineLoadRegEx, RegexOptions.IgnoreCase))
+                if (_isMaf && Regex.IsMatch(s, RequiredLogHeaders.MafvRegEx, RegexOptions.IgnoreCase))
                 {
                     engLoad = s;
                 }
-                else if (Regex.IsMatch(s, RequiredLogHeaders.MafvRegEx, RegexOptions.IgnoreCase))
+                else if (Regex.IsMatch(s, RequiredLogHeaders.EngineLoadRegEx, RegexOptions.IgnoreCase))
                 {
                     engLoad = s;
                 }
@@ -499,9 +499,6 @@ namespace NSFW.TimingEditor
                     engSpeed = s;
                 }
             }
-
-            //xAxisComboBox.SelectedIndex = 0;
-            //yAxisComboBox.SelectedIndex = 0;
 
             if (engLoad != null)
             {
@@ -571,8 +568,6 @@ namespace NSFW.TimingEditor
                 _changingTables = true;
 
                 var content = overlayStream.ReadToEnd();
-
-                //_overlay.AddHeaderInfo(logOverlay.SelectedLogParameters);
                 _overlay.AddLog(content);
             }
             catch (Exception ex)
@@ -840,7 +835,7 @@ namespace NSFW.TimingEditor
             }
 
             Util.ColorTable(dataGrid, entry.Table, _selectedColumn, _selectedRow, _overlay);
-            
+
             //dataGrid.Refresh();
             _changingTables = false;
             AdditionalLogOverlay.Enabled = true;
@@ -889,10 +884,10 @@ namespace NSFW.TimingEditor
 
         private void DataGrid_SelectionChanged(object sender, EventArgs e)
         {
-            if(dataGrid.SelectedCells.Count != 1 || !(dataGrid.SelectedCells[0] is CustomDataGridViewCell item))
+            if (dataGrid.SelectedCells.Count != 1 || !(dataGrid.SelectedCells[0] is CustomDataGridViewCell item))
             {
                 return;
-            }           
+            }
 
             rtbOverlayCellData.Text = item.PointData.ToString();
         }

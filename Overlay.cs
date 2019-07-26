@@ -29,6 +29,22 @@ namespace NSFW.TimingEditor
             }
 
             _headers = logHeaderLine.Split(',');
+
+            for (var i = 0; i < _headers.Length; i++)
+            {
+                if (Regex.IsMatch(_headers[i], RequiredLogHeaders.EngineLoadRegEx, RegexOptions.IgnoreCase))
+                {
+                    EngineLoadIndex = i;
+                }
+                else if (Regex.IsMatch(_headers[i], RequiredLogHeaders.RpmRegEx, RegexOptions.IgnoreCase))
+                {
+                    RpmIndex = i;
+                }
+                else if (Regex.IsMatch(_headers[i], RequiredLogHeaders.MafvRegEx, RegexOptions.IgnoreCase))
+                {
+                    MafvIndex = i;
+                }
+            }
         }
 
         internal OverlayHeaderInfo(string logHeaderLine, string xAxisHeader, string yAxisHeader)
@@ -54,22 +70,6 @@ namespace NSFW.TimingEditor
 
             RowHeader = rowHeader;
             ColumnHeader = columnHeader;
-
-            for (var i = 0; i < _headers.Length; i++)
-            {
-                if (Regex.IsMatch(_headers[i], RequiredLogHeaders.EngineLoadRegEx, RegexOptions.IgnoreCase))
-                {
-                    EngineLoadIndex = i;
-                }
-                else if (Regex.IsMatch(_headers[i], RequiredLogHeaders.RpmRegEx, RegexOptions.IgnoreCase))
-                {
-                    RpmIndex = i;
-                }
-                else if (Regex.IsMatch(_headers[i], RequiredLogHeaders.MafvRegEx, RegexOptions.IgnoreCase))
-                {
-                    MafvIndex = i;
-                }
-            }
         }
 
         internal void AddHeaderInfo(params string[] displayDataHeaders)

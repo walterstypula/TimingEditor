@@ -69,11 +69,9 @@
             this.tableList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableList.FormattingEnabled = true;
             this.tableList.IntegralHeight = false;
-            this.tableList.ItemHeight = 16;
-            this.tableList.Location = new System.Drawing.Point(4, 4);
-            this.tableList.Margin = new System.Windows.Forms.Padding(4);
+            this.tableList.Location = new System.Drawing.Point(3, 3);
             this.tableList.Name = "tableList";
-            this.tableList.Size = new System.Drawing.Size(224, 216);
+            this.tableList.Size = new System.Drawing.Size(168, 176);
             this.tableList.TabIndex = 0;
             this.tableList.SelectedIndexChanged += new System.EventHandler(this.TableList_SelectedIndexChanged);
             this.tableList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TableList_MouseDown);
@@ -87,11 +85,10 @@
             this.dataGrid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.Disable;
             this.dataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGrid.Location = new System.Drawing.Point(244, 312);
-            this.dataGrid.Margin = new System.Windows.Forms.Padding(4);
+            this.dataGrid.Location = new System.Drawing.Point(183, 253);
             this.dataGrid.Name = "dataGrid";
             this.dataGrid.RowHeadersWidth = 51;
-            this.dataGrid.Size = new System.Drawing.Size(653, 450);
+            this.dataGrid.Size = new System.Drawing.Size(489, 366);
             this.dataGrid.TabIndex = 1;
             this.dataGrid.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.DataGrid_CellBeginEdit);
             this.dataGrid.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellEnter);
@@ -108,10 +105,9 @@
             // horizontalPanel
             // 
             this.horizontalPanel.BackColor = System.Drawing.SystemColors.Window;
-            this.horizontalPanel.Location = new System.Drawing.Point(4, 4);
-            this.horizontalPanel.Margin = new System.Windows.Forms.Padding(4);
+            this.horizontalPanel.Location = new System.Drawing.Point(3, 3);
             this.horizontalPanel.Name = "horizontalPanel";
-            this.horizontalPanel.Size = new System.Drawing.Size(217, 271);
+            this.horizontalPanel.Size = new System.Drawing.Size(163, 220);
             this.horizontalPanel.TabIndex = 2;
             this.horizontalPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.HorizontalPanel_MouseDown);
             // 
@@ -120,10 +116,9 @@
             this.verticalPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.verticalPanel.BackColor = System.Drawing.SystemColors.Window;
-            this.verticalPanel.Location = new System.Drawing.Point(4, 312);
-            this.verticalPanel.Margin = new System.Windows.Forms.Padding(4);
+            this.verticalPanel.Location = new System.Drawing.Point(3, 253);
             this.verticalPanel.Name = "verticalPanel";
-            this.verticalPanel.Size = new System.Drawing.Size(232, 210);
+            this.verticalPanel.Size = new System.Drawing.Size(174, 171);
             this.verticalPanel.TabIndex = 3;
             this.verticalPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.VerticalPanel_MouseDown);
             // 
@@ -132,10 +127,9 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 794);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 644);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 19, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1181, 26);
+            this.statusStrip1.Size = new System.Drawing.Size(886, 22);
             this.statusStrip1.TabIndex = 6;
             this.statusStrip1.Text = "statusStrip";
             // 
@@ -143,16 +137,15 @@
             // 
             this.toolStripStatusLabel1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(74, 20);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(59, 17);
             this.toolStripStatusLabel1.Text = "statusText";
             // 
             // smoothButton
             // 
             this.smoothButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.smoothButton.Location = new System.Drawing.Point(4, 228);
-            this.smoothButton.Margin = new System.Windows.Forms.Padding(4);
+            this.smoothButton.Location = new System.Drawing.Point(3, 185);
             this.smoothButton.Name = "smoothButton";
-            this.smoothButton.Size = new System.Drawing.Size(108, 30);
+            this.smoothButton.Size = new System.Drawing.Size(81, 25);
             this.smoothButton.TabIndex = 7;
             this.smoothButton.Text = "&Smooth";
             this.smoothButton.UseVisualStyleBackColor = true;
@@ -170,50 +163,49 @@
             this.logOverlayToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1181, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(886, 24);
             this.menuStrip1.TabIndex = 12;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // tuningModeToolStripMenuItem
             // 
             this.tuningModeToolStripMenuItem.Name = "tuningModeToolStripMenuItem";
-            this.tuningModeToolStripMenuItem.Size = new System.Drawing.Size(102, 24);
+            this.tuningModeToolStripMenuItem.Size = new System.Drawing.Size(85, 20);
             this.tuningModeToolStripMenuItem.Text = "MAF Tuning";
             this.tuningModeToolStripMenuItem.Click += new System.EventHandler(this.TuningModeToolStripMenuItem_Click);
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(57, 24);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.CopyToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(57, 24);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.PasteToolStripMenuItem_Click);
             // 
             // undoToolStripMenuItem
             // 
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(59, 24);
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.undoToolStripMenuItem.Text = "Undo";
             this.undoToolStripMenuItem.Click += new System.EventHandler(this.UndoToolStripMenuItem_Click);
             // 
             // redoToolStripMenuItem
             // 
             this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
-            this.redoToolStripMenuItem.Size = new System.Drawing.Size(58, 24);
+            this.redoToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.redoToolStripMenuItem.Text = "Redo";
             this.redoToolStripMenuItem.Click += new System.EventHandler(this.RedoToolStripMenuItem_Click);
             // 
             // logOverlayToolStripMenuItem
             // 
             this.logOverlayToolStripMenuItem.Name = "logOverlayToolStripMenuItem";
-            this.logOverlayToolStripMenuItem.Size = new System.Drawing.Size(102, 24);
+            this.logOverlayToolStripMenuItem.Size = new System.Drawing.Size(82, 20);
             this.logOverlayToolStripMenuItem.Text = "Log Overlay";
             this.logOverlayToolStripMenuItem.Click += new System.EventHandler(this.LogOverlayToolStripMenuItem_Click);
             // 
@@ -221,10 +213,9 @@
             // 
             this.AdditionalLogOverlay.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AdditionalLogOverlay.Enabled = false;
-            this.AdditionalLogOverlay.Location = new System.Drawing.Point(120, 266);
-            this.AdditionalLogOverlay.Margin = new System.Windows.Forms.Padding(4);
+            this.AdditionalLogOverlay.Location = new System.Drawing.Point(90, 216);
             this.AdditionalLogOverlay.Name = "AdditionalLogOverlay";
-            this.AdditionalLogOverlay.Size = new System.Drawing.Size(108, 30);
+            this.AdditionalLogOverlay.Size = new System.Drawing.Size(81, 25);
             this.AdditionalLogOverlay.TabIndex = 13;
             this.AdditionalLogOverlay.Text = "Addt’l Log";
             this.AdditionalLogOverlay.UseVisualStyleBackColor = true;
@@ -234,10 +225,9 @@
             // 
             this.AutoTune.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AutoTune.Enabled = false;
-            this.AutoTune.Location = new System.Drawing.Point(120, 228);
-            this.AutoTune.Margin = new System.Windows.Forms.Padding(4);
+            this.AutoTune.Location = new System.Drawing.Point(90, 185);
             this.AutoTune.Name = "AutoTune";
-            this.AutoTune.Size = new System.Drawing.Size(108, 30);
+            this.AutoTune.Size = new System.Drawing.Size(81, 25);
             this.AutoTune.TabIndex = 14;
             this.AutoTune.Text = "AutoTune";
             this.AutoTune.UseVisualStyleBackColor = true;
@@ -247,7 +237,7 @@
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 240F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 180F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70.24442F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 29.75558F));
             this.tableLayoutPanel1.Controls.Add(this.tlpOverlay, 2, 0);
@@ -257,19 +247,18 @@
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.rtbOverlayCellData, 2, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 28);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 24);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 308F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 250F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1181, 766);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(886, 620);
             this.tableLayoutPanel1.TabIndex = 15;
             // 
             // tlpOverlay
             // 
             this.tlpOverlay.ColumnCount = 2;
-            this.tlpOverlay.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.tlpOverlay.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 45F));
             this.tlpOverlay.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tlpOverlay.Controls.Add(this.xAxisLabel, 0, 0);
             this.tlpOverlay.Controls.Add(this.yAxisComboBox, 1, 1);
@@ -277,22 +266,22 @@
             this.tlpOverlay.Controls.Add(this.lbOverlayHeaders, 0, 2);
             this.tlpOverlay.Controls.Add(this.xAxisComboBox, 1, 0);
             this.tlpOverlay.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpOverlay.Location = new System.Drawing.Point(904, 3);
+            this.tlpOverlay.Location = new System.Drawing.Point(677, 2);
+            this.tlpOverlay.Margin = new System.Windows.Forms.Padding(2);
             this.tlpOverlay.Name = "tlpOverlay";
             this.tlpOverlay.RowCount = 3;
-            this.tlpOverlay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            this.tlpOverlay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            this.tlpOverlay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 200F));
-            this.tlpOverlay.Size = new System.Drawing.Size(274, 302);
+            this.tlpOverlay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+            this.tlpOverlay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+            this.tlpOverlay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 162F));
+            this.tlpOverlay.Size = new System.Drawing.Size(207, 246);
             this.tlpOverlay.TabIndex = 17;
             // 
             // xAxisLabel
             // 
             this.xAxisLabel.AutoSize = true;
-            this.xAxisLabel.Location = new System.Drawing.Point(4, 0);
-            this.xAxisLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.xAxisLabel.Location = new System.Drawing.Point(3, 0);
             this.xAxisLabel.Name = "xAxisLabel";
-            this.xAxisLabel.Size = new System.Drawing.Size(51, 17);
+            this.xAxisLabel.Size = new System.Drawing.Size(39, 13);
             this.xAxisLabel.TabIndex = 3;
             this.xAxisLabel.Text = "X-Axis:";
             // 
@@ -300,20 +289,18 @@
             // 
             this.yAxisComboBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.yAxisComboBox.FormattingEnabled = true;
-            this.yAxisComboBox.Location = new System.Drawing.Point(64, 36);
-            this.yAxisComboBox.Margin = new System.Windows.Forms.Padding(4);
+            this.yAxisComboBox.Location = new System.Drawing.Point(48, 29);
             this.yAxisComboBox.Name = "yAxisComboBox";
-            this.yAxisComboBox.Size = new System.Drawing.Size(206, 24);
+            this.yAxisComboBox.Size = new System.Drawing.Size(156, 21);
             this.yAxisComboBox.TabIndex = 6;
             this.yAxisComboBox.SelectedIndexChanged += new System.EventHandler(this.YAxisComboBox_SelectedIndexChanged);
             // 
             // yAxisLabel
             // 
             this.yAxisLabel.AutoSize = true;
-            this.yAxisLabel.Location = new System.Drawing.Point(4, 32);
-            this.yAxisLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.yAxisLabel.Location = new System.Drawing.Point(3, 26);
             this.yAxisLabel.Name = "yAxisLabel";
-            this.yAxisLabel.Size = new System.Drawing.Size(51, 17);
+            this.yAxisLabel.Size = new System.Drawing.Size(39, 13);
             this.yAxisLabel.TabIndex = 4;
             this.yAxisLabel.Text = "Y-Axis:";
             // 
@@ -323,10 +310,9 @@
             this.tlpOverlay.SetColumnSpan(this.lbOverlayHeaders, 2);
             this.lbOverlayHeaders.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbOverlayHeaders.FormattingEnabled = true;
-            this.lbOverlayHeaders.Location = new System.Drawing.Point(4, 68);
-            this.lbOverlayHeaders.Margin = new System.Windows.Forms.Padding(4);
+            this.lbOverlayHeaders.Location = new System.Drawing.Point(3, 55);
             this.lbOverlayHeaders.Name = "lbOverlayHeaders";
-            this.lbOverlayHeaders.Size = new System.Drawing.Size(266, 230);
+            this.lbOverlayHeaders.Size = new System.Drawing.Size(201, 188);
             this.lbOverlayHeaders.Sorted = true;
             this.lbOverlayHeaders.TabIndex = 0;
             this.lbOverlayHeaders.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.LbOverlayHeaders_ItemCheck);
@@ -335,10 +321,9 @@
             // 
             this.xAxisComboBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.xAxisComboBox.FormattingEnabled = true;
-            this.xAxisComboBox.Location = new System.Drawing.Point(64, 4);
-            this.xAxisComboBox.Margin = new System.Windows.Forms.Padding(4);
+            this.xAxisComboBox.Location = new System.Drawing.Point(48, 3);
             this.xAxisComboBox.Name = "xAxisComboBox";
-            this.xAxisComboBox.Size = new System.Drawing.Size(206, 24);
+            this.xAxisComboBox.Size = new System.Drawing.Size(156, 21);
             this.xAxisComboBox.TabIndex = 5;
             this.xAxisComboBox.SelectedIndexChanged += new System.EventHandler(this.XAxisComboBox_SelectedIndexChanged);
             // 
@@ -352,14 +337,13 @@
             this.tableLayoutPanel2.Controls.Add(this.AdditionalLogOverlay, 1, 2);
             this.tableLayoutPanel2.Controls.Add(this.smoothButton, 0, 1);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(4, 4);
-            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 3;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(232, 300);
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(174, 244);
             this.tableLayoutPanel2.TabIndex = 16;
             // 
             // flowLayoutPanel1
@@ -370,10 +354,9 @@
             this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.Control;
             this.flowLayoutPanel1.Controls.Add(this.horizontalPanel);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(244, 4);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(183, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(653, 300);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(489, 244);
             this.flowLayoutPanel1.TabIndex = 0;
             this.flowLayoutPanel1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.FlowLayoutPanel1_Scroll);
             // 
@@ -381,23 +364,23 @@
             // 
             this.rtbOverlayCellData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rtbOverlayCellData.EnableAutoDragDrop = true;
-            this.rtbOverlayCellData.Font = new System.Drawing.Font("Consolas", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rtbOverlayCellData.Location = new System.Drawing.Point(904, 311);
+            this.rtbOverlayCellData.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtbOverlayCellData.Location = new System.Drawing.Point(677, 252);
+            this.rtbOverlayCellData.Margin = new System.Windows.Forms.Padding(2);
             this.rtbOverlayCellData.Name = "rtbOverlayCellData";
-            this.rtbOverlayCellData.Size = new System.Drawing.Size(274, 452);
+            this.rtbOverlayCellData.Size = new System.Drawing.Size(207, 368);
             this.rtbOverlayCellData.TabIndex = 7;
             this.rtbOverlayCellData.Text = "";
             // 
             // TimingForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1181, 820);
+            this.ClientSize = new System.Drawing.Size(886, 666);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "TimingForm";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.MainForm_Load);
