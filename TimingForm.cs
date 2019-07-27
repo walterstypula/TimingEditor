@@ -125,6 +125,32 @@ namespace NSFW.TimingEditor
             flowLayoutPanel1.HorizontalScroll.Value = e.NewValue;
         }
 
+        private void SetXAxisOverlay(string xAxisHeader)
+        {
+            string engLoad = null;
+
+            var headers = new List<string>();
+
+            foreach (string s in xAxisComboBox.Items)
+            {
+                headers.Add(s);
+            }
+
+            foreach (var s in headers)
+            {
+                if (Regex.IsMatch(s, xAxisHeader, RegexOptions.IgnoreCase) || s == xAxisHeader)
+                {
+                    engLoad = s;
+                    break;
+                }
+            }
+
+            if (engLoad != null)
+            {
+                xAxisComboBox.SelectedItem = engLoad;
+            }
+        }
+
         private void TableList_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (!(tableList.SelectedItem is TableListEntry entry))
@@ -182,6 +208,8 @@ namespace NSFW.TimingEditor
                 dataGrid.Columns.Clear();
                 _changingTables = false;
             }
+
+            SetXAxisOverlay(entry.Table.XAxisHeader);
         }
 
         private void CopyClick(object sender, EventArgs e)
@@ -622,7 +650,7 @@ namespace NSFW.TimingEditor
 
             foreach (var op in overlayPoints)
             {
-                var allCurrentAfrData = op.ValueData[WideBandHeaders.AEM_UEGO_9600];
+                var allCurrentAfrData = op.ValueData[WideBandHeaders.SUBARU_AFR];
                 var validAutoTuneAfrData = allCurrentAfrData;// allCurrentAfrData.SkipOutliers(k: 3, selector: result => result.Value);
 
                 if (validAutoTuneAfrData.Count() <= 1)
@@ -755,12 +783,13 @@ namespace NSFW.TimingEditor
 
         private void XAxisComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _overlay.SetHeaders(XAxis, YAxis);
-
             if (!(tableList.SelectedItem is TableListEntry entry))
             {
                 return;
             }
+
+            entry.Table.XAxisHeader = XAxis;
+            _overlay.SetHeaders(XAxis, YAxis);
 
             if (!entry.Table.IsPopulated)
             {

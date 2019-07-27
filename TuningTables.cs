@@ -18,8 +18,8 @@ namespace NSFW.TimingEditor
         public ITable ModifiedMaf { get; }
         public ITable DeltaMaf { get; }
 
-        private const string Maf = ".*\\bmass[_\\s]airflow\\b.*";
-        private const string EngineLoad = ".*\\bengine[_\\s]load\\b.*";
+        private const string Maf = RequiredLogHeaders.MafvRegEx;
+        private const string EngineLoad = RequiredLogHeaders.EngineLoadRegEx;
 
         public TuningTables()
         {

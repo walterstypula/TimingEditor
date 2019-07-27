@@ -43,6 +43,7 @@
             this.logOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoTuneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.smoothToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tlpOverlay = new System.Windows.Forms.TableLayoutPanel();
             this.xAxisLabel = new System.Windows.Forms.Label();
@@ -53,7 +54,6 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.rtbOverlayCellData = new System.Windows.Forms.RichTextBox();
-            this.smoothToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -209,6 +209,13 @@
             this.autoTuneToolStripMenuItem.Text = "AutoTune";
             this.autoTuneToolStripMenuItem.Click += new System.EventHandler(this.AutoTuneToolStripMenuItem_Click);
             // 
+            // smoothToolStripMenuItem
+            // 
+            this.smoothToolStripMenuItem.Name = "smoothToolStripMenuItem";
+            this.smoothToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.smoothToolStripMenuItem.Text = "Smooth";
+            this.smoothToolStripMenuItem.Click += new System.EventHandler(this.SmoothToolStripMenuItem_Click);
+            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
@@ -341,13 +348,6 @@
             this.rtbOverlayCellData.Size = new System.Drawing.Size(207, 368);
             this.rtbOverlayCellData.TabIndex = 7;
             this.rtbOverlayCellData.Text = "";
-            // 
-            // smoothToolStripMenuItem
-            // 
-            this.smoothToolStripMenuItem.Name = "smoothToolStripMenuItem";
-            this.smoothToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.smoothToolStripMenuItem.Text = "Smooth";
-            this.smoothToolStripMenuItem.Click += new System.EventHandler(this.SmoothToolStripMenuItem_Click);
             // 
             // TimingForm
             // 
