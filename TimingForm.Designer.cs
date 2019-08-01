@@ -41,7 +41,6 @@
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.addLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoTuneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.smoothToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -143,7 +142,6 @@
             this.undoToolStripMenuItem,
             this.redoToolStripMenuItem,
             this.logOverlayToolStripMenuItem,
-            this.addLogToolStripMenuItem,
             this.autoTuneToolStripMenuItem,
             this.smoothToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -193,14 +191,6 @@
             this.logOverlayToolStripMenuItem.Size = new System.Drawing.Size(82, 20);
             this.logOverlayToolStripMenuItem.Text = "Log Overlay";
             this.logOverlayToolStripMenuItem.Click += new System.EventHandler(this.LogOverlayToolStripMenuItem_Click);
-            // 
-            // addLogToolStripMenuItem
-            // 
-            this.addLogToolStripMenuItem.Name = "addLogToolStripMenuItem";
-            this.addLogToolStripMenuItem.Size = new System.Drawing.Size(64, 20);
-            this.addLogToolStripMenuItem.Text = "Add Log";
-            this.addLogToolStripMenuItem.Visible = false;
-            this.addLogToolStripMenuItem.Click += new System.EventHandler(this.AddLogToolStripMenuItem_Click);
             // 
             // autoTuneToolStripMenuItem
             // 
@@ -402,7 +392,6 @@
         private System.Windows.Forms.CheckedListBox lbOverlayHeaders;
         private System.Windows.Forms.ComboBox xAxisComboBox;
         private System.Windows.Forms.RichTextBox rtbOverlayCellData;
-        private System.Windows.Forms.ToolStripMenuItem addLogToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem autoTuneToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem smoothToolStripMenuItem;
     }

@@ -596,7 +596,9 @@ namespace NSFW.TimingEditor
                 _changingTables = true;
 
                 var content = overlayStream.ReadToEnd();
-                _overlay.AddLog(content);
+                var filters = AppSettings.LogFilters;
+                var filteredContent = FilterLog(line, content, filters);
+                _overlay.AddLog(filteredContent);
             }
             catch (Exception ex)
             {
@@ -605,38 +607,39 @@ namespace NSFW.TimingEditor
             finally
             {
                 overlayStream.Close();
-                addLogToolStripMenuItem.Visible = true;
             }
         }
 
-        private void AdditionalLogOverlay_Click(object sender, EventArgs e)
+        private string FilterLog(string headers, string content, Dictionary<string, double> filters)
         {
-            if (!(tableList.SelectedItem is TableListEntry entry))
+            StringBuilder sb = new StringBuilder();
+
+            var splitHeaders = headers.Split(",".ToCharArray());
+
+            Dictionary<int, double> indexFilters = new Dictionary<int, double>();
+            foreach (var filter in filters)
             {
-                return;
+                var index = splitHeaders.IndexOf(filter.Key);
+                indexFilters.Add(index, filter.Value);
             }
 
-            dataGrid.ClearSelection();
-
-            var file = new OpenFileDialog();
-
-            if (file.ShowDialog() != DialogResult.OK)
-            { return; }
-
-            var overlayStream = new StreamReader(file.FileName, Encoding.Default);
-
-            var line = overlayStream.ReadLine();
-
-            if (line == null)
+            using (TextReader sr = new StringReader(content))
             {
-                return;
+                string line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    var splitLine = line.Split(",".ToCharArray());
+
+                    var allFiltersMet = indexFilters.All(k => splitLine[k.Key].ToDouble() >= k.Value);
+
+                    if (allFiltersMet == true)
+                    {
+                        sb.AppendLine(line);
+                    }
+                }
             }
 
-            var content = overlayStream.ReadToEnd();
-            _overlay.AddLog(content);
-
-            Util.ColorTable(dataGrid, entry.Table, _selectedColumn, _selectedRow, _overlay);
-            dataGrid.Refresh();
+            return sb.ToString().Trim();
         }
 
         private void AutoTune_Click(object sender, EventArgs e)
@@ -650,7 +653,7 @@ namespace NSFW.TimingEditor
 
             foreach (var op in overlayPoints)
             {
-                var allCurrentAfrData = op.ValueData[WideBandHeaders.SUBARU_AFR];
+                var allCurrentAfrData = op.ValueData[AppSettings.AutoTuneAfrSource];
                 var validAutoTuneAfrData = allCurrentAfrData;// allCurrentAfrData.SkipOutliers(k: 3, selector: result => result.Value);
 
                 if (validAutoTuneAfrData.Count() <= 1)
@@ -824,11 +827,6 @@ namespace NSFW.TimingEditor
             }
 
             rtbOverlayCellData.Text = item.PointData.ToString();
-        }
-
-        private void AddLogToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AdditionalLogOverlay_Click(sender, e);
         }
 
         private void AutoTuneToolStripMenuItem_Click(object sender, EventArgs e)
