@@ -8,125 +8,14 @@ using System.Text.RegularExpressions;
 
 namespace NSFW.TimingEditor
 {
-    internal class OverlayHeaderInfo
-    {
-        internal string RowHeader;
-        internal string ColumnHeader;
-        internal int RowHeaderIndex = -1;
-        internal int ColumnHeaderIndex = -1;
-        internal readonly Dictionary<string, int> HeaderIndices = new Dictionary<string, int>();
-        private readonly string[] _headers;
-
-        internal int RpmIndex = -1;
-        internal int EngineLoadIndex = -1;
-        internal int MafvIndex = -1;
-
-        internal OverlayHeaderInfo(string logHeaderLine)
-        {
-            if (logHeaderLine.Length <= 0)
-            {
-                throw new ApplicationException($"First line in log file does not contains headers.");
-            }
-
-            _headers = logHeaderLine.Split(',');
-
-            for (var i = 0; i < _headers.Length; i++)
-            {
-                if (Regex.IsMatch(_headers[i], RequiredLogHeaders.EngineLoadRegEx, RegexOptions.IgnoreCase))
-                {
-                    EngineLoadIndex = i;
-                }
-                else if (Regex.IsMatch(_headers[i], RequiredLogHeaders.RpmRegEx, RegexOptions.IgnoreCase))
-                {
-                    RpmIndex = i;
-                }
-                else if (Regex.IsMatch(_headers[i], RequiredLogHeaders.MafvRegEx, RegexOptions.IgnoreCase))
-                {
-                    MafvIndex = i;
-                }
-            }
-        }
-
-        internal OverlayHeaderInfo(string logHeaderLine, string xAxisHeader, string yAxisHeader)
-            : this(logHeaderLine)
-        {
-            SetHeaders(xAxisHeader, yAxisHeader);
-        }
-
-        internal void SetHeaders(string rowHeader, string columnHeader)
-        {
-            if (rowHeader == null || columnHeader == null)
-            {
-                return;
-            }
-
-            RowHeaderIndex = _headers.IndexOf(rowHeader);
-            ColumnHeaderIndex = _headers.IndexOf(columnHeader);
-
-            if (ColumnHeaderIndex == -1 || RowHeaderIndex == -1)
-            {
-                throw new ApplicationException($"Either {RowHeader} or {ColumnHeader} headers not found in log file.");
-            }
-
-            RowHeader = rowHeader;
-            ColumnHeader = columnHeader;
-        }
-
-        internal void AddHeaderInfo(params string[] displayDataHeaders)
-        {
-            HeaderIndices.Clear();
-
-            foreach (var header in displayDataHeaders)
-            {
-                if (HeaderIndices.ContainsKey(header))
-                {
-                    throw new ApplicationException($"Duplicate header found.");
-                }
-
-                var headerIndex = Array.IndexOf(_headers, header);
-
-                if (headerIndex == -1)
-                {
-                    throw new ApplicationException($"{header} header not found in log file.");
-                }
-
-                HeaderIndices.Add(header, headerIndex);
-            }
-        }
-
-        public bool SetRowHeader(string regEx)
-        {
-            if (regEx == null)
-                return false;
-
-            var result = _headers.FirstOrDefault(header => Regex.IsMatch(header, regEx, RegexOptions.IgnoreCase));
-
-            if (result == null)
-                return false;
-
-            SetHeaders(result, ColumnHeader);
-            return true;
-        }
-    }
-
     public class Overlay
     {
-        private readonly OverlayHeaderInfo _overlayHeaders;
         private readonly StringBuilder _logData = new StringBuilder();
+        private readonly OverlayHeaderInfo _overlayHeaders;
 
         public Overlay(string logHeaderLine)
         {
             _overlayHeaders = new OverlayHeaderInfo(logHeaderLine);
-        }
-
-        public void SetHeaders(string xAxisHeader, string yAxisHeader)
-        {
-            if (xAxisHeader == null || yAxisHeader == null)
-            {
-                return;
-            }
-
-            _overlayHeaders.SetHeaders(xAxisHeader, yAxisHeader);
         }
 
         public Overlay(string logHeaderLine, string xAxisHeader, string yAxisHeader)
@@ -134,9 +23,14 @@ namespace NSFW.TimingEditor
             _overlayHeaders = new OverlayHeaderInfo(logHeaderLine, xAxisHeader, yAxisHeader);
         }
 
-        public bool SetRowHeader(string regEx)
+        public void AddHeaderInfo(params string[] displayDataHeaders)
         {
-            return _overlayHeaders.SetRowHeader(regEx);
+            _overlayHeaders.AddHeaderInfo(displayDataHeaders);
+        }
+
+        public void AddLog(string content)
+        {
+            _logData.AppendLine(content.Trim());
         }
 
         public List<OverlayPoint> ProcessOverlay(IEnumerable<double> columnHeaderValues, IEnumerable<double> rowHeaderValues)
@@ -189,27 +83,25 @@ namespace NSFW.TimingEditor
             return list;
         }
 
-        public void AddHeaderInfo(params string[] displayDataHeaders)
+        public void SetHeaders(string xAxisHeader, string yAxisHeader)
         {
-            _overlayHeaders.AddHeaderInfo(displayDataHeaders);
+            if (xAxisHeader == null || yAxisHeader == null)
+            {
+                return;
+            }
+
+            _overlayHeaders.SetHeaders(xAxisHeader, yAxisHeader);
         }
 
-        public void AddLog(string content)
+        public bool SetRowHeader(string regEx)
         {
-            _logData.AppendLine(content.Trim());
+            return _overlayHeaders.SetRowHeader(regEx);
         }
     }
 
     public class OverlayPoint
     {
-        public int RowIndex { get; }
-        public int ColumnIndex { get; }
-
-        public double RowValue { get; }
-        public double ColumnValue { get; }
-
         public readonly Dictionary<string, List<string>> LogData = new Dictionary<string, List<string>>();
-
         public readonly Dictionary<string, List<TableData>> ValueData = new Dictionary<string, List<TableData>>();
 
         public OverlayPoint(int xAxisIndex, int yAxisIndex, double xAvisValue, double yAxisValue)
@@ -219,6 +111,11 @@ namespace NSFW.TimingEditor
             RowValue = xAvisValue;
             ColumnValue = yAxisValue;
         }
+
+        public int ColumnIndex { get; }
+        public double ColumnValue { get; }
+        public int RowIndex { get; }
+        public double RowValue { get; }
 
         public void AddData(string header, double rpm, double load, double mafv, double value)
         {
@@ -254,9 +151,109 @@ namespace NSFW.TimingEditor
 
     public class TableData
     {
-        public double Rpm { get; set; }
         public double Load { get; set; }
         public double MafV { get; set; }
+        public double Rpm { get; set; }
         public double Value { get; set; }
+    }
+
+    internal class OverlayHeaderInfo
+    {
+        internal readonly Dictionary<string, int> HeaderIndices = new Dictionary<string, int>();
+        internal string ColumnHeader;
+        internal int ColumnHeaderIndex = -1;
+        internal int EngineLoadIndex = -1;
+        internal int MafvIndex = -1;
+        internal string RowHeader;
+        internal int RowHeaderIndex = -1;
+        internal int RpmIndex = -1;
+        private readonly string[] _headers;
+
+        internal OverlayHeaderInfo(string logHeaderLine)
+        {
+            if (logHeaderLine.Length <= 0)
+            {
+                throw new ApplicationException($"First line in log file does not contains headers.");
+            }
+
+            _headers = logHeaderLine.Split(',');
+
+            for (var i = 0; i < _headers.Length; i++)
+            {
+                if (Regex.IsMatch(_headers[i], RequiredLogHeaders.EngineLoadRegEx, RegexOptions.IgnoreCase))
+                {
+                    EngineLoadIndex = i;
+                }
+                else if (Regex.IsMatch(_headers[i], RequiredLogHeaders.RpmRegEx, RegexOptions.IgnoreCase))
+                {
+                    RpmIndex = i;
+                }
+                else if (Regex.IsMatch(_headers[i], RequiredLogHeaders.MafvRegEx, RegexOptions.IgnoreCase))
+                {
+                    MafvIndex = i;
+                }
+            }
+        }
+
+        internal OverlayHeaderInfo(string logHeaderLine, string xAxisHeader, string yAxisHeader)
+            : this(logHeaderLine)
+        {
+            SetHeaders(xAxisHeader, yAxisHeader);
+        }
+
+        public bool SetRowHeader(string regEx)
+        {
+            if (regEx == null)
+                return false;
+
+            var result = _headers.FirstOrDefault(header => Regex.IsMatch(header, regEx, RegexOptions.IgnoreCase));
+
+            if (result == null)
+                return false;
+
+            SetHeaders(result, ColumnHeader);
+            return true;
+        }
+
+        internal void AddHeaderInfo(params string[] displayDataHeaders)
+        {
+            HeaderIndices.Clear();
+
+            foreach (var header in displayDataHeaders)
+            {
+                if (HeaderIndices.ContainsKey(header))
+                {
+                    throw new ApplicationException($"Duplicate header found.");
+                }
+
+                var headerIndex = Array.IndexOf(_headers, header);
+
+                if (headerIndex == -1)
+                {
+                    throw new ApplicationException($"{header} header not found in log file.");
+                }
+
+                HeaderIndices.Add(header, headerIndex);
+            }
+        }
+
+        internal void SetHeaders(string rowHeader, string columnHeader)
+        {
+            if (rowHeader == null || columnHeader == null)
+            {
+                return;
+            }
+
+            RowHeaderIndex = _headers.IndexOf(rowHeader);
+            ColumnHeaderIndex = _headers.IndexOf(columnHeader);
+
+            if (ColumnHeaderIndex == -1 || RowHeaderIndex == -1)
+            {
+                throw new ApplicationException($"Either {RowHeader} or {ColumnHeader} headers not found in log file.");
+            }
+
+            RowHeader = rowHeader;
+            ColumnHeader = columnHeader;
+        }
     }
 }
