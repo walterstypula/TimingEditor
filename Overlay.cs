@@ -1,4 +1,5 @@
-﻿using NSFW.TimingEditor.Utils;
+﻿using NSFW.TimingEditor.Extensions;
+using NSFW.TimingEditor.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,18 +12,14 @@ namespace NSFW.TimingEditor
     public class Overlay
     {
         private readonly StringBuilder _logData = new StringBuilder();
-        private readonly OverlayHeaderInfo _overlayHeaders;
+        private OverlayHeaderInfo _overlayHeaders;
 
-        public Overlay(string logHeaderLine)
+        public Overlay(string file, Dictionary<string, double> filters)
         {
-            _overlayHeaders = new OverlayHeaderInfo(logHeaderLine);
+            ProcessFile(file, filters);
         }
 
-        public Overlay(string logHeaderLine, string xAxisHeader, string yAxisHeader)
-        {
-            _overlayHeaders = new OverlayHeaderInfo(logHeaderLine, xAxisHeader, yAxisHeader);
-        }
-
+        public List<string> Headers { get; } = new List<string>();
         public void AddHeaderInfo(params string[] displayDataHeaders)
         {
             _overlayHeaders.AddHeaderInfo(displayDataHeaders);
@@ -97,6 +94,69 @@ namespace NSFW.TimingEditor
         {
             return _overlayHeaders.SetRowHeader(regEx);
         }
+
+        private string FilterLog(string[] headers, string content, Dictionary<string, double> filters)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            Dictionary<int, double> indexFilters = new Dictionary<int, double>();
+            foreach (var filter in filters)
+            {
+                var index = headers.IndexOf(filter.Key);
+                indexFilters.Add(index, filter.Value);
+            }
+
+            using (TextReader sr = new StringReader(content))
+            {
+                string line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    var splitLine = line.Split(",".ToCharArray());
+
+                    var allFiltersMet = indexFilters.All(k => splitLine[k.Key].ToDouble() >= k.Value);
+
+                    if (allFiltersMet == true)
+                    {
+                        sb.AppendLine(line);
+                    }
+                }
+            }
+
+            return sb.ToString().Trim();
+        }
+
+        private void ProcessFile(string file, Dictionary<string, double> filters)
+        {
+            using (var overlayStream = new StreamReader(file, Encoding.Default))
+            {
+                var line = overlayStream.ReadLine();
+
+                if (line == null)
+                {
+                    return;
+                }
+
+                var headers = line.Split(',')
+                                  .Select(s => s.Trim())
+                                  .ToArray();
+
+                if (Headers.Count == 0)
+                {
+                    Headers.AddRange(headers);
+                }
+                else if (headers.Length != Headers.Count || !headers.All(h => Headers.Exists(e => e == h)))
+                {
+                    return;
+                }	  							 
+
+                _overlayHeaders = new OverlayHeaderInfo(headers);
+
+                var content = overlayStream.ReadToEnd();
+
+                var filteredContent = FilterLog(headers, content, filters);
+                AddLog(filteredContent);
+            }
+        }
     }
 
     public class OverlayPoint
@@ -169,14 +229,14 @@ namespace NSFW.TimingEditor
         internal int RpmIndex = -1;
         private readonly string[] _headers;
 
-        internal OverlayHeaderInfo(string logHeaderLine)
+        internal OverlayHeaderInfo(string[] logHeaderLine)
         {
             if (logHeaderLine.Length <= 0)
             {
                 throw new ApplicationException($"First line in log file does not contains headers.");
             }
 
-            _headers = logHeaderLine.Split(',');
+            _headers = logHeaderLine;
 
             for (var i = 0; i < _headers.Length; i++)
             {
@@ -195,7 +255,7 @@ namespace NSFW.TimingEditor
             }
         }
 
-        internal OverlayHeaderInfo(string logHeaderLine, string xAxisHeader, string yAxisHeader)
+        internal OverlayHeaderInfo(string[] logHeaderLine, string xAxisHeader, string yAxisHeader)
             : this(logHeaderLine)
         {
             SetHeaders(xAxisHeader, yAxisHeader);

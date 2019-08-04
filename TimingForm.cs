@@ -528,15 +528,24 @@ namespace NSFW.TimingEditor
                 }
             }
 
+            _overlay.SetHeaders(engLoad, engSpeed);
+
             if (engLoad != null)
             {
-                xAxisComboBox.SelectedItem = engLoad;
+                SetSelectedItem(xAxisComboBox, engLoad);
             }
 
             if (engSpeed != null)
             {
-                yAxisComboBox.SelectedItem = engSpeed;
+                SetSelectedItem(yAxisComboBox, engSpeed);
             }
+        }
+
+        private void SetSelectedItem(ComboBox comboBox, string selectedItem)
+        {
+            comboBox.Tag = false;
+            comboBox.SelectedItem = selectedItem;
+            comboBox.Tag = null;
         }
 
         public string[] SelectedLogParameters
@@ -577,36 +586,19 @@ namespace NSFW.TimingEditor
             if (file.ShowDialog() != DialogResult.OK)
             { return; }
 
-            var overlayStream = new StreamReader(file.FileName, Encoding.Default);
             try
             {
-                var line = overlayStream.ReadLine();
+                var fileName = file.FileName;
+                var filters = AppSettings.LogFilters;
 
-                if (line == null)
-                {
-                    return;
-                }
-
-                var header = line.Split(',')
-                                 .Select(s => s.Trim())
-                                 .ToArray();
-                _overlay = new Overlay(line);
-                InitializeForm(header);
+                _overlay = new Overlay(fileName, filters);
+                InitializeForm(_overlay.Headers.ToArray());
 
                 _changingTables = true;
-
-                var content = overlayStream.ReadToEnd();
-                var filters = AppSettings.LogFilters;
-                var filteredContent = FilterLog(line, content, filters);
-                _overlay.AddLog(filteredContent);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error: {ex}");
-            }
-            finally
-            {
-                overlayStream.Close();
             }
         }
 
@@ -804,12 +796,12 @@ namespace NSFW.TimingEditor
 
         private void YAxisComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _overlay.SetHeaders(XAxis, YAxis);
-
             if (!(tableList.SelectedItem is TableListEntry entry))
             {
                 return;
             }
+
+            _overlay.SetHeaders(XAxis, YAxis);
 
             if (!entry.Table.IsPopulated)
             {
