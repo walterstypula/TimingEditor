@@ -179,7 +179,7 @@ namespace NSFW.TimingEditor
 
         public void AddData(string header, double rpm, double load, double mafv, double value)
         {
-            var compositeData = $"{rpm} {load} {mafv} {value}";
+            var compositeData = $"{rpm.ToString().PadRight(4)} {load.ToString().PadRight(4)} {mafv.ToString().PadRight(4)} {value.ToString().PadRight(4)}";
 
             if (!LogData.ContainsKey(header))
             {
@@ -199,6 +199,8 @@ namespace NSFW.TimingEditor
             foreach (var dataPoint in LogData)
             {
                 sb.AppendLine(dataPoint.Key);
+                var average = ValueData[dataPoint.Key].Average(p => p.Value);
+                sb.AppendLine($"AVG: {average}");
                 foreach (var v in dataPoint.Value)
                 {
                     sb.AppendLine($"   {v}");
