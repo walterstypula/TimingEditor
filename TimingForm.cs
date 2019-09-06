@@ -819,7 +819,12 @@ namespace NSFW.TimingEditor
 
         private void AutoTuneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AutoTune_Click(sender, e);
+            var result = MessageBox.Show("By continuing you (the application user) use the software at YOUR OWN RISK, and absolve the application author from any and all damages or harm the use of this application may cause.\r\n\r\nThe application user understands this feature is meant as a guide, and application generated values are not to be used.\r\n\r\nWould you like to continue?", "Continue?", MessageBoxButtons.YesNo);
+
+            if (result == DialogResult.Yes)
+            {
+                AutoTune_Click(sender, e);
+            }
         }
 
         private void SmoothToolStripMenuItem_Click(object sender, EventArgs e)
