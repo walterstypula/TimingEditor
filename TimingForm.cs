@@ -70,51 +70,49 @@ namespace NSFW.TimingEditor
 
             tableList.Items.AddRange(_tableListEntries.Where(p => p.TuningMode == TuningMode.Timing || p.TuningMode == TuningMode.Both).ToArray());
 
-            if (Program.Debug)
+            try
             {
-                try
+                using (var file = new FileStream("Files\\tableTimingBase.txt", FileMode.Open))
                 {
-                    using (var file = new FileStream("..\\..\\tableTimingBase.txt", FileMode.Open))
-                    {
-                        var reader = new StreamReader(file);
-                        var content = reader.ReadToEnd();
-                        Util.LoadTable(content, _tables.InitialBaseTiming);
-                        _tables.InitialBaseTiming.IsReadOnly = true;
-                        Util.LoadTable(content, _tables.ModifiedBaseTiming);
-                    }
-                    using (var file = new FileStream("..\\..\\tableTimingAdvance.txt", FileMode.Open))
-                    {
-                        var reader = new StreamReader(file);
-                        var content = reader.ReadToEnd();
-                        Util.LoadTable(content, _tables.InitialAdvanceTiming);
-                        _tables.InitialAdvanceTiming.IsReadOnly = true;
-                        Util.LoadTable(content, _tables.ModifiedAdvanceTiming);
-                    }
-                    using (var file = new FileStream("..\\..\\tableFuelBase.txt", FileMode.Open))
-                    {
-                        var reader = new StreamReader(file);
-                        var content = reader.ReadToEnd();
-                        Util.LoadTable(content, _tables.TargetFuel);
-                    }
-                    using (var file = new FileStream("..\\..\\tableMafBase.txt", FileMode.Open))
-                    {
-                        var reader = new StreamReader(file);
-                        var content = reader.ReadToEnd();
-                        Util.LoadTable(content, _tables.InitialMaf);
-                        _tables.InitialMaf.IsReadOnly = true;
-                        Util.LoadTable(content, _tables.ModifiedMaf);
-                    }
-                    TableList_SelectedIndexChanged(null, null);
+                    var reader = new StreamReader(file);
+                    var content = reader.ReadToEnd();
+                    Util.LoadTable(content, _tables.InitialBaseTiming);
+                    _tables.InitialBaseTiming.IsReadOnly = true;
+                    Util.LoadTable(content, _tables.ModifiedBaseTiming);
                 }
-                catch (IOException)
+                using (var file = new FileStream("Files\\tableTimingAdvance.txt", FileMode.Open))
                 {
+                    var reader = new StreamReader(file);
+                    var content = reader.ReadToEnd();
+                    Util.LoadTable(content, _tables.InitialAdvanceTiming);
+                    _tables.InitialAdvanceTiming.IsReadOnly = true;
+                    Util.LoadTable(content, _tables.ModifiedAdvanceTiming);
                 }
-                catch (ApplicationException)
+                using (var file = new FileStream("Files\\tableFuelBase.txt", FileMode.Open))
                 {
+                    var reader = new StreamReader(file);
+                    var content = reader.ReadToEnd();
+                    Util.LoadTable(content, _tables.TargetFuel);
+                    _tables.TargetFuel.IsReadOnly = true;
                 }
-                catch (ArgumentOutOfRangeException)
+                using (var file = new FileStream("Files\\tableMafBase.txt", FileMode.Open))
                 {
+                    var reader = new StreamReader(file);
+                    var content = reader.ReadToEnd();
+                    Util.LoadTable(content, _tables.InitialMaf);
+                    _tables.InitialMaf.IsReadOnly = true;
+                    Util.LoadTable(content, _tables.ModifiedMaf);
                 }
+                TableList_SelectedIndexChanged(null, null);
+            }
+            catch (IOException)
+            {
+            }
+            catch (ApplicationException)
+            {
+            }
+            catch (ArgumentOutOfRangeException)
+            {
             }
 
             tableList.SelectedIndex = 0;
@@ -159,6 +157,7 @@ namespace NSFW.TimingEditor
             }
 
             smoothToolStripMenuItem.Enabled = !entry.Table.IsReadOnly;
+            autoTuneToolStripMenuItem.Enabled = _isMaf && entry.Table.Is2DTable && !entry.Table.IsReadOnly;
 
             var title = $"Timing Editor: {entry.Description}";
             pasteToolStripMenuItem.Enabled = entry.AllowPaste;
