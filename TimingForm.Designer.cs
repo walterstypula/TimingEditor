@@ -153,7 +153,7 @@
             // tuningModeToolStripMenuItem
             // 
             this.tuningModeToolStripMenuItem.Name = "tuningModeToolStripMenuItem";
-            this.tuningModeToolStripMenuItem.Size = new System.Drawing.Size(85, 20);
+            this.tuningModeToolStripMenuItem.Size = new System.Drawing.Size(84, 20);
             this.tuningModeToolStripMenuItem.Text = "MAF Tuning";
             this.tuningModeToolStripMenuItem.Click += new System.EventHandler(this.TuningModeToolStripMenuItem_Click);
             // 
@@ -195,7 +195,7 @@
             // autoTuneToolStripMenuItem
             // 
             this.autoTuneToolStripMenuItem.Name = "autoTuneToolStripMenuItem";
-            this.autoTuneToolStripMenuItem.Size = new System.Drawing.Size(72, 20);
+            this.autoTuneToolStripMenuItem.Size = new System.Drawing.Size(71, 20);
             this.autoTuneToolStripMenuItem.Text = "AutoTune";
             this.autoTuneToolStripMenuItem.Click += new System.EventHandler(this.AutoTuneToolStripMenuItem_Click);
             // 

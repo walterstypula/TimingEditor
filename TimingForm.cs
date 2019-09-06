@@ -286,21 +286,18 @@ namespace NSFW.TimingEditor
 
                 if (entry.Table == _tables.InitialBaseTiming)
                 {
-                    _overlay = null;
                     temporaryTable.CopyTo(_tables.ModifiedBaseTiming);
                     //Util.LoadTable(tableText, this.tables.ModifiedBaseTiming);
                 }
 
                 if (entry.Table == _tables.InitialAdvanceTiming)
                 {
-                    _overlay = null;
                     temporaryTable.CopyTo(_tables.ModifiedAdvanceTiming);
                     //Util.LoadTable(tableText, this.tables.ModifiedAdvanceTiming);
                 }
 
                 if (entry.Table == _tables.InitialMaf)
                 {
-                    _overlay = null;
                     temporaryTable.CopyTo(_tables.ModifiedMaf);
                 }
             }
