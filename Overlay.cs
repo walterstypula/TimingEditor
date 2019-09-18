@@ -14,12 +14,16 @@ namespace NSFW.TimingEditor
         private readonly StringBuilder _logData = new StringBuilder();
         private OverlayHeaderInfo _overlayHeaders;
 
-        public Overlay(string file, Dictionary<string, double> filters)
+        public Overlay(List<KeyValuePair<string, KeyValuePair<string, double>>> filters, params string[] files)
         {
-            ProcessFile(file, filters);
+            foreach (var file in files)
+            {
+                ProcessFile(file, filters);
+            }
         }
 
         public List<string> Headers { get; } = new List<string>();
+
         public void AddHeaderInfo(params string[] displayDataHeaders)
         {
             _overlayHeaders.AddHeaderInfo(displayDataHeaders);
@@ -27,6 +31,11 @@ namespace NSFW.TimingEditor
 
         public void AddLog(string content)
         {
+            if(string.IsNullOrWhiteSpace(content))
+            {
+                return;
+            }
+
             _logData.AppendLine(content.Trim());
         }
 
@@ -95,15 +104,17 @@ namespace NSFW.TimingEditor
             return _overlayHeaders.SetRowHeader(regEx);
         }
 
-        private string FilterLog(string[] headers, string content, Dictionary<string, double> filters)
+        private string FilterLog(string[] headers, string content, List<KeyValuePair<string, KeyValuePair<string, double>>> filters)
         {
             StringBuilder sb = new StringBuilder();
 
-            Dictionary<int, double> indexFilters = new Dictionary<int, double>();
+            List<KeyValuePair<int, KeyValuePair<string, double>>> indexFilters = new List<KeyValuePair<int, KeyValuePair<string, double>>>();
             foreach (var filter in filters)
             {
                 var index = headers.IndexOf(filter.Key);
-                indexFilters.Add(index, filter.Value);
+
+                var keyValuePair = new KeyValuePair<int, KeyValuePair<string, double>>(index, filter.Value);
+                indexFilters.Add(keyValuePair);
             }
 
             using (TextReader sr = new StringReader(content))
@@ -113,7 +124,20 @@ namespace NSFW.TimingEditor
                 {
                     var splitLine = line.Split(",".ToCharArray());
 
-                    var allFiltersMet = indexFilters.All(k => splitLine[k.Key].ToDouble() >= k.Value);
+                    var allFiltersMet = indexFilters.All(k =>
+                    {
+                        switch (k.Value.Key)
+                        {
+                            case "lt":
+                                return splitLine[k.Key].ToDouble() < k.Value.Value;
+
+                            case "gt":
+                                return splitLine[k.Key].ToDouble() > k.Value.Value;
+
+                            default:
+                                return false;
+                        }
+                    });
 
                     if (allFiltersMet == true)
                     {
@@ -125,7 +149,7 @@ namespace NSFW.TimingEditor
             return sb.ToString().Trim();
         }
 
-        private void ProcessFile(string file, Dictionary<string, double> filters)
+        private void ProcessFile(string file, List<KeyValuePair<string, KeyValuePair<string, double>>> filters)
         {
             using (var overlayStream = new StreamReader(file, Encoding.Default))
             {
@@ -147,7 +171,7 @@ namespace NSFW.TimingEditor
                 else if (headers.Length != Headers.Count || !headers.All(h => Headers.Exists(e => e == h)))
                 {
                     return;
-                }	  							 
+                }
 
                 _overlayHeaders = new OverlayHeaderInfo(headers);
 

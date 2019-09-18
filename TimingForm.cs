@@ -396,9 +396,7 @@ namespace NSFW.TimingEditor
                     break;
             }
 
-            e.Handled = true;
-            dataGrid.CancelEdit();
-            dataGrid.EndEdit();
+           
         }
 
         private void Delta(double delta)
@@ -578,16 +576,18 @@ namespace NSFW.TimingEditor
         private void LogOverlayButton_Click(object sender, EventArgs e)
         {
             var file = new OpenFileDialog();
+            file.Multiselect = true;
 
             if (file.ShowDialog() != DialogResult.OK)
             { return; }
 
             try
             {
-                var fileName = file.FileName;
+                var files = file.FileNames;
+
                 var filters = AppSettings.LogFilters;
 
-                _overlay = new Overlay(fileName, filters);
+                _overlay = new Overlay(filters, files);
                 InitializeForm(_overlay.Headers.ToArray());
 
                 _changingTables = true;

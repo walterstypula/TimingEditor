@@ -6,9 +6,9 @@ namespace NSFW.TimingEditor
 {
     public static class AppSettings
     {
-        private static Dictionary<string, double> _logFilters;
+        private static List<KeyValuePair<string, KeyValuePair<string, double>>> _logFilters;
 
-        public static Dictionary<string, double> LogFilters
+        public static List<KeyValuePair<string, KeyValuePair<string, double>>> LogFilters
         {
             get
             {
@@ -16,9 +16,9 @@ namespace NSFW.TimingEditor
             }
         }
 
-        private static Dictionary<string, double> ProcessLogFilters()
+        private static List<KeyValuePair<string, KeyValuePair<string, double>>> ProcessLogFilters()
         {
-            _logFilters = new Dictionary<string, double>();
+            _logFilters = new List<KeyValuePair<string, KeyValuePair<string, double>>>();
             var rawFilters = ConfigurationManager.AppSettings["LogFilters"];
             var filters = rawFilters.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
@@ -26,10 +26,15 @@ namespace NSFW.TimingEditor
             {
                 var item = fitler.Split(":".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
-                if (double.TryParse(item[1], out var value))
+                var compare = item[1].Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                if (double.TryParse(compare[1], out var value))
                 {
                     var field = item[0];
-                    _logFilters.Add(field, value);
+
+                    var pairValue = new KeyValuePair<string, double>(compare[0], value);
+
+                    _logFilters.Add(new KeyValuePair<string, KeyValuePair<string, double>>(field, pairValue));
                 }
             }
 
