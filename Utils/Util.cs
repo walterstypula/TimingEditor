@@ -118,7 +118,15 @@ namespace NSFW.TimingEditor.Utils
         public static string CopyTable(ITable table)
         {
             var writer = new StringWriter();
-            writer.WriteLine("[Table3D]");
+
+            if (table.Is2DTable)
+            {
+                writer.WriteLine("[Table2D]");
+            }
+            else
+            {
+                writer.WriteLine("[Table3D]");
+            }
 
             for (var i = 0; i < table.ColumnHeaders.Count; i++)
             {
@@ -135,12 +143,16 @@ namespace NSFW.TimingEditor.Utils
             {
                 for (var column = 0; column < table.ColumnHeaders.Count; column++)
                 {
-                    if (column == 0)
+                    if (column == 0 && !table.Is2DTable)
                     {
                         writer.Write((int)table.RowHeaders[row]);
                     }
 
-                    writer.Write('\t');
+                    if (!table.Is2DTable || column > 0)
+                    {
+                        writer.Write('\t');
+                    }
+
                     writer.Write(table.GetCell(column, row).ToString(DoubleFormat));
                 }
                 writer.WriteLine();

@@ -31,7 +31,7 @@ namespace NSFW.TimingEditor
 
         public void AddLog(string content)
         {
-            if(string.IsNullOrWhiteSpace(content))
+            if (string.IsNullOrWhiteSpace(content))
             {
                 return;
             }
@@ -74,6 +74,11 @@ namespace NSFW.TimingEditor
                 var point = list.FirstOrDefault(p => p.RowIndex == xIndex && p.ColumnIndex == yIndex)
                                 ?? new OverlayPoint(xIndex, yIndex, xAxisValueRef, yAxisValueRef);
 
+                if (!point.HasKnock)
+                {
+                    point.HasKnock = HasKnock(lineArray);
+                }
+
                 if (!list.Contains(point))
                 {
                     list.Add(point);
@@ -87,6 +92,14 @@ namespace NSFW.TimingEditor
             }
 
             return list;
+        }
+
+        private bool HasKnock(string[] lineArray)
+        {
+            var fbkc = lineArray[_overlayHeaders.FbkcIndex].ToDouble();
+            var flkc = lineArray[_overlayHeaders.FlkcIndex].ToDouble();
+
+            return fbkc != 0 || flkc != 0;
         }
 
         public void SetHeaders(string xAxisHeader, string yAxisHeader)
@@ -200,6 +213,7 @@ namespace NSFW.TimingEditor
         public double ColumnValue { get; }
         public int RowIndex { get; }
         public double RowValue { get; }
+        public bool HasKnock { get; set; }
 
         public void AddData(string header, double rpm, double load, double mafv, double value)
         {
@@ -255,6 +269,9 @@ namespace NSFW.TimingEditor
         internal int RpmIndex = -1;
         private readonly string[] _headers;
 
+        internal int FbkcIndex = -1;
+        internal int FlkcIndex = -1;
+
         internal OverlayHeaderInfo(string[] logHeaderLine)
         {
             if (logHeaderLine.Length <= 0)
@@ -277,6 +294,14 @@ namespace NSFW.TimingEditor
                 else if (Regex.IsMatch(_headers[i], RequiredLogHeaders.MafvRegEx, RegexOptions.IgnoreCase))
                 {
                     MafvIndex = i;
+                }
+                else if (Regex.IsMatch(_headers[i], RequiredLogHeaders.FbkcRegEx, RegexOptions.IgnoreCase))
+                {
+                    FbkcIndex = i;
+                }
+                else if (Regex.IsMatch(_headers[i], RequiredLogHeaders.FlkcRegEx, RegexOptions.IgnoreCase))
+                {
+                    FlkcIndex = i;
                 }
             }
         }

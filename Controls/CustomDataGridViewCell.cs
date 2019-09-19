@@ -41,7 +41,9 @@ namespace NSFW.TimingEditor.Controls
         protected override void PaintBorder(Graphics graphics, Rectangle clipBounds, Rectangle bounds, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle)
         {
             base.PaintBorder(graphics, clipBounds, bounds, cellStyle, _style);
-            using (var p = new Pen(Color.Navy, 5))
+            var color = PointData.HasKnock ? Color.Red : Color.Navy;
+
+            using (var p = new Pen(color, 5))
             {
                 var rect = bounds;
                 rect.X = rect.X + 1;
@@ -56,7 +58,9 @@ namespace NSFW.TimingEditor.Controls
         {
             base.Paint(graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, _style, paintParts);
             var rect = cellBounds;
-            using (var p = new Pen(Color.Navy, 2))
+            var color = PointData.HasKnock ? Color.Red : Color.Navy;
+
+            using (var p = new Pen(color, 2))
             {
                 rect.Width -= 1;
                 rect.Height -= 1;

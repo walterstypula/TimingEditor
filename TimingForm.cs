@@ -389,14 +389,19 @@ namespace NSFW.TimingEditor
             {
                 case Keys.OemMinus:
                     Delta(-0.35);
+                    e.Handled = true;
+                    dataGrid.CancelEdit();
+                    dataGrid.EndEdit();
                     break;
 
                 case Keys.Oemplus:
                     Delta(+0.35);
+                    e.Handled = true;
+                    dataGrid.CancelEdit();
+                    dataGrid.EndEdit();
                     break;
             }
 
-           
         }
 
         private void Delta(double delta)
