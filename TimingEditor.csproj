@@ -136,18 +136,10 @@
     <None Include="romraiderlol.csv" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Files\tableFuelBase.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Files\tableTimingAdvance.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Files\tableMafBase.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Files\tableTimingBase.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Files\tableFuelBase.txt" />
+    <Content Include="Files\tableTimingAdvance.txt" />
+    <Content Include="Files\tableMafBase.txt" />
+    <Content Include="Files\tableTimingBase.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -93,7 +93,7 @@ namespace NSFW.TimingEditor
                     var reader = new StreamReader(file);
                     var content = reader.ReadToEnd();
                     Util.LoadTable(content, _tables.TargetFuel);
-                    _tables.TargetFuel.IsReadOnly = true;
+                    _tables.TargetFuel.IsReadOnly = false;
                 }
                 using (var file = new FileStream("Files\\tableMafBase.txt", FileMode.Open))
                 {
@@ -158,6 +158,7 @@ namespace NSFW.TimingEditor
 
             smoothToolStripMenuItem.Enabled = !entry.Table.IsReadOnly;
             autoTuneToolStripMenuItem.Enabled = _isMaf && entry.Table.Is2DTable && !entry.Table.IsReadOnly;
+            autoTuneTypeToolStripMenuItem.Enabled = autoTuneToolStripMenuItem.Enabled;
 
             var title = $"Timing Editor: {entry.Description}";
             pasteToolStripMenuItem.Enabled = entry.AllowPaste;
@@ -401,7 +402,6 @@ namespace NSFW.TimingEditor
                     dataGrid.EndEdit();
                     break;
             }
-
         }
 
         private void Delta(double delta)
@@ -642,6 +642,13 @@ namespace NSFW.TimingEditor
                 return;
             }
 
+            var afrCorrectionHeaders = _overlay.Headers.Where(h => Regex.IsMatch(h, RequiredLogHeaders.AfCorrectionRegEx, RegexOptions.IgnoreCase) ||
+                                        Regex.IsMatch(h, RequiredLogHeaders.AfLearningRegEx, RegexOptions.IgnoreCase)).ToList();
+            var existingHeaders = afrCorrectionHeaders.ToList();
+            existingHeaders.Add(AppSettings.AutoTuneAfrSource);
+            existingHeaders.AddRange(SelectedLogParameters);
+
+            _overlay.AddHeaderInfo(existingHeaders.ToArray());
             var overlayPoints = _overlay.ProcessOverlay(_tables.ModifiedMaf.ColumnHeaders, _tables.ModifiedMaf.RowHeaders);
 
             foreach (var op in overlayPoints)
@@ -656,18 +663,29 @@ namespace NSFW.TimingEditor
 
                 var afrErrorList = new List<double>();
 
-                foreach (var currentAfr in validAutoTuneAfrData)
+                for(int i = 0; i < validAutoTuneAfrData.Count; i++)
                 {
-                    var xTargetAfrValue = _tables.TargetFuel.ColumnHeaders.ClosestValueIndex(currentAfr.Load);
-                    var yTargetAfrValue = _tables.TargetFuel.RowHeaders.ClosestValueIndex(currentAfr.Rpm);
-                    var targetAfr = _tables.TargetFuel.GetCell(xTargetAfrValue, yTargetAfrValue);
+                    if(autoTuneTypeToolStripMenuItem.SelectedIndex == 0)
+                    {
+                        var currentAfr = validAutoTuneAfrData[i];
 
-                    afrErrorList.Add(CalcAfrError(currentAfr.Value, targetAfr));
+                        var xTargetAfrValue = _tables.TargetFuel.ColumnHeaders.ClosestValueIndex(currentAfr.Load);
+                        var yTargetAfrValue = _tables.TargetFuel.RowHeaders.ClosestValueIndex(currentAfr.Rpm);
+                        var targetAfr = _tables.TargetFuel.GetCell(xTargetAfrValue, yTargetAfrValue);
+
+                        afrErrorList.Add(CalcAfrError(currentAfr.Value, targetAfr));
+                    }
+                    else
+                    {
+                        var afr1 = op.ValueData[afrCorrectionHeaders[0]][i].Value;
+                        var afr2 = op.ValueData[afrCorrectionHeaders[1]][i].Value;
+                        afrErrorList.Add(afr1+afr2);
+                    }
                 }
 
-                var targetCell = dataGrid[op.RowIndex, op.ColumnIndex] as CustomDataGridViewCell;
+                var targetCell = dataGrid[op.ColumnIndex, op.RowIndex] as CustomDataGridViewCell;
 
-                afrErrorList = afrErrorList.SkipOutliers(k: 1, selector: result => result).ToList();
+                afrErrorList = afrErrorList.SkipOutliers(k: 3, selector: result => result).ToList();
 
                 var avgAfrError = afrErrorList.Average();
 
@@ -677,6 +695,8 @@ namespace NSFW.TimingEditor
                 var newValue = currentValue + avgAfrError * correction;
                 targetCell.Value = newValue.ToString();
             }
+
+            _overlay.AddHeaderInfo(SelectedLogParameters);
         }
 
         private static double CalcAfrError(double currentAfr, double targetAfr)
@@ -708,6 +728,8 @@ namespace NSFW.TimingEditor
             tableList.SelectedIndex = 0;
             autoTuneToolStripMenuItem.Visible = _isMaf;
             autoTuneToolStripMenuItem.Enabled = _isMaf;
+            autoTuneTypeToolStripMenuItem.Visible = _isMaf;
+            autoTuneTypeToolStripMenuItem.Enabled = _isMaf;
         }
 
         private void CopyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -835,6 +857,26 @@ namespace NSFW.TimingEditor
         private void SmoothToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SmoothButton_Click(sender, e);
+        }
+
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if((tableList.SelectedItem as TableListEntry).Table == _tables.ModifiedBaseTiming)
+            {
+                System.IO.File.WriteAllText(@"Files\\tableTimingBase.txt", Util.CopyTable(_tables.ModifiedBaseTiming));
+            }
+            else if ((tableList.SelectedItem as TableListEntry).Table == _tables.ModifiedAdvanceTiming)
+            {
+                System.IO.File.WriteAllText(@"Files\\tableTimingAdvance.txt", Util.CopyTable(_tables.ModifiedAdvanceTiming));
+            }
+            else if ((tableList.SelectedItem as TableListEntry).Table == _tables.TargetFuel)
+            {
+                System.IO.File.WriteAllText(@"Files\\tableFuelBase.txt", Util.CopyTable(_tables.TargetFuel));
+            }
+            else if ((tableList.SelectedItem as TableListEntry).Table == _tables.ModifiedMaf)
+            {
+                System.IO.File.WriteAllText(@"Files\\tableMafBase.txt", Util.CopyTable(_tables.ModifiedMaf));
+            }
         }
     }
 }

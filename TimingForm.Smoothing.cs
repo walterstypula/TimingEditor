@@ -14,32 +14,59 @@ namespace NSFW.TimingEditor
             Smooth(dataGrid.SelectedCells);
         }
 
-        private static void SmoothVertically(DataGridViewSelectedCellCollection selectedCells, int range, double decay)
+        private static void SmoothVertically(DataGridViewSelectedCellCollection selectedCells)
         {
             var columnsGroup = selectedCells.ToList().GroupBy(p => p.ColumnIndex);
-            SmoothCells(columnsGroup, range, decay);
+            SmoothCells(columnsGroup);
         }
 
-        private static void SmoothHorizontally(DataGridViewSelectedCellCollection selectedCells, int range, double decay)
+        private static void SmoothHorizontally(DataGridViewSelectedCellCollection selectedCells)
         {
             var rowsGroup = selectedCells.ToList().GroupBy(p => p.RowIndex);
-            SmoothCells(rowsGroup, range, decay);
+            SmoothCells(rowsGroup);
         }
 
-        private static void SmoothCells(IEnumerable<IGrouping<int, DataGridViewCell>> groupedCells, int range, double decay)
+        private static List<double> Smooth(List<double> arr)
+        {
+            List<double> result = new List<double>();
+            int windowSize = 1;
+
+            for (int i = 0; i < arr.Count; i++)
+            {
+                int leftOffeset = i - windowSize;
+                int from = leftOffeset >= 0 ? leftOffeset : 0;
+                int to = i + windowSize + 1;
+                int count = 0;
+                double sum = 0;
+
+                for (int j = from; j < to && j < arr.Count; j++)
+                {
+                    sum += arr[j];
+
+                    if (j == i)
+                    {
+                        sum += arr[j] * 2;
+                        count += 2;
+                    }
+
+                    count++;
+                }
+
+                result.Add(sum / count);
+            }
+
+            return result;
+        }
+
+        private static void SmoothCells(IEnumerable<IGrouping<int, DataGridViewCell>> groupedCells)
         {
             foreach (var r in groupedCells)
             {
-                if (r.Count() < 3)
-                {
-                    continue;
-                }
-
                 var cells = r.OrderBy(p => p.ColumnIndex).ToArray();
                 var values = cells.Select(p => p.ValueAsDouble()).ToList();
-                var cleanData = Util.CleanData(values, range, decay);
+                var cleanData = Smooth(values);
 
-                for (int i = 0; i < cleanData.Length; i++)
+                for (int i = 0; i < cleanData.Count; i++)
                 {
                     cells[i].Value = cleanData[i].ToString();
                 }
@@ -48,11 +75,8 @@ namespace NSFW.TimingEditor
 
         private static void Smooth(DataGridViewSelectedCellCollection selectedCells)
         {
-            var decay = 0.15;
-            var range = 100;
-
-            SmoothHorizontally(selectedCells, range, decay);
-            SmoothVertically(selectedCells, range, decay);
+            SmoothHorizontally(selectedCells);
+            SmoothVertically(selectedCells);
         }
 
         private static bool SelectedColumn(System.Collections.ICollection selectedCells)

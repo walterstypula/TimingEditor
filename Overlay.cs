@@ -71,7 +71,7 @@ namespace NSFW.TimingEditor
                 var load = lineArray[_overlayHeaders.EngineLoadIndex];
                 var mafv = lineArray[_overlayHeaders.MafvIndex];
 
-                var point = list.FirstOrDefault(p => p.RowIndex == xIndex && p.ColumnIndex == yIndex)
+                var point = list.FirstOrDefault(p => p.RowIndex == yIndex && p.ColumnIndex ==xIndex)
                                 ?? new OverlayPoint(xIndex, yIndex, xAxisValueRef, yAxisValueRef);
 
                 if (!point.HasKnock)
@@ -201,12 +201,12 @@ namespace NSFW.TimingEditor
         public readonly Dictionary<string, List<string>> LogData = new Dictionary<string, List<string>>();
         public readonly Dictionary<string, List<TableData>> ValueData = new Dictionary<string, List<TableData>>();
 
-        public OverlayPoint(int xAxisIndex, int yAxisIndex, double xAvisValue, double yAxisValue)
+        public OverlayPoint(int xAxisIndex, int yAxisIndex, double xAxisValue, double yAxisValue)
         {
-            RowIndex = xAxisIndex;
-            ColumnIndex = yAxisIndex;
-            RowValue = xAvisValue;
-            ColumnValue = yAxisValue;
+            RowIndex = yAxisIndex;
+            ColumnIndex = xAxisIndex;
+            RowValue = yAxisValue;
+            ColumnValue = xAxisValue;
         }
 
         public int ColumnIndex { get; }
@@ -334,7 +334,7 @@ namespace NSFW.TimingEditor
             {
                 if (HeaderIndices.ContainsKey(header))
                 {
-                    throw new ApplicationException($"Duplicate header found.");
+                    continue;
                 }
 
                 var headerIndex = Array.IndexOf(_headers, header);

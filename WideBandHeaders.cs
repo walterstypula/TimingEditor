@@ -7,5 +7,7 @@
         public const string MafvRegEx = ".*\\bmass.*voltage\\b.*";
         public const string FbkcRegEx = ".*\\bfeedback.*knock\\b.*";
         public const string FlkcRegEx = ".*\\bfine.*learning.*knock\\b.*";
+        public const string AfCorrectionRegEx = ".*\\ba/f.*correction.*#1\\b.*";
+        public const string AfLearningRegEx = ".*\\ba/f.*learning.*#1\\b.*";
     }
 }

@@ -30,7 +30,7 @@ namespace NSFW.TimingEditor
             ModifiedAdvanceTiming = new PassThroughTable(ModifiedBaseTiming) { XAxisHeader = EngineLoad };
             ModifiedTotalTiming = new CombinedTable(ModifiedBaseTiming, ModifiedAdvanceTiming, Operation.Sum) { XAxisHeader = EngineLoad };
             DeltaTotalTiming = new CombinedTable(InitialTotalTiming, ModifiedTotalTiming, Operation.Difference) { XAxisHeader = EngineLoad };
-            TargetFuel = new Table() { XAxisHeader = EngineLoad };
+            TargetFuel = new Table() { XAxisHeader = EngineLoad, IsReadOnly = false };
             InitialMaf = new Table(true) { XAxisHeader = Maf }; ;
             ModifiedMaf = new Table(true) { XAxisHeader = Maf }; ;
             DeltaMaf = new CombinedTable(InitialMaf, ModifiedMaf, Operation.Difference) { XAxisHeader = Maf }; ;

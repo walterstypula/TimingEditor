@@ -304,7 +304,7 @@ namespace NSFW.TimingEditor.Utils
 
                     if (cellHit != null)
                     {
-                        var highlight = cellHit.FirstOrDefault(p => p.RowIndex == x && p.ColumnIndex == y);
+                        var highlight = cellHit.FirstOrDefault(p => p.RowIndex == y && p.ColumnIndex == x);
 
                         if (highlight != null)
                         {
