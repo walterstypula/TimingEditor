@@ -663,15 +663,17 @@ namespace NSFW.TimingEditor
 
                 var afrErrorList = new List<double>();
 
-                for(int i = 0; i < validAutoTuneAfrData.Count; i++)
+                for (int i = 0; i < validAutoTuneAfrData.Count; i++)
                 {
-                    if(autoTuneTypeToolStripMenuItem.SelectedIndex == 0)
+                    if (autoTuneTypeToolStripMenuItem.SelectedIndex == 0)
                     {
                         var currentAfr = validAutoTuneAfrData[i];
 
-                        var xTargetAfrValue = _tables.TargetFuel.ColumnHeaders.ClosestValueIndex(currentAfr.Load);
-                        var yTargetAfrValue = _tables.TargetFuel.RowHeaders.ClosestValueIndex(currentAfr.Rpm);
-                        var targetAfr = _tables.TargetFuel.GetCell(xTargetAfrValue, yTargetAfrValue);
+                        var targetAfr = (_tables.TargetFuel as Table).InterpolateXY(currentAfr.Load, currentAfr.Rpm);
+
+                        //var xTargetAfrValue = _tables.TargetFuel.ColumnHeaders.ClosestValueIndex(currentAfr.Load);
+                        //var yTargetAfrValue = _tables.TargetFuel.RowHeaders.ClosestValueIndex(currentAfr.Rpm);
+                        //var targetAfr = _tables.TargetFuel.GetCell(xTargetAfrValue, yTargetAfrValue);
 
                         afrErrorList.Add(CalcAfrError(currentAfr.Value, targetAfr));
                     }
@@ -679,7 +681,7 @@ namespace NSFW.TimingEditor
                     {
                         var afr1 = op.ValueData[afrCorrectionHeaders[0]][i].Value;
                         var afr2 = op.ValueData[afrCorrectionHeaders[1]][i].Value;
-                        afrErrorList.Add(afr1+afr2);
+                        afrErrorList.Add(afr1 + afr2);
                     }
                 }
 
@@ -861,7 +863,7 @@ namespace NSFW.TimingEditor
 
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if((tableList.SelectedItem as TableListEntry).Table == _tables.ModifiedBaseTiming)
+            if ((tableList.SelectedItem as TableListEntry).Table == _tables.ModifiedBaseTiming)
             {
                 System.IO.File.WriteAllText(@"Files\\tableTimingBase.txt", Util.CopyTable(_tables.ModifiedBaseTiming));
             }
@@ -877,6 +879,10 @@ namespace NSFW.TimingEditor
             {
                 System.IO.File.WriteAllText(@"Files\\tableMafBase.txt", Util.CopyTable(_tables.ModifiedMaf));
             }
+        }
+
+        private void HorizontalPanel_Paint(object sender, PaintEventArgs e)
+        {
         }
     }
 }

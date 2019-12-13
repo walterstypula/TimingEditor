@@ -143,5 +143,60 @@ namespace NSFW.TimingEditor.Tables
             double[] row = cells[rowNumber];
             row[columnNumber] = value;
         }
+
+        private static int FindIndex(double value, double[] headers)
+        {
+            var index = 0;
+            while (value >= headers[index] && index < headers.Length)
+            {
+                index++;
+            };
+
+            return index;
+        }
+
+        private static double FindRatio(int index, double value, double[] headers)
+        {
+            var indexPrevious = index - 1;
+
+            var divider = (headers[index] - headers[indexPrevious]);
+
+            divider = divider == 0 ? 1 : divider;
+
+            var ratio = (value - headers[indexPrevious]) / divider;
+            return ratio;
+        }
+
+        public double InterpolateXY(double xValue, double yValue)
+        {
+            return InterpolateXY(xValue, yValue, ColumnHeaders.ToArray(), RowHeaders.ToArray(), cells.ToArray());
+        }
+
+        private static double InterpolateXY(double xValue, double yValue, double[] xHeaders, double[] yHeaders, double[][] values)
+        {
+            //Find Index of Target Columns
+            var columnIndex = FindIndex(xValue, xHeaders);
+            var rowIndex = FindIndex(yValue, yHeaders);
+
+            //Get Interpolation ratios
+            var columnRatio = FindRatio(columnIndex, xValue, xHeaders);
+            var rowRatio = FindRatio(rowIndex, yValue, yHeaders);
+
+            var previousRowIndex = rowIndex - 1;
+            var previousColumnIndex = columnIndex - 1;
+
+            //Get surrounding values
+            var cell1 = values[previousRowIndex][previousColumnIndex];
+            var cell2 = values[previousRowIndex][columnIndex];
+            var cell3 = values[rowIndex][previousColumnIndex];
+            var cell4 = values[rowIndex][columnIndex];
+
+            //Interpolation on columns
+            var xInterpolation1 = cell1 + columnRatio * (cell2 - cell1);
+            var xInterpolation2 = cell3 + columnRatio * (cell4 - cell3);
+
+            //Add interpolation on Y
+            return xInterpolation1 + rowRatio * (xInterpolation2 - xInterpolation1);
+        }
     }
 }
